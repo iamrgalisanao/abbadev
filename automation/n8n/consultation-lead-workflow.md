@@ -186,6 +186,112 @@ ABBADev Tech Solutions
 https://abbadev.com
 `.trim()
 
+const escapeHtml = (value) => clean(value)
+  .replace(/&/g, '&amp;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;')
+  .replace(/"/g, '&quot;')
+  .replace(/'/g, '&#039;')
+
+const rows = [
+  ['Name', normalized.name],
+  ['Email', normalized.email],
+  ['Company', normalized.company],
+  ['Preferred contact', normalized.preferredContact],
+  ['Work focus', normalized.workFocus],
+  ['Company stage', normalized.companyStage],
+  ['Urgency', normalized.urgency],
+  ['Engagement', normalized.engagement],
+  ['Budget', normalized.budget],
+  ['Current tools', normalized.currentTools],
+]
+
+const detailsTable = rows.map(([label, value]) => `
+  <tr>
+    <td style="padding:12px 14px;border-bottom:1px solid #dbe7f3;color:#64748b;font-size:13px;">${escapeHtml(label)}</td>
+    <td style="padding:12px 14px;border-bottom:1px solid #dbe7f3;color:#0f172a;font-size:14px;font-weight:700;">${escapeHtml(value)}</td>
+  </tr>
+`).join('')
+
+const shell = ({ preview, title, subtitle, badge, body }) => `
+<!doctype html>
+<html>
+  <body style="margin:0;background:#07111f;padding:28px;font-family:Arial,Helvetica,sans-serif;color:#0f172a;">
+    <div style="display:none;max-height:0;overflow:hidden;opacity:0;">${escapeHtml(preview)}</div>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:720px;margin:0 auto;background:#f8fbff;border-radius:18px;overflow:hidden;border:1px solid #dbeafe;">
+      <tr>
+        <td style="background:#081827;padding:28px 30px;color:#ffffff;">
+          <div style="font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#38bdf8;font-weight:800;">ABBADev Tech Solutions</div>
+          <h1 style="margin:12px 0 8px;font-size:28px;line-height:1.18;color:#ffffff;">${escapeHtml(title)}</h1>
+          <p style="margin:0;color:#bfd4ea;font-size:15px;line-height:1.6;">${escapeHtml(subtitle)}</p>
+          ${badge ? `<div style="display:inline-block;margin-top:18px;padding:8px 12px;border-radius:999px;background:#0b6ee8;color:#ffffff;font-size:13px;font-weight:800;">${escapeHtml(badge)}</div>` : ''}
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:28px 30px;">
+          ${body}
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:20px 30px;background:#eef6ff;color:#475569;font-size:13px;line-height:1.6;">
+          <strong style="color:#0f172a;">Rommel Galisanao</strong><br>
+          ABBADev Tech Solutions<br>
+          <a href="https://abbadev.com" style="color:#0b6ee8;text-decoration:none;">abbadev.com</a>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
+`
+
+const internalHtml = shell({
+  preview: `${priority} priority consultation brief from ${normalized.company}`,
+  title: 'New consultation brief',
+  subtitle: 'A website lead submitted a workflow challenge for review.',
+  badge: `${priority} priority / Score ${score}`,
+  body: `
+    <h2 style="margin:0 0 14px;color:#0f172a;font-size:18px;">Lead details</h2>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;background:#ffffff;border:1px solid #dbe7f3;border-radius:12px;overflow:hidden;">
+      ${detailsTable}
+    </table>
+    <h2 style="margin:28px 0 10px;color:#0f172a;font-size:18px;">Workflow challenge</h2>
+    <p style="margin:0;padding:16px 18px;background:#ffffff;border:1px solid #dbe7f3;border-radius:12px;color:#1e293b;line-height:1.7;">${escapeHtml(normalized.challenge)}</p>
+    <h2 style="margin:28px 0 10px;color:#0f172a;font-size:18px;">Scoring reasons</h2>
+    <p style="margin:0;color:#334155;line-height:1.7;">${escapeHtml(reasons.join('; ') || 'No strong scoring signals')}</p>
+    <p style="margin:24px 0 0;color:#64748b;font-size:13px;line-height:1.6;">Source: <a href="${escapeHtml(normalized.pageUrl)}" style="color:#0b6ee8;">${escapeHtml(normalized.pageUrl)}</a><br>Submitted: ${escapeHtml(normalized.submittedAt)}</p>
+  `,
+})
+
+const clientHtml = shell({
+  preview: 'ABBADev received your consultation brief.',
+  title: 'Your consultation brief was received',
+  subtitle: `Thanks, ${normalized.name}. I will review your workflow challenge and reply within one business day.`,
+  badge: normalized.workFocus,
+  body: `
+    <p style="margin:0 0 18px;color:#334155;font-size:16px;line-height:1.7;">I received the details about your ${escapeHtml(normalized.workFocus.toLowerCase())} request and will review the workflow challenge, tools, urgency, and engagement fit.</p>
+    <h2 style="margin:0 0 12px;color:#0f172a;font-size:18px;">What happens next</h2>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
+      <tr><td style="padding:10px 0;color:#334155;line-height:1.6;">1. I review the process and business outcome you described.</td></tr>
+      <tr><td style="padding:10px 0;color:#334155;line-height:1.6;">2. I identify the likely architecture, automation, or software direction.</td></tr>
+      <tr><td style="padding:10px 0;color:#334155;line-height:1.6;">3. I reply with the recommended next step.</td></tr>
+    </table>
+    <h2 style="margin:24px 0 12px;color:#0f172a;font-size:18px;">Summary received</h2>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;background:#ffffff;border:1px solid #dbe7f3;border-radius:12px;overflow:hidden;">
+      ${[
+        ['Work focus', normalized.workFocus],
+        ['Company stage', normalized.companyStage],
+        ['Urgency', normalized.urgency],
+        ['Preferred engagement', normalized.engagement],
+      ].map(([label, value]) => `
+        <tr>
+          <td style="padding:12px 14px;border-bottom:1px solid #dbe7f3;color:#64748b;font-size:13px;">${escapeHtml(label)}</td>
+          <td style="padding:12px 14px;border-bottom:1px solid #dbe7f3;color:#0f172a;font-size:14px;font-weight:700;">${escapeHtml(value)}</td>
+        </tr>
+      `).join('')}
+    </table>
+  `,
+})
+
 return {
   json: {
     ...normalized,
@@ -194,8 +300,10 @@ return {
     scoreReasons: reasons,
     internalSubject,
     internalText,
+    internalHtml,
     clientSubject,
     clientText,
+    clientHtml,
   },
 }
 ```
@@ -211,7 +319,14 @@ Add an email node after the Code node.
 {{$json.internalSubject}}
 ```
 
-- Text:
+- Email Format: `HTML`
+- HTML:
+
+```text
+{{$json.internalHtml}}
+```
+
+- Optional text fallback:
 
 ```text
 {{$json.internalText}}
@@ -233,7 +348,14 @@ Add another email node after the Code node or after the internal email node.
 {{$json.clientSubject}}
 ```
 
-- Text:
+- Email Format: `HTML`
+- HTML:
+
+```text
+{{$json.clientHtml}}
+```
+
+- Optional text fallback:
 
 ```text
 {{$json.clientText}}
