@@ -41,6 +41,11 @@ const server = http.createServer(async (request, response) => {
   const requestOrigin = request.headers.origin
   const responseOrigin = requestOrigin === ALLOWED_ORIGIN ? requestOrigin : ALLOWED_ORIGIN
 
+  if (request.method === 'GET' && request.url === '/api/health') {
+    jsonResponse(response, 200, { ok: true, service: 'abbadev-consultation-proxy' }, responseOrigin)
+    return
+  }
+
   if (request.method === 'OPTIONS') {
     jsonResponse(response, 204, {}, responseOrigin)
     return

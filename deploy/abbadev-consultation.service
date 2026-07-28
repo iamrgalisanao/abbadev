@@ -1,0 +1,16 @@
+[Unit]
+Description=ABBADev consultation proxy
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/var/www/abbadev
+EnvironmentFile=/etc/abbadev/abbadev.env
+ExecStart=/usr/bin/node server/consultation-proxy.mjs
+Restart=always
+RestartSec=5
+User=www-data
+Group=www-data
+
+[Install]
+WantedBy=multi-user.target

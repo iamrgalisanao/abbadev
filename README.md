@@ -1,16 +1,27 @@
-# React + Vite
+# ABBADev Website
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Personal brand and business website for Rommel Galisanao / ABBADev Tech Solutions.
 
-Currently, two official plugins are available:
+The site is built with React, Vite, Tailwind CSS, Framer Motion, and a small Node.js proxy for the consultation form. The proxy forwards submissions to n8n while keeping the JWT on the server.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Local Development
 
-## React Compiler
+```bash
+npm install
+npm run dev
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+In another terminal, run the consultation proxy when testing form submissions:
 
-## Expanding the ESLint configuration
+```bash
+npm run dev:proxy
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Production Build
+
+```bash
+npm run lint
+npm run build
+```
+
+Deployment instructions are in [DEPLOYMENT.md](DEPLOYMENT.md).
