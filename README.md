@@ -25,3 +25,5 @@ npm run build
 ```
 
 Deployment instructions are in [DEPLOYMENT.md](DEPLOYMENT.md).
+
+The n8n lead-handling workflow is documented in [automation/n8n/consultation-lead-workflow.md](automation/n8n/consultation-lead-workflow.md).
