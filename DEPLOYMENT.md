@@ -1,12 +1,12 @@
 # ABBADev Hostinger VPS Deployment
 
-This project deploys as a static React/Vite site served by Nginx, with a small Node.js proxy for the consultation form. The proxy keeps the n8n JWT on the VPS so it is never exposed in the browser.
+This project deploys as a static React/Vite site served by Apache or Nginx, with a small Node.js proxy for the consultation form. The proxy keeps the n8n JWT on the VPS so it is never exposed in the browser.
 
 ## 1. VPS Requirements
 
 - Ubuntu VPS
 - Node.js 20 or newer
-- Nginx
+- Apache 2 or Nginx
 - Git
 - Domain DNS pointed to the VPS IP for `abbadev.com` and `www.abbadev.com`
 
@@ -88,7 +88,31 @@ Expected response:
 {"ok":true,"service":"abbadev-consultation-proxy"}
 ```
 
-## 6. Configure Nginx
+## 6A. Configure Apache 2
+
+Use this option if the VPS already runs Apache for other projects.
+
+Enable the required Apache modules:
+
+```bash
+sudo a2enmod rewrite proxy proxy_http headers ssl
+sudo systemctl restart apache2
+```
+
+Install the virtual host:
+
+```bash
+sudo cp deploy/abbadev.apache.conf /etc/apache2/sites-available/abbadev.conf
+sudo a2ensite abbadev.conf
+sudo apache2ctl configtest
+sudo systemctl reload apache2
+```
+
+If another Apache site already uses `abbadev.com`, disable or update that conflicting site first.
+
+## 6B. Configure Nginx
+
+Use this option only if Nginx is the front web server for this domain. Do not run Apache and Nginx on the same `80` and `443` listeners unless one is intentionally proxying to the other.
 
 ```bash
 sudo cp deploy/abbadev.nginx.conf /etc/nginx/sites-available/abbadev
@@ -107,7 +131,16 @@ sudo systemctl reload nginx
 
 ## 7. Enable HTTPS
 
-After DNS is pointed to the VPS:
+After DNS is pointed to the VPS, use the command that matches your web server.
+
+For Apache:
+
+```bash
+sudo apt install certbot python3-certbot-apache
+sudo certbot --apache -d abbadev.com -d www.abbadev.com
+```
+
+For Nginx:
 
 ```bash
 sudo apt install certbot python3-certbot-nginx
