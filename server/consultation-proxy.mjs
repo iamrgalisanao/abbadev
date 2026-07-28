@@ -4,6 +4,7 @@ const PORT = Number(process.env.PORT || 8787)
 const N8N_WEBHOOK_URL = process.env.N8N_WEBHOOK_URL
 const N8N_JWT = process.env.N8N_JWT
 const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || 'https://abbadev.com'
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 
 const jsonResponse = (response, statusCode, body, origin = ALLOWED_ORIGIN) => {
   response.writeHead(statusCode, {
@@ -63,13 +64,20 @@ const server = http.createServer(async (request, response) => {
 
   try {
     const payload = await readJsonBody(request)
+    const email = String(payload.email || '').trim()
+
+    if (!EMAIL_PATTERN.test(email)) {
+      jsonResponse(response, 422, { error: 'A valid email address is required' }, responseOrigin)
+      return
+    }
+
     const n8nResponse = await fetch(N8N_WEBHOOK_URL, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${N8N_JWT}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(payload),
+      body: JSON.stringify({ ...payload, email }),
     })
 
     if (!n8nResponse.ok) {

@@ -275,6 +275,7 @@ const workbenchEvents = [
 const SEQUENCE_STEPS = sequenceStages.length
 const STAGE_MS = 1500
 const HOLD_MS = 1500
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 
 function App() {
   const [activeMode, setActiveMode] = useState(1)
@@ -309,7 +310,14 @@ function App() {
     const form = event.currentTarget
     const formData = new FormData(form)
     const payload = Object.fromEntries(formData.entries())
+    const email = String(payload.email || '').trim()
     const pageUrl = typeof window !== 'undefined' ? window.location.href : 'https://abbadev.com/'
+
+    if (!EMAIL_PATTERN.test(email)) {
+      setLeadStatus('error')
+      setLeadMessage('Enter a valid business email address, such as name@company.com.')
+      return
+    }
 
     setLeadStatus('submitting')
     setLeadMessage('')
@@ -322,6 +330,7 @@ function App() {
         },
         body: JSON.stringify({
           ...payload,
+          email,
           source: 'abbadev.com',
           pageUrl,
           submittedAt: new Date().toISOString(),
@@ -850,6 +859,8 @@ function App() {
                   type="email"
                   autoComplete="email"
                   required
+                  pattern="^[^\s@]+@[^\s@]+\.[^\s@]{2,}$"
+                  title="Enter a valid email address, such as name@company.com."
                   placeholder="you@company.com"
                 />
               </label>

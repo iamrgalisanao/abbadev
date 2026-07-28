@@ -53,7 +53,7 @@ sudo nano /etc/abbadev/abbadev.env
 Use this shape:
 
 ```env
-N8N_WEBHOOK_URL=https://n8nautomation.abbadev.com/webhook-test/abbadev-consultation
+N8N_WEBHOOK_URL=https://n8nautomation.abbadev.com/webhook/abbadev-consultation
 N8N_JWT=replace-with-your-real-jwt
 ALLOWED_ORIGIN=https://abbadev.com
 PORT=8787
