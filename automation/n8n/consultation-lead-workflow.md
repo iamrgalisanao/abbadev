@@ -363,32 +363,116 @@ Add another email node after the Code node or after the internal email node.
 
 ## Storage Node
 
-Add one storage destination after the Code node. Start simple.
+Add one storage destination after the Code node. Use Notion as the first lead pipeline.
 
-Recommended first version:
+Recommended workflow order:
 
-- Google Sheets row
-- Notion database page
-- Airtable record
-- PostgreSQL/MySQL row
+```text
+Webhook
+-> Code / Score Lead
+-> Notion / Create Lead Page
+-> Internal Email
+-> Client Confirmation Email
+```
 
-Fields to store:
+## Notion Database Setup
 
-- `submittedAt`
-- `priority`
-- `score`
-- `name`
-- `email`
-- `company`
-- `workFocus`
-- `companyStage`
-- `urgency`
-- `engagement`
-- `budget`
-- `currentTools`
-- `challenge`
-- `pageUrl`
-- `scoreReasons`
+Create a Notion database named:
+
+```text
+ABBADev Consultation Leads
+```
+
+Recommended properties:
+
+| Property | Type | Recommended options |
+| --- | --- | --- |
+| Lead | Title | Main lead title |
+| Status | Status | New, Reviewed, Contacted, Discovery Scheduled, Proposal Sent, Won, Lost, Not Fit |
+| Priority | Select | High, Medium, Low |
+| Score | Number | Plain number |
+| Submitted At | Date | Include time |
+| Name | Text | Visitor name |
+| Email | Email | Visitor email |
+| Company | Text | Company or organization |
+| Preferred Contact | Select | Email, Phone, Video call |
+| Work Focus | Select | AI automation, Custom software, Architecture review, Digital transformation |
+| Company Stage | Select | Growing business, Startup, Enterprise team, Public sector or nonprofit |
+| Urgency | Select | This month, This quarter, Planning phase, Exploring options |
+| Engagement | Select | Consultation and roadmap, Architecture review, Prototype or proof of concept, Full software build |
+| Budget | Select | To be scoped, Under $5k, $5k to $15k, $15k to $50k, $50k+ |
+| Current Tools | Text | Tools listed by the visitor |
+| Challenge | Text | Workflow challenge |
+| Score Reasons | Text | Lead scoring explanation |
+| Source | Select | abbadev.com |
+| Source Page | URL | Page URL |
+| Next Action | Text | Manual follow-up note |
+| Owner | Person | Optional |
+| Last Contacted | Date | Optional |
+
+Recommended Notion views:
+
+- `New Leads`: filter `Status` is `New`, sort `Submitted At` descending
+- `High Priority`: filter `Priority` is `High`, sort `Score` descending
+- `Pipeline`: board grouped by `Status`
+- `All Leads`: table sorted by `Submitted At` descending
+
+## n8n Notion Node Mapping
+
+Add a Notion node after the Code node.
+
+- Resource: `Database Page`
+- Operation: `Create`
+- Database: `ABBADev Consultation Leads`
+
+Map properties:
+
+```text
+Lead: {{$json.company}} - {{$json.workFocus}}
+Status: New
+Priority: {{$json.priority}}
+Score: {{$json.score}}
+Submitted At: {{$json.submittedAt}}
+Name: {{$json.name}}
+Email: {{$json.email}}
+Company: {{$json.company}}
+Preferred Contact: {{$json.preferredContact}}
+Work Focus: {{$json.workFocus}}
+Company Stage: {{$json.companyStage}}
+Urgency: {{$json.urgency}}
+Engagement: {{$json.engagement}}
+Budget: {{$json.budget}}
+Current Tools: {{$json.currentTools}}
+Challenge: {{$json.challenge}}
+Score Reasons: {{($json.scoreReasons || []).join('; ')}}
+Source: {{$json.source}}
+Source Page: {{$json.pageUrl}}
+Next Action: Review and reply within one business day
+```
+
+Page content/body, if the Notion node supports page content:
+
+```text
+Priority: {{$json.priority}}
+Score: {{$json.score}}
+
+Workflow challenge:
+{{$json.challenge}}
+
+Scoring reasons:
+{{($json.scoreReasons || []).join('; ')}}
+
+Recommended next action:
+Review the challenge, confirm fit, and reply with a suggested discovery path.
+```
+
+After the Notion node works, keep email nodes after it:
+
+```text
+Notion / Create Lead Page
+-> Internal Email
+-> Client Confirmation Email
+```
 
 ## Recommended Next Automation
 
