@@ -1,0 +1,38 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+.env
+.env.*
+!.env.example
+
+# Local Codex/agent tooling cache
+.agents/
+.hallmark/
+
+# Unused local/archive assets that should not deploy
+public/images/_Oceanofgames.com_Snake_Pass/
+public/images/_Oceanofgames.com_Snake_Pass.zip
+public/images/**/*.zip
+public/images/case-studies/case-study/
+public/images/case-studies/digital-transformation-2.png
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

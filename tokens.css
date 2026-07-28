@@ -1,0 +1,153 @@
+:root {
+  --color-paper: oklch(97.5% 0.012 236);
+  --color-paper-cool: oklch(95.5% 0.024 240);
+  --color-paper-raised: oklch(94.5% 0.019 238);
+  --color-card: oklch(100% 0 0);
+  --color-ink: oklch(20% 0.045 250);
+  --color-body: oklch(43% 0.04 252);
+  --color-muted: oklch(50% 0.036 252);
+  --color-accent-soft: oklch(91% 0.055 254);
+  --color-accent-text: oklch(55% 0.19 258);
+  --color-success: oklch(66% 0.16 148);
+  --color-success-strong: oklch(52% 0.15 148);
+  --color-rule: oklch(89% 0.018 244);
+  --color-rule-strong: oklch(82% 0.026 246);
+  --color-dot: oklch(65% 0.08 258 / 0.42);
+  --color-grid: oklch(74% 0.035 250 / 0.28);
+  --color-focus: oklch(65% 0.17 258 / 0.36);
+  --glass-tint: 72%;
+  --glass-highlight: inset 0 1px 0 oklch(100% 0 0 / 0.5);
+
+  --shadow-soft: 0 18px 54px oklch(20% 0.045 250 / 0.07);
+  --shadow-stage: 0 28px 90px oklch(20% 0.045 250 / 0.13);
+  --shadow-ink: 0 22px 60px oklch(20% 0.045 250 / 0.28);
+  --shadow-accent: 0 16px 34px oklch(55% 0.19 258 / 0.22);
+
+  /* Theme-invariant: always-dark surfaces (nav CTA, terminal-style panels), the
+     light text/accent that sit on them, and the button-fill accent - kept at a
+     fixed lightness in both themes so white button text always clears 4.5:1
+     (a brighter dark-mode accent reads great as text but fails as a fill). */
+  --color-deep: oklch(20% 0.045 250);
+  --color-ink-soft: oklch(86% 0.018 248);
+  --color-accent: oklch(55% 0.19 258);
+  --color-accent-pale: oklch(91% 0.055 254);
+  --color-white: oklch(100% 0 0);
+  --color-black: oklch(0% 0 0);
+
+  --font-display: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    'Segoe UI', sans-serif;
+  --font-body: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    'Segoe UI', sans-serif;
+  --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+
+  --space-2xs: 8px;
+  --space-xs: 12px;
+  --space-sm: 18px;
+  --space-md: 26px;
+  --space-lg: 40px;
+  --space-xl: 64px;
+  --space-2xl: 88px;
+  --space-3xl: 112px;
+  --space-nav: 74px;
+
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-md: 18px;
+  --text-lg: 20px;
+  --text-xl: 24px;
+  --text-2xl: 34px;
+
+  --layout-max: 1750px;
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-pill: 999px;
+  --rule-hairline: 1px;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 180ms;
+  --dur-base: 260ms;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-paper: oklch(13% 0.022 254);
+    --color-paper-cool: oklch(16% 0.028 252);
+    --color-paper-raised: oklch(20% 0.032 250);
+    --color-card: oklch(21% 0.035 254);
+    --color-ink: oklch(96% 0.012 240);
+    --color-body: oklch(80% 0.022 245);
+    --color-muted: oklch(64% 0.03 248);
+    --color-accent-soft: oklch(32% 0.09 258);
+    --color-accent-text: oklch(68% 0.19 258);
+    --color-success: oklch(72% 0.17 150);
+    --color-success-strong: oklch(60% 0.16 150);
+    --color-rule: oklch(100% 0 0 / 0.12);
+    --color-rule-strong: oklch(100% 0 0 / 0.2);
+    --color-dot: oklch(75% 0.09 258 / 0.4);
+    --color-grid: oklch(65% 0.05 250 / 0.22);
+    --color-focus: oklch(75% 0.16 258 / 0.45);
+    --glass-tint: 60%;
+    --glass-highlight: inset 0 1px 0 oklch(100% 0 0 / 0.09);
+
+    --shadow-soft: 0 18px 54px oklch(0% 0 0 / 0.45);
+    --shadow-stage: 0 28px 90px oklch(0% 0 0 / 0.55);
+    --shadow-ink: 0 22px 60px oklch(0% 0 0 / 0.6);
+    --shadow-accent: 0 16px 34px oklch(68% 0.19 258 / 0.35);
+  }
+}
+
+:root[data-theme='dark'] {
+  --color-paper: oklch(13% 0.022 254);
+  --color-paper-cool: oklch(16% 0.028 252);
+  --color-paper-raised: oklch(20% 0.032 250);
+  --color-card: oklch(21% 0.035 254);
+  --color-ink: oklch(96% 0.012 240);
+  --color-body: oklch(80% 0.022 245);
+  --color-muted: oklch(64% 0.03 248);
+  --color-accent-soft: oklch(32% 0.09 258);
+  --color-accent-text: oklch(68% 0.19 258);
+  --color-success: oklch(72% 0.17 150);
+  --color-success-strong: oklch(60% 0.16 150);
+  --color-rule: oklch(100% 0 0 / 0.12);
+  --color-rule-strong: oklch(100% 0 0 / 0.2);
+  --color-dot: oklch(75% 0.09 258 / 0.4);
+  --color-grid: oklch(65% 0.05 250 / 0.22);
+  --color-focus: oklch(75% 0.16 258 / 0.45);
+  --glass-tint: 60%;
+  --glass-highlight: inset 0 1px 0 oklch(100% 0 0 / 0.09);
+
+  --shadow-soft: 0 18px 54px oklch(0% 0 0 / 0.45);
+  --shadow-stage: 0 28px 90px oklch(0% 0 0 / 0.55);
+  --shadow-ink: 0 22px 60px oklch(0% 0 0 / 0.6);
+  --shadow-accent: 0 16px 34px oklch(68% 0.19 258 / 0.35);
+}
+
+:root[data-theme='light'] {
+  --color-paper: oklch(97.5% 0.012 236);
+  --color-paper-cool: oklch(95.5% 0.024 240);
+  --color-paper-raised: oklch(94.5% 0.019 238);
+  --color-card: oklch(100% 0 0);
+  --color-ink: oklch(20% 0.045 250);
+  --color-body: oklch(43% 0.04 252);
+  --color-muted: oklch(50% 0.036 252);
+  --color-accent-soft: oklch(91% 0.055 254);
+  --color-accent-text: oklch(55% 0.19 258);
+  --color-success: oklch(66% 0.16 148);
+  --color-success-strong: oklch(52% 0.15 148);
+  --color-rule: oklch(89% 0.018 244);
+  --color-rule-strong: oklch(82% 0.026 246);
+  --color-dot: oklch(65% 0.08 258 / 0.42);
+  --color-grid: oklch(74% 0.035 250 / 0.28);
+  --color-focus: oklch(65% 0.17 258 / 0.36);
+  --glass-tint: 72%;
+  --glass-highlight: inset 0 1px 0 oklch(100% 0 0 / 0.5);
+
+  --shadow-soft: 0 18px 54px oklch(20% 0.045 250 / 0.07);
+  --shadow-stage: 0 28px 90px oklch(20% 0.045 250 / 0.13);
+  --shadow-ink: 0 22px 60px oklch(20% 0.045 250 / 0.28);
+  --shadow-accent: 0 16px 34px oklch(55% 0.19 258 / 0.22);
+}
