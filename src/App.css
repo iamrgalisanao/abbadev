@@ -1675,24 +1675,6 @@
     display: flex;
   }
 
-  .case-page-nav {
-    position: static;
-    display: flex;
-    flex-direction: row;
-    gap: 4px;
-    padding: 0;
-    border: 0;
-    border-radius: 0;
-    background: transparent;
-    box-shadow: none;
-  }
-
-  .case-page-nav a {
-    min-height: 38px;
-    padding-inline: 8px;
-    font-size: 12px;
-  }
-
   .nav-links a {
     min-height: 42px;
   }
@@ -2202,10 +2184,33 @@
 }
 
 .case-page-shell {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   color: var(--color-white);
   background:
+    linear-gradient(90deg, color-mix(in oklch, var(--color-accent-pale) 10%, transparent) 1px, transparent 1px),
+    linear-gradient(color-mix(in oklch, var(--color-accent-pale) 10%, transparent) 1px, transparent 1px),
     radial-gradient(circle at 70% 8%, color-mix(in oklch, var(--color-accent) 7%, transparent), transparent 28%),
     linear-gradient(180deg, #02060b 0%, #050911 56%, #02050a 100%);
+  background-size: 72px 72px, 72px 72px, auto, auto;
+}
+
+.case-page-shell::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 0%, color-mix(in oklch, var(--color-accent) 10%, transparent), transparent 32%),
+    linear-gradient(180deg, transparent 0%, rgba(2, 6, 11, 0.54) 46%, rgba(2, 6, 11, 0.88) 100%);
+}
+
+.case-page-header,
+.case-page-main {
+  position: relative;
+  z-index: 1;
 }
 
 .case-page-main {
@@ -2261,6 +2266,20 @@
   color: rgba(236, 244, 255, 0.74);
   font-size: var(--text-md);
   line-height: 1.55;
+}
+
+.case-page-hero .case-page-disclaimer {
+  width: fit-content;
+  max-width: 100%;
+  margin: 0;
+  padding: 8px 10px;
+  border: 1px solid color-mix(in oklch, var(--color-accent-pale) 18%, transparent);
+  border-radius: var(--radius-sm);
+  color: rgba(196, 213, 234, 0.58);
+  background: rgba(3, 13, 24, 0.36);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.45;
 }
 
 .case-page-section > p {
@@ -2351,7 +2370,7 @@
   border-right: 0;
 }
 
-.case-page-results span {
+.case-page-results > div > span {
   color: rgba(196, 213, 234, 0.54);
   font-family: var(--font-mono);
   font-size: 11px;
@@ -2360,23 +2379,50 @@
   text-transform: uppercase;
 }
 
-.case-page-results small,
-.case-page-results del {
-  color: rgba(196, 213, 234, 0.52);
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
+.case-page-result-values {
+  display: grid;
+  gap: 12px;
+  margin-top: 10px;
 }
 
-.case-page-results strong {
+.case-page-result-values small {
+  display: grid;
+  gap: 6px;
+}
+
+.case-page-result-values small span,
+.case-page-result-values strong span {
+  display: block;
+  color: rgba(196, 213, 234, 0.52);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 760;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.case-page-result-values del {
+  display: block;
+  color: rgba(196, 213, 234, 0.58);
+  font-family: var(--font-mono);
+  font-size: var(--text-md);
+  text-decoration-color: rgba(196, 213, 234, 0.38);
+}
+
+.case-page-result-values strong {
+  display: grid;
+  gap: 6px;
   color: var(--color-success);
   font-family: var(--font-mono);
-  font-size: clamp(30px, 4vw, 46px);
+  /* font-size: clamp(30px, 4vw, 46px); */
+  font-size: var(--text-xl);
   line-height: 1;
 }
 
 .case-page-results p {
   margin: 0;
   color: rgba(236, 244, 255, 0.72);
+  padding-top: 8px;
   line-height: 1.55;
 }
 
@@ -2416,8 +2462,8 @@
   margin: 0;
   color: var(--color-white);
   font-size: clamp(20px, 2.2vw, 28px);
-  font-style: italic;
-  font-weight: 760;
+  font-style: normal;
+  font-weight: 720;
   line-height: 1.45;
 }
 
@@ -2455,7 +2501,7 @@
 
 .case-next-link strong {
   color: var(--color-white);
-  font-family: var(--font-sans);
+  font-family: var(--font-body);
   font-size: var(--text-lg);
   letter-spacing: 0;
   text-transform: none;
@@ -2772,6 +2818,7 @@
 
   .case-page-main {
     width: min(100% - 36px, 760px);
+    gap: 38px;
     padding-block: var(--space-xl);
   }
 
@@ -2787,8 +2834,14 @@
 
   .case-page-results > div {
     min-height: auto;
+    padding: 18px;
     border-right: 0;
     border-bottom: 1px solid color-mix(in oklch, var(--color-accent-pale) 18%, transparent);
+  }
+
+  .case-page-result-values {
+    grid-template-columns: 1fr;
+    gap: 10px;
   }
 
   .case-page-results > div:last-child {
@@ -2798,6 +2851,10 @@
   .case-page-cta {
     display: grid;
     align-items: start;
+  }
+
+  .case-page-cta .primary-button {
+    width: 100%;
   }
 
   .case-page-pagination {
@@ -2833,4 +2890,3 @@
     border-bottom: 0;
   }
 }
-

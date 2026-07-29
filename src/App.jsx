@@ -316,6 +316,7 @@ const consultationSteps = [
 ]
 
 function CaseStudyPage({ study, theme, setTheme }) {
+  const [menuOpen, setMenuOpen] = useState(false)
   const currentIndex = caseStudies.findIndex((item) => item.slug === study.slug)
   const previousStudy = caseStudies[(currentIndex - 1 + caseStudies.length) % caseStudies.length]
   const nextStudy = caseStudies[(currentIndex + 1) % caseStudies.length]
@@ -328,7 +329,7 @@ function CaseStudyPage({ study, theme, setTheme }) {
 
   return (
     <div className="site-shell case-page-shell">
-      <header className="nav">
+      <header className="nav case-page-header">
         <a className="brand" href="/#top" aria-label="ABBADev Tech Solutions home">
           <span className="brand-mark">A</span>
           <span>
@@ -345,9 +346,22 @@ function CaseStudyPage({ study, theme, setTheme }) {
           >
             {theme === 'dark' ? <Sun size={19} aria-hidden="true" /> : <Moon size={19} aria-hidden="true" />}
           </button>
-          <nav className="nav-links case-page-nav">
-            <a href="/#work">All cases</a>
-            <a href="/#contact">Contact</a>
+          <button
+            className="icon-button mobile-only"
+            type="button"
+            aria-label="Toggle navigation"
+            onClick={() => setMenuOpen((open) => !open)}
+          >
+            {menuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+          <nav className={menuOpen ? 'nav-links open' : 'nav-links'}>
+            <a href="/#platform" onClick={() => setMenuOpen(false)}>Platform</a>
+            <a href="/#workflow" onClick={() => setMenuOpen(false)}>Workflow</a>
+            <a href="/#services" onClick={() => setMenuOpen(false)}>Services</a>
+            <a href="/#resources" onClick={() => setMenuOpen(false)}>Insights</a>
+            <a className="nav-cta" href="/#contact" onClick={() => setMenuOpen(false)}>
+              Book a systems consult
+            </a>
           </nav>
         </div>
       </header>
@@ -366,10 +380,13 @@ function CaseStudyPage({ study, theme, setTheme }) {
               </div>
             ))}
           </div>
+          <p className="case-page-disclaimer">
+            Representative case format. Replace with confirmed client data when available.
+          </p>
         </section>
 
         <a className="case-download-button" href="/#contact">
-          Download summary PDF <ArrowRight size={15} aria-hidden="true" />
+          Request summary PDF <ArrowRight size={15} aria-hidden="true" />
         </a>
 
         <section className="case-page-section case-page-list-section">
@@ -415,12 +432,21 @@ function CaseStudyPage({ study, theme, setTheme }) {
 
         <section className="case-page-results">
           {study.metrics.map((metric) => (
-            <div key={metric.label}>
+            <div
+              key={metric.label}
+              aria-label={`${metric.label}. Before ${metric.before}. After ${metric.after}. ${metric.note}`}
+            >
               <span>{metric.label}</span>
-              <small>Before</small>
-              <del>{metric.before}</del>
-              <small>After</small>
-              <strong>{metric.after}</strong>
+              <div className="case-page-result-values">
+                <small>
+                  <span>Before</span>
+                  <del>{metric.before}</del>
+                </small>
+                <strong>
+                  <span>After</span>
+                  {metric.after}
+                </strong>
+              </div>
               <p>{metric.note}</p>
             </div>
           ))}
@@ -444,11 +470,11 @@ function CaseStudyPage({ study, theme, setTheme }) {
         <section className="case-page-cta">
           <div>
             <span className="kicker">Take this with you</span>
-            <h2>Summary PDF - 1 page, print-ready</h2>
-            <p>Problem, approach, implementation path, and results will become a downloadable one-page summary.</p>
+            <h2>Request a 1-page case summary</h2>
+            <p>Problem, approach, implementation path, and results packaged for stakeholder review.</p>
           </div>
           <a className="primary-button" href="/#contact">
-            Download PDF <ArrowRight size={18} aria-hidden="true" />
+            Request PDF <ArrowRight size={18} aria-hidden="true" />
           </a>
         </section>
 
