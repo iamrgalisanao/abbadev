@@ -286,28 +286,28 @@ const resources = [
     icon: FileText,
     title: 'Case studies',
     copy: 'Problem, architecture, delivery path, and outcome notes for real implementation stories.',
-    href: '#work',
+    href: '/cases',
     status: 'live',
   },
   {
     icon: BookOpen,
     title: 'Architecture notes',
     copy: 'Readable explanations of system design, AI workflow choices, and integration tradeoffs.',
-    href: '#contact',
-    status: 'soon',
+    href: '/implementation-notes',
+    status: 'live',
   },
   {
     icon: GraduationCap,
     title: 'Training library',
     copy: 'Future lessons, templates, and walkthroughs for teams learning to design better systems.',
-    href: '#contact',
+    href: '/insights',
     status: 'soon',
   },
   {
     icon: Blocks,
     title: 'Automation examples',
     copy: 'See the live workflow demo running in the hero, then apply the same automation pattern to your own process.',
-    href: '#top',
+    href: '/workflow-demos',
     status: 'live',
   },
 ]
@@ -317,6 +317,329 @@ const consultationSteps = [
   'Identify the systems, people, and approval points involved',
   'Return a practical path for automation, architecture, or software delivery',
 ]
+
+const contentPages = {
+  '/services/ai-automation': {
+    icon: BrainCircuit,
+    label: 'Services',
+    title: 'AI automation',
+    intro: 'Use AI where it can reduce operating drag without removing human judgment, auditability, or ownership.',
+    priority: 'P1 service page',
+    goal: 'Convert leaders with repetitive intake, routing, review, and reporting work into a scoped automation consultation.',
+    blocks: [
+      ['Workflow fit review', 'Identify where AI should draft, summarize, classify, or route work, and where deterministic rules or human approval should stay in control.'],
+      ['Automation blueprint', 'Map triggers, systems, owners, exception paths, and review checkpoints before tools are connected.'],
+      ['n8n implementation path', 'Turn the approved workflow into webhooks, validation rules, notifications, Notion or CRM updates, and email handoffs.'],
+      ['Governance and monitoring', 'Define failure handling, retry behavior, data visibility, prompt boundaries, and audit notes.'],
+    ],
+    proof: ['Live consultation workflow connected to n8n', 'Before and after process metrics', 'Screenshots of sanitized workflow runs', 'Exception handling examples'],
+    visuals: ['Workflow node map', 'Before and after handoff diagram', 'Automation control panel', 'AI review queue illustration'],
+    seo: 'AI automation consulting, n8n automation consultant, business workflow automation, AI workflow automation for operations',
+    examples: ['Lead intake qualification', 'Document review triage', 'Status update routing', 'Executive summary generation'],
+    cta: 'Map an automation opportunity',
+    ctaHref: '/consulting-intake',
+  },
+  '/services/software-architecture': {
+    icon: Network,
+    label: 'Services',
+    title: 'Software architecture',
+    intro: 'Design the system boundaries, data flow, and governance model before implementation cost compounds.',
+    priority: 'P1 service page',
+    goal: 'Position ABBADev as the architecture partner for teams planning integrations, modernization, and custom platforms.',
+    blocks: [
+      ['Architecture review', 'Assess current systems, data movement, user roles, pain points, and failure modes.'],
+      ['Target operating model', 'Translate business process into system responsibilities, ownership boundaries, and delivery phases.'],
+      ['Integration strategy', 'Define APIs, sync direction, source of truth rules, retries, and observability before automation expands.'],
+      ['Delivery governance', 'Create review checkpoints for access, reliability, maintainability, and release risk.'],
+    ],
+    proof: ['Architecture diagrams', 'Case study implementation paths', 'Risk decision logs', 'Stack and boundary examples'],
+    visuals: ['Layered system diagram', 'Integration contract map', 'Governance checklist', 'Service boundary cards'],
+    seo: 'software architecture consultant, enterprise software architecture, system design consulting, application modernization architecture',
+    examples: ['API foundation', 'Multi-tenant workflow platform', 'Reporting data layer', 'Legacy tool modernization'],
+    cta: 'Review a system architecture',
+    ctaHref: '/consulting-intake',
+  },
+  '/services/custom-systems': {
+    icon: Code2,
+    label: 'Services',
+    title: 'Custom systems',
+    intro: 'Build internal tools, portals, dashboards, APIs, and workflow systems around the way the business actually operates.',
+    priority: 'P1 service page',
+    goal: 'Explain custom software delivery as a practical business operating layer, not a generic development service.',
+    blocks: [
+      ['Discovery and scope', 'Clarify users, workflows, reports, permissions, integrations, and measurable outcomes.'],
+      ['Prototype and validation', 'Create enough of the product surface to confirm the workflow before the build expands.'],
+      ['Implementation', 'Deliver the application, database, integrations, queues, roles, and operational views.'],
+      ['Handoff and support', 'Document the system, train users, and establish maintenance expectations.'],
+    ],
+    proof: ['Representative product screens', 'Case study metrics', 'Implementation notes', 'Operational handoff documents'],
+    visuals: ['Portal screens', 'Dashboard layouts', 'Data model snapshots', 'Workflow status views'],
+    seo: 'custom software development, custom web application development, business software solutions, internal tools development',
+    examples: ['Client portals', 'Operations dashboards', 'Workflow applications', 'Reporting systems'],
+    cta: 'Scope a custom system',
+    ctaHref: '/consulting-intake',
+  },
+  '/services/technical-advisory': {
+    icon: ShieldCheck,
+    label: 'Services',
+    title: 'Technical advisory',
+    intro: 'Get senior technical guidance before committing budget, vendor effort, or internal team capacity.',
+    priority: 'P2 service page',
+    goal: 'Offer a lower-friction advisory path for teams that need clarity before a full software or automation engagement.',
+    blocks: [
+      ['Roadmap session', 'Turn a business problem into a practical sequence of architecture, automation, and delivery decisions.'],
+      ['Vendor and tool review', 'Evaluate whether a platform, integration, or AI tool fits the operating context.'],
+      ['Risk review', 'Identify security, data, reliability, access, and maintenance risks before implementation.'],
+      ['Team enablement', 'Help leaders and teams understand the system design choices in plain language.'],
+    ],
+    proof: ['Sample roadmap', 'Decision matrix', 'Architecture review summary', 'Advisory action list'],
+    visuals: ['Decision tree', 'Readiness checklist', 'Risk matrix', 'Roadmap strip'],
+    seo: 'technical advisor, CTO advisory, technology consulting for businesses, software project advisory',
+    examples: ['Architecture second opinion', 'AI adoption review', 'Build versus buy decision', 'Integration planning'],
+    cta: 'Request technical advisory',
+    ctaHref: '/consulting-intake',
+  },
+  '/work': {
+    icon: LayoutDashboard,
+    label: 'Work',
+    title: 'Portfolio',
+    intro: 'A practical view of representative systems, automations, and architecture patterns ABBADev can deliver.',
+    priority: 'P2 proof page',
+    goal: 'Show breadth without distracting from the deeper case studies.',
+    blocks: [
+      ['Operating systems', 'Command centers, workflow apps, dashboards, and portals for daily business operations.'],
+      ['Automation layers', 'n8n workflows, notifications, data updates, intake routing, and exception queues.'],
+      ['Architecture foundations', 'APIs, sync jobs, role boundaries, observability, and data ownership rules.'],
+      ['Knowledge systems', 'Documentation, training resources, implementation notes, and reusable templates.'],
+    ],
+    proof: ['Case summaries', 'Sanitized screenshots', 'System diagrams', 'Before and after metrics'],
+    visuals: ['Evidence board', 'Project cards', 'Metric tiles', 'Architecture thumbnails'],
+    seo: 'AI automation portfolio, software architecture portfolio, custom software portfolio',
+    examples: ['Transaction intake command center', 'Document intake assistant', 'Integration foundation'],
+    cta: 'Review the case studies',
+    ctaHref: '/cases',
+  },
+  '/cases': {
+    icon: FileText,
+    label: 'Work',
+    title: 'Case studies',
+    intro: 'Representative proof pages that show the business problem, approach, implementation path, governance, and results.',
+    priority: 'P1 proof page',
+    goal: 'Give executives and technical reviewers enough proof to trust the consulting and delivery model.',
+    blocks: [
+      ['Metric-led summaries', 'Each case starts with a measurable before and after signal.'],
+      ['Problem and approach', 'The business context is documented before architecture details appear.'],
+      ['Implementation path', 'The page explains phases, tradeoffs, governance, and handoff.'],
+      ['Printable summaries', 'Each case can support stakeholder review through a concise PDF.'],
+    ],
+    proof: ['Before and after metrics', 'Implementation phases', 'Governance details', 'Anonymized stakeholder quotes'],
+    visuals: ['Metric-first case cards', 'PDF style summaries', 'Implementation timeline', 'Architecture snapshots'],
+    seo: 'AI automation case studies, software architecture case studies, custom software case studies',
+    examples: caseStudies.map((study) => study.title),
+    cta: 'Read the latest case',
+    ctaHref: `/cases/${caseStudies[0].slug}`,
+  },
+  '/workflow-demos': {
+    icon: Blocks,
+    label: 'Work',
+    title: 'Workflow demos',
+    intro: 'Interactive examples that show how a request moves from intake to rules, AI support, data updates, and human approval.',
+    priority: 'P3 interactive content',
+    goal: 'Let visitors experience the operating logic behind ABBADev automation work.',
+    blocks: [
+      ['Lead intake replay', 'Show how a consultation brief is validated, scored, routed, and logged.'],
+      ['Document intake simulation', 'Demonstrate AI drafting, validation, and exception review.'],
+      ['Status workflow demo', 'Show how updates move through owners, reminders, and reporting views.'],
+      ['Integration monitoring demo', 'Show retries, sync status, and exception handling.'],
+    ],
+    proof: ['Live n8n example', 'Sanitized payloads', 'Step timing', 'Failure path examples'],
+    visuals: ['Animated node graph', 'Payload preview', 'Status timeline', 'Control checklist'],
+    seo: 'workflow automation examples, AI workflow demo, n8n workflow examples',
+    examples: ['Website consultation workflow', 'Document intake route', 'Approval reminder workflow'],
+    cta: 'See the homepage workflow',
+    ctaHref: '/#top',
+  },
+  '/implementation-notes': {
+    icon: BookOpen,
+    label: 'Work',
+    title: 'Implementation notes',
+    intro: 'Short technical notes that explain architecture decisions, integration tradeoffs, AI workflow boundaries, and delivery lessons.',
+    priority: 'P3 authority content',
+    goal: 'Build technical trust with practical notes that support the case studies and service pages.',
+    blocks: [
+      ['Architecture notes', 'Readable breakdowns of boundaries, contracts, sync rules, and reliability choices.'],
+      ['Automation notes', 'Patterns for retries, validation, observability, prompt boundaries, and exception handling.'],
+      ['Delivery notes', 'Lessons from scoping, staging, handoff, documentation, and governance.'],
+      ['Templates', 'Reusable checklists for system reviews, workflow mapping, and AI automation readiness.'],
+    ],
+    proof: ['Diagrams', 'Code-adjacent snippets', 'Decision records', 'Checklists'],
+    visuals: ['Technical notebook layout', 'Inline diagrams', 'Checklist panels', 'Architecture maps'],
+    seo: 'software implementation notes, architecture notes, AI automation implementation',
+    examples: ['Webhook validation checklist', 'Queue observability pattern', 'AI exception review model'],
+    cta: 'Start with a system review',
+    ctaHref: '/consulting-intake',
+  },
+  '/insights': {
+    icon: BookOpen,
+    label: 'Learn',
+    title: 'Insights',
+    intro: 'The learning hub for systems thinking, AI operations, software architecture, and digital transformation.',
+    priority: 'P2 authority hub',
+    goal: 'Create an organized home for educational content that compounds SEO and trust over time.',
+    blocks: [
+      ['System design', 'How to think about boundaries, roles, data movement, and reliability.'],
+      ['AI operations', 'How AI fits into actual business processes without losing control.'],
+      ['Digital transformation', 'How to modernize operations in phases that teams can adopt.'],
+      ['Implementation notes', 'Practical patterns and lessons from delivery work.'],
+    ],
+    proof: ['Case study links', 'Diagrams', 'Templates', 'Workflow examples'],
+    visuals: ['Knowledge hub grid', 'Article cards', 'Topic paths', 'Learning roadmap'],
+    seo: 'AI automation insights, system design articles, digital transformation strategy',
+    examples: ['System design', 'AI operations', 'Digital transformation', 'Implementation notes'],
+    cta: 'Explore system design',
+    ctaHref: '/insights/system-design',
+  },
+  '/insights/system-design': {
+    icon: Network,
+    label: 'Learn',
+    title: 'System design',
+    intro: 'A practical guide to designing software systems around workflows, people, integrations, and business rules.',
+    priority: 'P2 authority topic',
+    goal: 'Educate technical buyers and developers while reinforcing architecture credibility.',
+    blocks: [
+      ['Boundaries', 'Define what each system owns, what it exposes, and what it should never decide alone.'],
+      ['Data movement', 'Clarify sources of truth, sync direction, retries, and audit events.'],
+      ['Operating views', 'Design the dashboards, statuses, and exception paths leaders need.'],
+      ['Governance', 'Make access, review, and reliability decisions explicit.'],
+    ],
+    proof: ['Architecture diagrams', 'Case study patterns', 'Review checklist', 'Integration examples'],
+    visuals: ['Layered diagrams', 'Boundary maps', 'Event flow charts', 'Review checklist'],
+    seo: 'system design consulting, software system design, enterprise system design',
+    examples: ['Integration foundation', 'Transaction intake command center', 'Workflow blueprint'],
+    cta: 'Review a system design',
+    ctaHref: '/consulting-intake',
+  },
+  '/insights/ai-operations': {
+    icon: Bot,
+    label: 'Learn',
+    title: 'AI operations',
+    intro: 'AI becomes useful when it is placed inside accountable operating workflows with review, monitoring, and escalation.',
+    priority: 'P2 authority topic',
+    goal: 'Explain AI adoption in operational terms executives and technical teams can both trust.',
+    blocks: [
+      ['Human review', 'Keep judgment visible for approvals, exceptions, and risk-heavy decisions.'],
+      ['AI drafting', 'Use models for summaries, extraction, classification, and recommendations.'],
+      ['Deterministic rules', 'Use software rules for validation, routing, retries, and permissions.'],
+      ['Operational monitoring', 'Track quality, exceptions, failures, and business outcomes.'],
+    ],
+    proof: ['n8n workflow', 'Exception queue examples', 'AI-assisted intake case study', 'Governance notes'],
+    visuals: ['AI control plane', 'Review queue', 'Rules and model split', 'Monitoring timeline'],
+    seo: 'AI operations, AI workflow governance, AI business operations',
+    examples: ['Consultation intake routing', 'Document intake assistant', 'AI summary workflow'],
+    cta: 'Design an AI operating model',
+    ctaHref: '/consulting-intake',
+  },
+  '/insights/digital-transformation': {
+    icon: Workflow,
+    label: 'Learn',
+    title: 'Digital transformation',
+    intro: 'Modernization works when the business process is redesigned with software, automation, data, and governance together.',
+    priority: 'P1 executive topic',
+    goal: 'Speak directly to business leaders who need modernization without vague transformation language.',
+    blocks: [
+      ['Operating diagnosis', 'Find the manual handoffs, duplicate entry, missing visibility, and tool fragmentation.'],
+      ['Modernization roadmap', 'Prioritize releases around operational lift, not technology novelty.'],
+      ['System foundation', 'Create the integration, workflow, and reporting layer that future automation depends on.'],
+      ['Adoption and governance', 'Make ownership, training, access, and auditability part of the plan.'],
+    ],
+    proof: ['Before and after workflow maps', 'Case study outcomes', 'Roadmap samples', 'Leadership reporting examples'],
+    visuals: ['Transformation roadmap', 'Process to system map', 'Operating layer diagram', 'Metric cards'],
+    seo: 'digital transformation consultant, business process digitization, operations modernization',
+    examples: ['Transaction intake command center', 'Integration foundation', 'AI automation roadmap'],
+    cta: 'Plan a transformation roadmap',
+    ctaHref: '/consulting-intake',
+  },
+  '/about': {
+    icon: ShieldCheck,
+    label: 'ABBADev',
+    title: 'About',
+    intro: 'ABBADev Tech Solutions is led by Rommel Galisanao to help organizations turn business complexity into practical software systems.',
+    priority: 'P1 trust page',
+    goal: 'Build trust around Rommel, ABBADev, and the operating principles behind the work.',
+    blocks: [
+      ['Founder-led systems work', 'Rommel brings together software architecture, project leadership, AI automation, and business process analysis.'],
+      ['Business and technical translation', 'The work bridges executive clarity and developer-ready implementation.'],
+      ['AI-assisted delivery', 'AI is used to accelerate research, documentation, workflow design, and implementation while keeping accountability human.'],
+      ['Operating principles', 'Clear scope, practical architecture, measurable outcomes, and maintainable systems.'],
+    ],
+    proof: ['Case studies', 'Tool stack', 'Delivery process', 'Client-ready documentation examples'],
+    visuals: ['Founder profile area', 'Operating principles grid', 'Tool ecosystem', 'Delivery model diagram'],
+    seo: 'Rommel Galisanao, ABBADev, ABBA Tech Solutions, AI automation consultant',
+    examples: ['Software architecture', 'AI automation', 'Digital transformation', 'Custom systems'],
+    cta: 'Start a conversation',
+    ctaHref: '/contact',
+  },
+  '/contact': {
+    icon: MessageSquareText,
+    label: 'ABBADev',
+    title: 'Contact',
+    intro: 'Reach out with a workflow, system, or automation problem that needs a practical path forward.',
+    priority: 'P1 conversion page',
+    goal: 'Give visitors a simple trust-building bridge to the consultation intake.',
+    blocks: [
+      ['Best first step', 'Use the consulting intake so the first conversation starts with useful context.'],
+      ['What to include', 'Describe the workflow, tools, people, approvals, urgency, and business impact.'],
+      ['Response expectation', 'ABBADev reviews the brief and replies with the best next step.'],
+      ['Project fit', 'Best fit includes AI automation, architecture, custom systems, and digital transformation work.'],
+    ],
+    proof: ['Working n8n intake workflow', 'Notion lead logging', 'Internal and confirmation emails', 'Case study examples'],
+    visuals: ['Contact card', 'Intake workflow path', 'Response steps', 'Trust note'],
+    seo: 'contact ABBADev, Rommel Galisanao contact, AI automation consultation',
+    examples: ['Consultation and roadmap', 'Architecture review', 'Prototype', 'Full software build'],
+    cta: 'Open consulting intake',
+    ctaHref: '/#contact',
+  },
+  '/consulting-intake': {
+    icon: CircleDot,
+    label: 'ABBADev',
+    title: 'Consulting intake',
+    intro: 'Prepare a useful first conversation by describing the workflow, tools, urgency, and desired business outcome.',
+    priority: 'P1 conversion page',
+    goal: 'Route qualified leads into the existing website form and n8n workflow.',
+    blocks: [
+      ['Workflow challenge', 'Name the process, bottleneck, decision point, or system that should improve.'],
+      ['Operating context', 'Share the current tools, people involved, approval points, and company stage.'],
+      ['Engagement fit', 'Choose whether the next step is advisory, architecture review, prototype, or full build.'],
+      ['Automated routing', 'The website sends the brief into n8n, email, and Notion for follow-up.'],
+    ],
+    proof: ['Live website form', 'n8n workflow', 'Notion lead database', 'Branded confirmation email'],
+    visuals: ['Intake fields', 'Routing workflow', 'Qualification scoring', 'Follow-up timeline'],
+    seo: 'software consultation intake, AI automation consultation, ABBADev consulting intake',
+    examples: ['AI automation', 'Custom software', 'Architecture review', 'Digital transformation'],
+    cta: 'Go to the intake form',
+    ctaHref: '/#contact',
+  },
+  '/business-solutions': {
+    icon: Blocks,
+    label: 'ABBADev',
+    title: 'Business solutions',
+    intro: 'A problem-led view of the operational outcomes ABBADev can support with architecture, software, and automation.',
+    priority: 'P2 executive landing page',
+    goal: 'Keep the label only as an executive route organized by business problem rather than another generic services page.',
+    blocks: [
+      ['Operational visibility', 'Dashboards, status endpoints, reporting views, and exception tracking.'],
+      ['Workflow automation', 'Intake, routing, reminders, approvals, and handoffs across teams and tools.'],
+      ['System integration', 'APIs, sync jobs, source-of-truth rules, and monitoring.'],
+      ['AI-assisted operations', 'Extraction, summaries, classification, and recommendation workflows with human checks.'],
+    ],
+    proof: ['Case study metrics', 'Workflow maps', 'Implementation notes', 'Service page links'],
+    visuals: ['Business problem cards', 'Operating layer map', 'Metric proof strip', 'Solution pathway'],
+    seo: 'business software solutions, automation solutions for business, digital operations solutions',
+    examples: ['Reduce duplicate entry', 'Improve transaction traceability', 'Automate document review', 'Connect disconnected tools'],
+    cta: 'Find the right solution path',
+    ctaHref: '/consulting-intake',
+  },
+}
 
 function CaseStudyPage({ study, theme, setTheme }) {
   const [menuOpen, setMenuOpen] = useState(false)
@@ -499,22 +822,170 @@ function CaseStudyPage({ study, theme, setTheme }) {
   )
 }
 
+function ContentPage({ page, theme, setTheme }) {
+  const [menuOpen, setMenuOpen] = useState(false)
+  const PageIcon = page.icon
+
+  return (
+    <div className="site-shell case-page-shell content-page-shell">
+      <header className="nav case-page-header">
+        <a className="brand" href="/#top" aria-label="ABBADev Tech Solutions home">
+          <span className="brand-mark">A</span>
+          <span>
+            <strong>ABBADev</strong>
+            <small>Tech Solutions</small>
+          </span>
+        </a>
+        <div className="nav-right">
+          <button
+            className="icon-button theme-toggle"
+            type="button"
+            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            onClick={() => setTheme((current) => (current === 'dark' ? 'light' : 'dark'))}
+          >
+            {theme === 'dark' ? <Sun size={19} aria-hidden="true" /> : <Moon size={19} aria-hidden="true" />}
+          </button>
+          <button
+            className="icon-button mobile-only"
+            type="button"
+            aria-label="Toggle navigation"
+            onClick={() => setMenuOpen((open) => !open)}
+          >
+            {menuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+          <nav className={menuOpen ? 'nav-links open' : 'nav-links'}>
+            <a href="/#platform" onClick={() => setMenuOpen(false)}>Platform</a>
+            <a href="/#workflow" onClick={() => setMenuOpen(false)}>Workflow</a>
+            <a href="/#services" onClick={() => setMenuOpen(false)}>Services</a>
+            <a href="/#resources" onClick={() => setMenuOpen(false)}>Insights</a>
+            <a className="nav-cta" href="/#contact" onClick={() => setMenuOpen(false)}>
+              Book a systems consult
+            </a>
+          </nav>
+        </div>
+      </header>
+
+      <main className="case-page-main content-page-main">
+        <a className="case-page-back" href="/#top">Back to home</a>
+        <section className="case-page-hero content-page-hero">
+          <span className="content-page-icon" aria-hidden="true">
+            <PageIcon size={24} />
+          </span>
+          <span className="kicker">{page.label}</span>
+          <h1>{page.title}</h1>
+          <p>{page.intro}</p>
+          <div className="content-page-goal">
+            <span>{page.priority}</span>
+            <strong>{page.goal}</strong>
+          </div>
+          <div className="content-page-actions">
+            <a className="primary-button" href={page.ctaHref}>
+              {page.cta} <ArrowRight size={18} aria-hidden="true" />
+            </a>
+            <a className="secondary-button" href="/cases">
+              Review proof <FileText size={17} aria-hidden="true" />
+            </a>
+          </div>
+        </section>
+
+        <section className="content-block-grid" aria-label={`${page.title} content blocks`}>
+          {page.blocks.map(([title, copy]) => (
+            <article className="content-block-card" key={title}>
+              <span>{title}</span>
+              <p>{copy}</p>
+            </article>
+          ))}
+        </section>
+
+        <div className="content-page-split">
+          <section className="case-page-section case-page-list-section">
+            <span className="kicker">Proof needed</span>
+            <h2>What makes this credible</h2>
+            <ul>
+              {page.proof.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+
+          <section className="case-page-section case-page-list-section">
+            <span className="kicker">Visual direction</span>
+            <h2>How the page should show it</h2>
+            <ul>
+              {page.visuals.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </div>
+
+        <section className="content-seo-panel">
+          <div>
+            <span className="kicker">SEO angle</span>
+            <h2>Search intent to support</h2>
+            <p>{page.seo}</p>
+          </div>
+          <div>
+            <span className="kicker">Examples</span>
+            <div className="content-example-list">
+              {page.examples.map((item) => (
+                <span key={item}>{item}</span>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="case-page-cta">
+          <div>
+            <span className="kicker">Next step</span>
+            <h2>Bring one real workflow into the conversation.</h2>
+            <p>Share the process, tools, people, and business outcome. ABBADev will map the practical software or automation path around it.</p>
+          </div>
+          <a className="primary-button" href={page.ctaHref}>
+            {page.cta} <ArrowRight size={18} aria-hidden="true" />
+          </a>
+        </section>
+      </main>
+    </div>
+  )
+}
+
 const footerGroups = [
   {
     title: 'Services',
-    links: ['AI automation', 'Software architecture', 'Custom systems', 'Technical advisory'],
+    links: [
+      ['AI automation', '/services/ai-automation'],
+      ['Software architecture', '/services/software-architecture'],
+      ['Custom systems', '/services/custom-systems'],
+      ['Technical advisory', '/services/technical-advisory'],
+    ],
   },
   {
     title: 'Work',
-    links: ['Portfolio', 'Case studies', 'Workflow demos', 'Implementation notes'],
+    links: [
+      ['Portfolio', '/work'],
+      ['Case studies', '/cases'],
+      ['Workflow demos', '/workflow-demos'],
+      ['Implementation notes', '/implementation-notes'],
+    ],
   },
   {
     title: 'Learn',
-    links: ['Insights', 'System design', 'AI operations', 'Digital transformation'],
+    links: [
+      ['Insights', '/insights'],
+      ['System design', '/insights/system-design'],
+      ['AI operations', '/insights/ai-operations'],
+      ['Digital transformation', '/insights/digital-transformation'],
+    ],
   },
   {
     title: 'ABBADev',
-    links: ['About', 'Contact', 'Consulting intake', 'Business solutions'],
+    links: [
+      ['About', '/about'],
+      ['Contact', '/contact'],
+      ['Consulting intake', '/consulting-intake'],
+      ['Business solutions', '/business-solutions'],
+    ],
   },
 ]
 
@@ -600,6 +1071,8 @@ function App() {
     return () => window.removeEventListener('popstate', handleRouteChange)
   }, [])
 
+  const normalizedPath = path.replace(/\/$/, '') || '/'
+  const routeContent = contentPages[normalizedPath] || null
   const routeCase = path.startsWith('/cases/')
     ? caseStudies.find((study) => study.slug === path.replace('/cases/', '').replace(/\/$/, ''))
     : null
@@ -706,6 +1179,10 @@ function App() {
 
   if (routeCase) {
     return <CaseStudyPage study={routeCase} theme={theme} setTheme={setTheme} />
+  }
+
+  if (routeContent) {
+    return <ContentPage page={routeContent} theme={theme} setTheme={setTheme} />
   }
 
   return (
@@ -1065,7 +1542,7 @@ function App() {
               </article>
             ))}
           </div>
-          <a className="all-cases-link" href="/#work">
+          <a className="all-cases-link" href="/cases">
             All case studies <ArrowRight size={16} aria-hidden="true" />
           </a>
           <p className="work-trust">
@@ -1284,8 +1761,8 @@ function App() {
           {footerGroups.map((group) => (
             <div key={group.title}>
               <h3>{group.title}</h3>
-              {group.links.map((link) => (
-                <a href="#contact" key={link}>{link}</a>
+              {group.links.map(([link, href]) => (
+                <a href={href} key={link}>{link}</a>
               ))}
             </div>
           ))}
