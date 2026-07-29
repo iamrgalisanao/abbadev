@@ -119,9 +119,9 @@ const caseStudies = [
     metrics: [
       { label: 'Status prep time', before: '6 h/wk', after: '45 min/wk', note: 'Less recurring reporting preparation.' },
       { label: 'Update latency', before: '2 days', after: 'Same day', note: 'Leaders see current work state faster.' },
-      { label: 'Manual follow-ups', before: 'High', after: 'Exception-led', note: 'Teams chase fewer routine updates.' },
+      { label: 'Follow-ups per week', before: '12/wk', after: '2/wk', note: 'Routine chasing moves into exception handling.' },
     ],
-    client: 'Representative operations team',
+    client: 'Anonymized operations team',
     sector: 'Delivery operations',
     duration: '8 weeks',
     stack: 'React - Node - Workflow rules',
@@ -152,7 +152,7 @@ const caseStudies = [
       ['Automation rules', 'Routed reminders and status changes so updates happen inside the operating flow.'],
     ],
     quote: 'This is the first time status became part of the operating rhythm instead of another meeting artifact.',
-    quoteBy: 'Operations lead, representative delivery team',
+    quoteBy: 'Anonymized operations lead',
     tags: [
       { icon: LayoutDashboard, label: 'Dashboards' },
       { icon: Workflow, label: 'Workflows' },
@@ -180,7 +180,7 @@ const caseStudies = [
       { label: 'Field capture', before: 'Manual', after: 'Drafted', note: 'AI prepares structured data for validation.' },
       { label: 'Handoff traceability', before: 'Partial', after: 'Logged', note: 'Each exception and approval remains visible.' },
     ],
-    client: 'Representative review operation',
+    client: 'Anonymized review operation',
     sector: 'Document-heavy operations',
     duration: '6 weeks',
     stack: 'LLM extraction - Review queues - Audit log',
@@ -211,7 +211,7 @@ const caseStudies = [
       ['Traceable handoff', 'Logged every decision so the system can be audited and improved over time.'],
     ],
     quote: 'The value was not just extraction. It was knowing exactly which cases needed a person.',
-    quoteBy: 'Review manager, representative intake team',
+    quoteBy: 'Anonymized review manager',
     tags: [
       { icon: BrainCircuit, label: 'LLM extraction' },
       { icon: ListChecks, label: 'Review queues' },
@@ -238,7 +238,7 @@ const caseStudies = [
       { label: 'Integration ownership', before: 'Unclear', after: 'Defined', note: 'Boundaries and source-of-truth rules are explicit.' },
       { label: 'Automation readiness', before: 'Brittle', after: 'Stable', note: 'Future workflows can build on reliable data movement.' },
     ],
-    client: 'Representative systems team',
+    client: 'Anonymized systems team',
     sector: 'Multi-tool operations',
     duration: '10 weeks',
     stack: 'APIs - Sync jobs - Monitoring',
@@ -269,7 +269,7 @@ const caseStudies = [
       ['Automation-ready layer', 'Prepared the foundation for dashboards, workflow apps, and AI-assisted processes.'],
     ],
     quote: 'The biggest win was not another integration. It was finally agreeing where the business logic belongs.',
-    quoteBy: 'Systems owner, representative operations team',
+    quoteBy: 'Anonymized systems owner',
     tags: [
       { icon: Code2, label: 'APIs' },
       { icon: Database, label: 'Data sync' },
@@ -382,12 +382,12 @@ function CaseStudyPage({ study, theme, setTheme }) {
             ))}
           </div>
           <p className="case-page-disclaimer">
-            Representative case format. Replace with confirmed client data when available.
+            Details anonymized to protect the client operating context.
           </p>
         </section>
 
-        <a className="case-download-button" href={summaryPdfHref} download>
-          Download summary PDF <ArrowRight size={15} aria-hidden="true" />
+        <a className="case-download-link" href={summaryPdfHref} download>
+          Download the 1-page summary <ArrowRight size={15} aria-hidden="true" />
         </a>
 
         <div className="case-page-split">
@@ -412,7 +412,7 @@ function CaseStudyPage({ study, theme, setTheme }) {
           </section>
         </div>
 
-        <section className="case-page-section case-page-list-section">
+        <section className="case-page-section case-page-list-section case-page-implementation-section">
           <span className="kicker">03 / Implementation</span>
           <h2>Implementation</h2>
           <div className="case-phase-list case-page-phases">

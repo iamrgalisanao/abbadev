@@ -2307,6 +2307,14 @@
   gap: clamp(32px, 5vw, 58px);
 }
 
+.case-page-split .case-page-section,
+.case-page-implementation-section {
+  padding: clamp(22px, 3vw, 30px);
+  border: 1px solid color-mix(in oklch, var(--color-accent-pale) 18%, transparent);
+  border-radius: var(--radius-md);
+  background: rgba(3, 13, 24, 0.22);
+}
+
 .case-page-section {
   display: grid;
   gap: 18px;
@@ -2354,6 +2362,18 @@
 .case-page-phases {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: clamp(22px, 4vw, 42px);
+}
+
+.case-page-phases .case-phase-item {
+  min-height: 116px;
+  padding-left: 18px;
+  border-left: 1px solid color-mix(in oklch, var(--color-accent-pale) 22%, transparent);
+}
+
+.case-page-phases .case-phase-item small {
+  color: var(--color-accent-text);
+  font-size: var(--text-xs);
+  font-weight: 850;
 }
 
 .case-page-results {
@@ -2449,11 +2469,16 @@
   background: rgba(3, 13, 24, 0.32);
 }
 
-.case-download-button {
+.case-download-button,
+.case-download-link {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   justify-self: start;
+  text-decoration: none;
+}
+
+.case-download-button {
   min-height: 42px;
   padding: 0 18px;
   border-radius: var(--radius-pill);
@@ -2461,7 +2486,15 @@
   background: var(--color-success);
   font-size: var(--text-sm);
   font-weight: 850;
-  text-decoration: none;
+}
+
+.case-download-link {
+  color: var(--color-accent-text);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .case-page-quote {
