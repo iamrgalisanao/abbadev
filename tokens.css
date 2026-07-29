@@ -14,8 +14,8 @@
   --color-warning-soft: oklch(93% 0.055 78);
   --color-rule: oklch(89% 0.018 244);
   --color-rule-strong: oklch(82% 0.026 246);
-  --color-dot: oklch(65% 0.08 258 / 0.42);
-  --color-grid: oklch(74% 0.035 250 / 0.28);
+  --color-dot: oklch(65% 0.08 258 / 0.24);
+  --color-grid: oklch(74% 0.035 250 / 0.16);
   --color-focus: oklch(65% 0.17 258 / 0.36);
   --glass-tint: 72%;
   --glass-highlight: inset 0 1px 0 oklch(100% 0 0 / 0.5);
@@ -92,8 +92,8 @@
     --color-warning-soft: oklch(34% 0.065 78);
     --color-rule: oklch(100% 0 0 / 0.12);
     --color-rule-strong: oklch(100% 0 0 / 0.2);
-    --color-dot: oklch(75% 0.09 258 / 0.4);
-    --color-grid: oklch(65% 0.05 250 / 0.22);
+    --color-dot: oklch(75% 0.09 258 / 0.24);
+    --color-grid: oklch(65% 0.05 250 / 0.12);
     --color-focus: oklch(75% 0.16 258 / 0.45);
     --glass-tint: 60%;
     --glass-highlight: inset 0 1px 0 oklch(100% 0 0 / 0.09);
@@ -121,8 +121,8 @@
   --color-warning-soft: oklch(34% 0.065 78);
   --color-rule: oklch(100% 0 0 / 0.12);
   --color-rule-strong: oklch(100% 0 0 / 0.2);
-  --color-dot: oklch(75% 0.09 258 / 0.4);
-  --color-grid: oklch(65% 0.05 250 / 0.22);
+  --color-dot: oklch(75% 0.09 258 / 0.24);
+  --color-grid: oklch(65% 0.05 250 / 0.12);
   --color-focus: oklch(75% 0.16 258 / 0.45);
   --glass-tint: 60%;
   --glass-highlight: inset 0 1px 0 oklch(100% 0 0 / 0.09);
@@ -149,8 +149,8 @@
   --color-warning-soft: oklch(93% 0.055 78);
   --color-rule: oklch(89% 0.018 244);
   --color-rule-strong: oklch(82% 0.026 246);
-  --color-dot: oklch(65% 0.08 258 / 0.42);
-  --color-grid: oklch(74% 0.035 250 / 0.28);
+  --color-dot: oklch(65% 0.08 258 / 0.24);
+  --color-grid: oklch(74% 0.035 250 / 0.16);
   --color-focus: oklch(65% 0.17 258 / 0.36);
   --glass-tint: 72%;
   --glass-highlight: inset 0 1px 0 oklch(100% 0 0 / 0.5);
