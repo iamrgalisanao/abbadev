@@ -2239,7 +2239,7 @@
 .case-page-hero {
   display: grid;
   gap: 18px;
-  max-width: 930px;
+  max-width: 100%;
 }
 
 .case-page-hero .kicker,
@@ -2254,6 +2254,7 @@
 }
 
 .case-page-hero h1 {
+  max-width: 930px;
   margin: 0;
   color: var(--color-white);
   font-size: clamp(42px, 5.2vw, 68px);
