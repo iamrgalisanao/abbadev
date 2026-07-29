@@ -106,13 +106,31 @@ const caseStudies = [
     image: '/images/case-studies/digital-transformation.png',
     imageAlt: 'Blue digital transformation network badge',
     type: 'Digital transformation',
+    code: '001 / Operations',
     title: 'Operations command center',
     result: 'A fragmented status process becomes a shared operating view for leaders and delivery teams.',
+    metric: {
+      label: 'Status prep time',
+      before: '6 h/wk',
+      after: '45 min/wk',
+      note: 'Representative operating lift when teams update one shared workflow view.',
+    },
+    meta: [
+      ['Audience', 'Executives and delivery leads'],
+      ['System type', 'Dashboard + workflow layer'],
+      ['Primary value', 'Clear status, fewer manual updates'],
+      ['Governance', 'Role-based views and audit trail'],
+    ],
     problem: 'Leaders depended on scattered updates, manual follow-ups, and late status visibility across active work.',
     approach: 'Mapped the operating rhythm, defined role-based views, and designed a dashboard layer supported by workflow states.',
     automation: 'Rules route status changes, reminders, and exceptions so teams update the system once and leaders see the current picture.',
     governance: 'Role access, audit-friendly status history, and clear ownership keep the operating view useful without exposing unnecessary detail.',
     outcome: 'Executives get a reliable command view while delivery teams spend less time preparing updates.',
+    phases: [
+      ['Operating map', 'Defined the recurring work states, owners, blockers, and leadership reporting rhythm.'],
+      ['Visibility layer', 'Designed role-based dashboards for active work, exceptions, overdue items, and handoffs.'],
+      ['Automation rules', 'Routed reminders and status changes so updates happen inside the operating flow.'],
+    ],
     tags: [
       { icon: LayoutDashboard, label: 'Dashboards' },
       { icon: Workflow, label: 'Workflows' },
@@ -125,13 +143,31 @@ const caseStudies = [
     image: '/images/case-studies/ai-implementation.png',
     imageAlt: 'Blue AI implementation document badge',
     type: 'AI implementation',
+    code: '002 / Intake',
     title: 'Document intake assistant',
     result: 'Manual review work becomes structured extraction, validation, exception handling, and traceable handoff.',
+    metric: {
+      label: 'Manual review load',
+      before: '100%',
+      after: 'Exception-only',
+      note: 'AI drafts structured fields while people keep control of low-confidence cases.',
+    },
+    meta: [
+      ['Audience', 'Operations and review teams'],
+      ['System type', 'AI-assisted intake workflow'],
+      ['Primary value', 'Less repetitive review work'],
+      ['Governance', 'Human approval for exceptions'],
+    ],
     problem: 'Teams manually reviewed incoming documents, copied key details, and lost time checking inconsistent submissions.',
     approach: 'Designed an intake path that separates extraction, validation, review queues, and final handoff.',
     automation: 'AI drafts structured fields and summaries, while deterministic checks catch missing data and route exceptions to people.',
     governance: 'Human review remains visible, every handoff is logged, and AI output is treated as a draft until confirmed.',
     outcome: 'Reviewers focus on exceptions and decisions instead of repetitive document handling.',
+    phases: [
+      ['Document surface', 'Grouped incoming files by type, source, required fields, and review risk.'],
+      ['Extraction path', 'Separated AI drafting from deterministic validation and human approval queues.'],
+      ['Traceable handoff', 'Logged every decision so the system can be audited and improved over time.'],
+    ],
     tags: [
       { icon: BrainCircuit, label: 'LLM extraction' },
       { icon: ListChecks, label: 'Review queues' },
@@ -143,13 +179,31 @@ const caseStudies = [
     image: '/images/case-studies/solution-architect.png',
     imageAlt: 'Blue solution architecture cube badge',
     type: 'Solution architecture',
+    code: '003 / Architecture',
     title: 'Integration foundation',
     result: 'Disconnected tools become a stable integration layer that can support future automations.',
+    metric: {
+      label: 'Duplicate entry',
+      before: '3 systems',
+      after: '1 source',
+      note: 'A stable integration layer reduces copy-paste work and future automation risk.',
+    },
+    meta: [
+      ['Audience', 'CTOs, IT leads, operators'],
+      ['System type', 'Integration and API foundation'],
+      ['Primary value', 'Reliable data movement'],
+      ['Governance', 'Source-of-truth rules and monitoring'],
+    ],
     problem: 'Important data lived across disconnected tools, creating duplicate entry, brittle reports, and unclear system ownership.',
     approach: 'Defined integration boundaries, source-of-truth rules, API contracts, and monitoring points before adding automation.',
     automation: 'Scheduled syncs and event-driven updates keep records moving without relying on manual export and import routines.',
     governance: 'Access scopes, retry behavior, observability, and data ownership rules are designed before scale.',
     outcome: 'The business gets a maintainable foundation that can support dashboards, workflow apps, and future AI use cases.',
+    phases: [
+      ['System inventory', 'Mapped source systems, ownership, data quality issues, and integration boundaries.'],
+      ['Contract design', 'Defined API contracts, sync rules, retry behavior, and monitoring expectations.'],
+      ['Automation-ready layer', 'Prepared the foundation for dashboards, workflow apps, and AI-assisted processes.'],
+    ],
     tags: [
       { icon: Code2, label: 'APIs' },
       { icon: Database, label: 'Data sync' },
@@ -690,12 +744,12 @@ function App() {
         <section className="section work-section" id="work">
           <div className="work-heading-row">
             <div className="section-heading">
-              <span className="kicker">Proof library</span>
-              <h2>Case studies built for both executives and technical reviewers.</h2>
+              <span className="kicker">Evidence of impact</span>
+              <h2>Proof patterns built for both executives and technical reviewers.</h2>
               <p>
-                Each case study shows the business problem, architecture,
-                implementation path, governance choices, and lessons learned
-                without hiding behind jargon.
+                Each case shows the business problem, architecture path,
+                automation role, governance choices, and measurable operating
+                lift without hiding behind jargon.
               </p>
             </div>
 
@@ -722,11 +776,19 @@ function App() {
                       <img src={study.image} alt={study.imageAlt} loading="lazy" />
                     </div>
                     <div className="case-title-block">
-                      <span>{study.type}</span>
+                      <span>{study.code}</span>
                       <h3>{study.title}</h3>
                     </div>
                   </div>
                   <p>{study.result}</p>
+
+                  <div className="case-impact" aria-label={`${study.title} impact metric`}>
+                    <span>{study.metric.label}</span>
+                    <div className="case-impact-values">
+                      <small>{study.metric.before}</small>
+                      <strong>{study.metric.after}</strong>
+                    </div>
+                  </div>
 
                   <div className="case-card-footer">
                     <div className="tag-list">
@@ -757,17 +819,45 @@ function App() {
           </div>
           <article className="case-detail-panel" id="case-detail-panel" aria-live="polite">
             <div className="case-detail-panel-head">
-              <span>{selectedCase.type}</span>
+              <span>{selectedCase.code}</span>
               <h3>{selectedCase.title}</h3>
               <p>{selectedCase.result}</p>
+              <div className="case-detail-impact">
+                <span>{selectedCase.metric.label}</span>
+                <strong>{selectedCase.metric.after}</strong>
+                <small>Before: {selectedCase.metric.before}</small>
+                <p>{selectedCase.metric.note}</p>
+              </div>
             </div>
-            <div className="case-detail-grid">
-              {caseDetailRows.map((row) => (
-                <div className="case-detail-row" key={row.key}>
-                  <span>{row.label}</span>
-                  <p>{selectedCase[row.key]}</p>
-                </div>
-              ))}
+            <div className="case-detail-content">
+              <div className="case-meta-grid" aria-label={`${selectedCase.title} context`}>
+                {selectedCase.meta.map(([label, value]) => (
+                  <div className="case-meta-item" key={label}>
+                    <span>{label}</span>
+                    <strong>{value}</strong>
+                  </div>
+                ))}
+              </div>
+              <div className="case-detail-grid">
+                {caseDetailRows.map((row) => (
+                  <div className="case-detail-row" key={row.key}>
+                    <span>{row.label}</span>
+                    <p>{selectedCase[row.key]}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="case-phase-list">
+                <span>Implementation path</span>
+                {selectedCase.phases.map(([label, copy], index) => (
+                  <div className="case-phase-item" key={label}>
+                    <small>{String(index + 1).padStart(2, '0')}</small>
+                    <div>
+                      <strong>{label}</strong>
+                      <p>{copy}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </article>
           <p className="work-trust">
