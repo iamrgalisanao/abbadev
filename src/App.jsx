@@ -116,6 +116,15 @@ const caseStudies = [
       after: '45 min/wk',
       note: 'Representative operating lift when teams update one shared workflow view.',
     },
+    metrics: [
+      { label: 'Status prep time', before: '6 h/wk', after: '45 min/wk', note: 'Less recurring reporting preparation.' },
+      { label: 'Update latency', before: '2 days', after: 'Same day', note: 'Leaders see current work state faster.' },
+      { label: 'Manual follow-ups', before: 'High', after: 'Exception-led', note: 'Teams chase fewer routine updates.' },
+    ],
+    client: 'Representative operations team',
+    sector: 'Delivery operations',
+    duration: '8 weeks',
+    stack: 'React - Node - Workflow rules',
     meta: [
       ['Audience', 'Executives and delivery leads'],
       ['System type', 'Dashboard + workflow layer'],
@@ -123,7 +132,17 @@ const caseStudies = [
       ['Governance', 'Role-based views and audit trail'],
     ],
     problem: 'Leaders depended on scattered updates, manual follow-ups, and late status visibility across active work.',
+    problems: [
+      'Leaders depended on scattered updates, manual follow-ups, and late status visibility across active work.',
+      'Delivery teams repeated the same status reporting in meetings, chats, and spreadsheets.',
+      'Exceptions were hard to see until work was already late or blocked.',
+    ],
     approach: 'Mapped the operating rhythm, defined role-based views, and designed a dashboard layer supported by workflow states.',
+    approaches: [
+      'Mapped the operating rhythm and the decisions leaders needed to make each week.',
+      'Defined role-based views for executives, delivery leads, and contributors.',
+      'Designed workflow states so status updates happened inside the operating system, not after the work.',
+    ],
     automation: 'Rules route status changes, reminders, and exceptions so teams update the system once and leaders see the current picture.',
     governance: 'Role access, audit-friendly status history, and clear ownership keep the operating view useful without exposing unnecessary detail.',
     outcome: 'Executives get a reliable command view while delivery teams spend less time preparing updates.',
@@ -132,6 +151,8 @@ const caseStudies = [
       ['Visibility layer', 'Designed role-based dashboards for active work, exceptions, overdue items, and handoffs.'],
       ['Automation rules', 'Routed reminders and status changes so updates happen inside the operating flow.'],
     ],
+    quote: 'This is the first time status became part of the operating rhythm instead of another meeting artifact.',
+    quoteBy: 'Operations lead, representative delivery team',
     tags: [
       { icon: LayoutDashboard, label: 'Dashboards' },
       { icon: Workflow, label: 'Workflows' },
@@ -154,6 +175,15 @@ const caseStudies = [
       after: 'Exception-only',
       note: 'AI drafts structured fields while people keep control of low-confidence cases.',
     },
+    metrics: [
+      { label: 'Manual review load', before: '100%', after: 'Exception-only', note: 'Reviewers focus on judgment, not repeated extraction.' },
+      { label: 'Field capture', before: 'Manual', after: 'Drafted', note: 'AI prepares structured data for validation.' },
+      { label: 'Handoff traceability', before: 'Partial', after: 'Logged', note: 'Each exception and approval remains visible.' },
+    ],
+    client: 'Representative review operation',
+    sector: 'Document-heavy operations',
+    duration: '6 weeks',
+    stack: 'LLM extraction - Review queues - Audit log',
     meta: [
       ['Audience', 'Operations and review teams'],
       ['System type', 'AI-assisted intake workflow'],
@@ -161,7 +191,17 @@ const caseStudies = [
       ['Governance', 'Human approval for exceptions'],
     ],
     problem: 'Teams manually reviewed incoming documents, copied key details, and lost time checking inconsistent submissions.',
+    problems: [
+      'Teams manually reviewed incoming documents, copied key details, and lost time checking inconsistent submissions.',
+      'Different document formats made routine intake work difficult to standardize.',
+      'Low-confidence cases were mixed with simple work, slowing down the whole review queue.',
+    ],
     approach: 'Designed an intake path that separates extraction, validation, review queues, and final handoff.',
+    approaches: [
+      'Separated document extraction, deterministic validation, human review, and final handoff.',
+      'Treated AI output as a draft until confidence checks and reviewers confirmed it.',
+      'Created exception queues so people handled risk and ambiguity instead of every document.',
+    ],
     automation: 'AI drafts structured fields and summaries, while deterministic checks catch missing data and route exceptions to people.',
     governance: 'Human review remains visible, every handoff is logged, and AI output is treated as a draft until confirmed.',
     outcome: 'Reviewers focus on exceptions and decisions instead of repetitive document handling.',
@@ -170,6 +210,8 @@ const caseStudies = [
       ['Extraction path', 'Separated AI drafting from deterministic validation and human approval queues.'],
       ['Traceable handoff', 'Logged every decision so the system can be audited and improved over time.'],
     ],
+    quote: 'The value was not just extraction. It was knowing exactly which cases needed a person.',
+    quoteBy: 'Review manager, representative intake team',
     tags: [
       { icon: BrainCircuit, label: 'LLM extraction' },
       { icon: ListChecks, label: 'Review queues' },
@@ -191,6 +233,15 @@ const caseStudies = [
       after: '1 source',
       note: 'A stable integration layer reduces copy-paste work and future automation risk.',
     },
+    metrics: [
+      { label: 'Duplicate entry', before: '3 systems', after: '1 source', note: 'The operating record has a clearer place to live.' },
+      { label: 'Integration ownership', before: 'Unclear', after: 'Defined', note: 'Boundaries and source-of-truth rules are explicit.' },
+      { label: 'Automation readiness', before: 'Brittle', after: 'Stable', note: 'Future workflows can build on reliable data movement.' },
+    ],
+    client: 'Representative systems team',
+    sector: 'Multi-tool operations',
+    duration: '10 weeks',
+    stack: 'APIs - Sync jobs - Monitoring',
     meta: [
       ['Audience', 'CTOs, IT leads, operators'],
       ['System type', 'Integration and API foundation'],
@@ -198,7 +249,17 @@ const caseStudies = [
       ['Governance', 'Source-of-truth rules and monitoring'],
     ],
     problem: 'Important data lived across disconnected tools, creating duplicate entry, brittle reports, and unclear system ownership.',
+    problems: [
+      'Important data lived across disconnected tools, creating duplicate entry, brittle reports, and unclear system ownership.',
+      'Teams relied on manual exports and imports to keep systems aligned.',
+      'Automation was risky because source-of-truth rules were not documented.',
+    ],
     approach: 'Defined integration boundaries, source-of-truth rules, API contracts, and monitoring points before adding automation.',
+    approaches: [
+      'Defined integration boundaries and ownership before connecting systems.',
+      'Established source-of-truth rules, sync direction, retry behavior, and monitoring points.',
+      'Kept the first release focused on stable data movement rather than broad automation.',
+    ],
     automation: 'Scheduled syncs and event-driven updates keep records moving without relying on manual export and import routines.',
     governance: 'Access scopes, retry behavior, observability, and data ownership rules are designed before scale.',
     outcome: 'The business gets a maintainable foundation that can support dashboards, workflow apps, and future AI use cases.',
@@ -207,6 +268,8 @@ const caseStudies = [
       ['Contract design', 'Defined API contracts, sync rules, retry behavior, and monitoring expectations.'],
       ['Automation-ready layer', 'Prepared the foundation for dashboards, workflow apps, and AI-assisted processes.'],
     ],
+    quote: 'The biggest win was not another integration. It was finally agreeing where the business logic belongs.',
+    quoteBy: 'Systems owner, representative operations team',
     tags: [
       { icon: Code2, label: 'APIs' },
       { icon: Database, label: 'Data sync' },
@@ -252,16 +315,16 @@ const consultationSteps = [
   'Return a practical path for automation, architecture, or software delivery',
 ]
 
-const caseDetailRows = [
-  { key: 'problem', label: 'Business problem' },
-  { key: 'approach', label: 'Architecture approach' },
-  { key: 'automation', label: 'AI and automation role' },
-  { key: 'governance', label: 'Governance' },
-  { key: 'outcome', label: 'Outcome' },
-]
-
 function CaseStudyPage({ study, theme, setTheme }) {
-  const nextStudy = caseStudies[(caseStudies.findIndex((item) => item.slug === study.slug) + 1) % caseStudies.length]
+  const currentIndex = caseStudies.findIndex((item) => item.slug === study.slug)
+  const previousStudy = caseStudies[(currentIndex - 1 + caseStudies.length) % caseStudies.length]
+  const nextStudy = caseStudies[(currentIndex + 1) % caseStudies.length]
+  const caseMeta = [
+    ['Client', study.client],
+    ['Sector', study.sector],
+    ['Duration', study.duration],
+    ['Stack', study.stack],
+  ]
 
   return (
     <div className="site-shell case-page-shell">
@@ -296,7 +359,7 @@ function CaseStudyPage({ study, theme, setTheme }) {
           <h1>{study.title}</h1>
           <p>{study.result}</p>
           <div className="case-page-meta">
-            {study.meta.map(([label, value]) => (
+            {caseMeta.map(([label, value]) => (
               <div className="case-meta-item" key={label}>
                 <span>{label}</span>
                 <strong>{value}</strong>
@@ -305,34 +368,33 @@ function CaseStudyPage({ study, theme, setTheme }) {
           </div>
         </section>
 
-        <section className="case-page-section">
-          <div className="case-page-section-copy">
-            <span className="kicker">01 / Problem</span>
-            <h2>What was slowing the operation down?</h2>
-          </div>
-          <p>{study.problem}</p>
-        </section>
+        <a className="case-download-button" href="/#contact">
+          Download summary PDF <ArrowRight size={15} aria-hidden="true" />
+        </a>
 
-        <section className="case-page-section">
-          <div className="case-page-section-copy">
-            <span className="kicker">02 / Approach</span>
-            <h2>How the system was designed.</h2>
-          </div>
-          <div className="case-page-detail-grid">
-            {caseDetailRows.slice(1, 4).map((row) => (
-              <div className="case-detail-row" key={row.key}>
-                <span>{row.label}</span>
-                <p>{study[row.key]}</p>
-              </div>
+        <section className="case-page-section case-page-list-section">
+          <span className="kicker">01 / Problem</span>
+          <h2>Problem</h2>
+          <ul>
+            {study.problems.map((item) => (
+              <li key={item}>{item}</li>
             ))}
-          </div>
+          </ul>
         </section>
 
-        <section className="case-page-section">
-          <div className="case-page-section-copy">
-            <span className="kicker">03 / Implementation</span>
-            <h2>The path from workflow map to operating system.</h2>
-          </div>
+        <section className="case-page-section case-page-list-section">
+          <span className="kicker">02 / Approach</span>
+          <h2>Approach</h2>
+          <ul>
+            {study.approaches.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+
+        <section className="case-page-section case-page-list-section">
+          <span className="kicker">03 / Implementation</span>
+          <h2>Implementation</h2>
           <div className="case-phase-list case-page-phases">
             {study.phases.map(([label, copy], index) => (
               <div className="case-phase-item" key={label}>
@@ -346,38 +408,60 @@ function CaseStudyPage({ study, theme, setTheme }) {
           </div>
         </section>
 
+        <section className="case-page-section case-page-list-section">
+          <span className="kicker">04 / Results</span>
+          <h2>Results</h2>
+        </section>
+
         <section className="case-page-results">
-          <div>
-            <span>{study.metric.label}</span>
-            <small>Before</small>
-            <del>{study.metric.before}</del>
-          </div>
-          <div>
-            <span>After</span>
-            <strong>{study.metric.after}</strong>
-            <p>{study.metric.note}</p>
-          </div>
-          <div>
-            <span>Outcome</span>
-            <p>{study.outcome}</p>
-          </div>
+          {study.metrics.map((metric) => (
+            <div key={metric.label}>
+              <span>{metric.label}</span>
+              <small>Before</small>
+              <del>{metric.before}</del>
+              <small>After</small>
+              <strong>{metric.after}</strong>
+              <p>{metric.note}</p>
+            </div>
+          ))}
+        </section>
+
+        <blockquote className="case-page-quote">
+          <p>{study.quote}</p>
+          <cite>{study.quoteBy}</cite>
+        </blockquote>
+
+        <section className="case-page-section case-page-list-section">
+          <span className="kicker">05 / Governance</span>
+          <h2>Governance</h2>
+          <ul>
+            <li>{study.governance}</li>
+            <li>{study.automation}</li>
+            <li>{study.outcome}</li>
+          </ul>
         </section>
 
         <section className="case-page-cta">
           <div>
             <span className="kicker">Take this with you</span>
-            <h2>Summary PDF placeholder</h2>
+            <h2>Summary PDF - 1 page, print-ready</h2>
             <p>Problem, approach, implementation path, and results will become a downloadable one-page summary.</p>
           </div>
           <a className="primary-button" href="/#contact">
-            Request a similar assessment <ArrowRight size={18} aria-hidden="true" />
+            Download PDF <ArrowRight size={18} aria-hidden="true" />
           </a>
         </section>
 
-        <a className="case-next-link" href={`/cases/${nextStudy.slug}`}>
-          <span>Next case</span>
-          <strong>{nextStudy.title}</strong>
-        </a>
+        <nav className="case-page-pagination" aria-label="Case study navigation">
+          <a className="case-next-link" href={`/cases/${previousStudy.slug}`}>
+            <span>Previous</span>
+            <strong>{previousStudy.title}</strong>
+          </a>
+          <a className="case-next-link" href={`/cases/${nextStudy.slug}`}>
+            <span>Next</span>
+            <strong>{nextStudy.title}</strong>
+          </a>
+        </nav>
       </main>
     </div>
   )
