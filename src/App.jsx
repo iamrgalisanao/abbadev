@@ -107,6 +107,7 @@ const caseStudies = [
     imageAlt: 'Blue digital transformation network badge',
     type: 'Digital transformation',
     code: '001 / Operations',
+    slug: 'operations-command-center',
     title: 'Operations command center',
     result: 'A fragmented status process becomes a shared operating view for leaders and delivery teams.',
     metric: {
@@ -144,6 +145,7 @@ const caseStudies = [
     imageAlt: 'Blue AI implementation document badge',
     type: 'AI implementation',
     code: '002 / Intake',
+    slug: 'document-intake-assistant',
     title: 'Document intake assistant',
     result: 'Manual review work becomes structured extraction, validation, exception handling, and traceable handoff.',
     metric: {
@@ -180,6 +182,7 @@ const caseStudies = [
     imageAlt: 'Blue solution architecture cube badge',
     type: 'Solution architecture',
     code: '003 / Architecture',
+    slug: 'integration-foundation',
     title: 'Integration foundation',
     result: 'Disconnected tools become a stable integration layer that can support future automations.',
     metric: {
@@ -256,6 +259,129 @@ const caseDetailRows = [
   { key: 'governance', label: 'Governance' },
   { key: 'outcome', label: 'Outcome' },
 ]
+
+function CaseStudyPage({ study, theme, setTheme }) {
+  const nextStudy = caseStudies[(caseStudies.findIndex((item) => item.slug === study.slug) + 1) % caseStudies.length]
+
+  return (
+    <div className="site-shell case-page-shell">
+      <header className="nav">
+        <a className="brand" href="/#top" aria-label="ABBADev Tech Solutions home">
+          <span className="brand-mark">A</span>
+          <span>
+            <strong>ABBADev</strong>
+            <small>Tech Solutions</small>
+          </span>
+        </a>
+        <div className="nav-right">
+          <button
+            className="icon-button theme-toggle"
+            type="button"
+            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            onClick={() => setTheme((current) => (current === 'dark' ? 'light' : 'dark'))}
+          >
+            {theme === 'dark' ? <Sun size={19} aria-hidden="true" /> : <Moon size={19} aria-hidden="true" />}
+          </button>
+          <nav className="nav-links case-page-nav">
+            <a href="/#work">All cases</a>
+            <a href="/#contact">Contact</a>
+          </nav>
+        </div>
+      </header>
+
+      <main className="case-page-main">
+        <a className="case-page-back" href="/#work">Back to case studies</a>
+        <section className="case-page-hero">
+          <span className="kicker">{study.code}</span>
+          <h1>{study.title}</h1>
+          <p>{study.result}</p>
+          <div className="case-page-meta">
+            {study.meta.map(([label, value]) => (
+              <div className="case-meta-item" key={label}>
+                <span>{label}</span>
+                <strong>{value}</strong>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="case-page-section">
+          <div className="case-page-section-copy">
+            <span className="kicker">01 / Problem</span>
+            <h2>What was slowing the operation down?</h2>
+          </div>
+          <p>{study.problem}</p>
+        </section>
+
+        <section className="case-page-section">
+          <div className="case-page-section-copy">
+            <span className="kicker">02 / Approach</span>
+            <h2>How the system was designed.</h2>
+          </div>
+          <div className="case-page-detail-grid">
+            {caseDetailRows.slice(1, 4).map((row) => (
+              <div className="case-detail-row" key={row.key}>
+                <span>{row.label}</span>
+                <p>{study[row.key]}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="case-page-section">
+          <div className="case-page-section-copy">
+            <span className="kicker">03 / Implementation</span>
+            <h2>The path from workflow map to operating system.</h2>
+          </div>
+          <div className="case-phase-list case-page-phases">
+            {study.phases.map(([label, copy], index) => (
+              <div className="case-phase-item" key={label}>
+                <small>{String(index + 1).padStart(2, '0')}</small>
+                <div>
+                  <strong>{label}</strong>
+                  <p>{copy}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="case-page-results">
+          <div>
+            <span>{study.metric.label}</span>
+            <small>Before</small>
+            <del>{study.metric.before}</del>
+          </div>
+          <div>
+            <span>After</span>
+            <strong>{study.metric.after}</strong>
+            <p>{study.metric.note}</p>
+          </div>
+          <div>
+            <span>Outcome</span>
+            <p>{study.outcome}</p>
+          </div>
+        </section>
+
+        <section className="case-page-cta">
+          <div>
+            <span className="kicker">Take this with you</span>
+            <h2>Summary PDF placeholder</h2>
+            <p>Problem, approach, implementation path, and results will become a downloadable one-page summary.</p>
+          </div>
+          <a className="primary-button" href="/#contact">
+            Request a similar assessment <ArrowRight size={18} aria-hidden="true" />
+          </a>
+        </section>
+
+        <a className="case-next-link" href={`/cases/${nextStudy.slug}`}>
+          <span>Next case</span>
+          <strong>{nextStudy.title}</strong>
+        </a>
+      </main>
+    </div>
+  )
+}
 
 const footerGroups = [
   {
@@ -334,9 +460,8 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 function App() {
   const [activeMode, setActiveMode] = useState(1)
   const [menuOpen, setMenuOpen] = useState(false)
-  const [expandedCase, setExpandedCase] = useState(caseStudies[0].title)
   const selectedMode = workflowModes[activeMode]
-  const selectedCase = caseStudies.find((study) => study.title === expandedCase) ?? caseStudies[0]
+  const [path, setPath] = useState(() => (typeof window === 'undefined' ? '/' : window.location.pathname))
 
   const [theme, setTheme] = useState(() => {
     if (typeof document === 'undefined') return 'light'
@@ -352,6 +477,16 @@ function App() {
       // localStorage unavailable (private browsing, disabled storage) - theme just won't persist
     }
   }, [theme])
+
+  useEffect(() => {
+    const handleRouteChange = () => setPath(window.location.pathname)
+    window.addEventListener('popstate', handleRouteChange)
+    return () => window.removeEventListener('popstate', handleRouteChange)
+  }, [])
+
+  const routeCase = path.startsWith('/cases/')
+    ? caseStudies.find((study) => study.slug === path.replace('/cases/', '').replace(/\/$/, ''))
+    : null
 
   const [leadStatus, setLeadStatus] = useState('idle')
   const [leadMessage, setLeadMessage] = useState('')
@@ -452,6 +587,10 @@ function App() {
 
   const sequenceComplete = activeIndex >= SEQUENCE_STEPS
   const currentStage = sequenceStages[Math.min(activeIndex, SEQUENCE_STEPS - 1)]
+
+  if (routeCase) {
+    return <CaseStudyPage study={routeCase} theme={theme} setTheme={setTheme} />
+  }
 
   return (
     <div className="site-shell">
@@ -747,9 +886,9 @@ function App() {
               <span className="kicker">Evidence of impact</span>
               <h2>Proof patterns built for both executives and technical reviewers.</h2>
               <p>
-                Each case shows the business problem, architecture path,
-                automation role, governance choices, and measurable operating
-                lift without hiding behind jargon.
+                Representative case formats show the business problem,
+                architecture path, automation role, governance choices, and
+                operating lift without hiding behind jargon.
               </p>
             </div>
 
@@ -767,105 +906,57 @@ function App() {
             </div>
           </div>
           <div className="case-grid">
-            {caseStudies.map((study) => {
-              const expanded = expandedCase === study.title
-              return (
-                <article className={expanded ? 'case-card case-card--expanded' : 'case-card'} key={study.title}>
-                  <div className="case-card-head">
-                    <div className="case-image-wrap">
-                      <img src={study.image} alt={study.imageAlt} loading="lazy" />
-                    </div>
-                    <div className="case-title-block">
-                      <span>{study.code}</span>
-                      <h3>{study.title}</h3>
-                    </div>
+            {caseStudies.map((study) => (
+              <article className="case-card" key={study.title}>
+                <div className="case-card-head">
+                  <div className="case-title-block">
+                    <span>{study.code}</span>
+                    <h3>{study.title}</h3>
                   </div>
-                  <p>{study.result}</p>
+                </div>
+                <p>{study.result}</p>
 
-                  <div className="case-impact" aria-label={`${study.title} impact metric`}>
-                    <span>{study.metric.label}</span>
-                    <div className="case-impact-values">
-                      <small>{study.metric.before}</small>
-                      <strong>{study.metric.after}</strong>
-                    </div>
+                <div className="case-impact" aria-label={`${study.title} impact metric`}>
+                  <span>{study.metric.label}</span>
+                  <div
+                    className="case-impact-values"
+                    aria-label={`Before ${study.metric.before}. After ${study.metric.after}.`}
+                  >
+                    <small>
+                      <span>Before</span>
+                      {' '}
+                      <del>{study.metric.before}</del>
+                    </small>
+                    {' '}
+                    <strong>
+                      <span>After</span>
+                      {' '}
+                      {study.metric.after}
+                    </strong>
                   </div>
+                  <em>Representative scenario</em>
+                </div>
 
-                  <div className="case-card-footer">
-                    <div className="tag-list">
-                      {study.tags.map((tag) => {
-                        const TagIcon = tag.icon
-                        return (
-                          <small key={tag.label}>
-                            <TagIcon size={14} aria-hidden="true" />
-                            {tag.label}
-                          </small>
-                        )
-                      })}
-                    </div>
-                    <button
-                      className="case-toggle"
-                      type="button"
-                      aria-pressed={expanded}
-                      aria-controls="case-detail-panel"
-                      onClick={() => setExpandedCase(study.title)}
-                    >
-                      {expanded ? 'Selected case' : 'Review case detail'}
-                      <ChevronRight size={16} aria-hidden="true" />
-                    </button>
-                  </div>
-                </article>
-              )
-            })}
+                <div className="case-card-footer">
+                  <a
+                    className="case-toggle"
+                    href={`/cases/${study.slug}`}
+                  >
+                    Read case study
+                    <ChevronRight size={16} aria-hidden="true" />
+                  </a>
+                </div>
+              </article>
+            ))}
           </div>
-          <article className="case-detail-panel" id="case-detail-panel" aria-live="polite">
-            <div className="case-detail-panel-head">
-              <span>{selectedCase.code}</span>
-              <h3>{selectedCase.title}</h3>
-              <p>{selectedCase.result}</p>
-              <div className="case-detail-impact">
-                <span>{selectedCase.metric.label}</span>
-                <strong>{selectedCase.metric.after}</strong>
-                <small>Before: {selectedCase.metric.before}</small>
-                <p>{selectedCase.metric.note}</p>
-              </div>
-            </div>
-            <div className="case-detail-content">
-              <div className="case-meta-grid" aria-label={`${selectedCase.title} context`}>
-                {selectedCase.meta.map(([label, value]) => (
-                  <div className="case-meta-item" key={label}>
-                    <span>{label}</span>
-                    <strong>{value}</strong>
-                  </div>
-                ))}
-              </div>
-              <div className="case-detail-grid">
-                {caseDetailRows.map((row) => (
-                  <div className="case-detail-row" key={row.key}>
-                    <span>{row.label}</span>
-                    <p>{selectedCase[row.key]}</p>
-                  </div>
-                ))}
-              </div>
-              <div className="case-phase-list">
-                <span>Implementation path</span>
-                {selectedCase.phases.map(([label, copy], index) => (
-                  <div className="case-phase-item" key={label}>
-                    <small>{String(index + 1).padStart(2, '0')}</small>
-                    <div>
-                      <strong>{label}</strong>
-                      <p>{copy}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </article>
+          <a className="all-cases-link" href="/#work">
+            All case studies <ArrowRight size={16} aria-hidden="true" />
+          </a>
           <p className="work-trust">
             <ShieldCheck size={22} aria-hidden="true" />
-            <strong>Real outcomes.</strong>
+            <strong>Outcome-driven proof.</strong>
             <span className="accent">Clear architecture.</span>
-            <strong>Measurable impact.</strong>
-            <span className="accent">Every time.</span>
+            <strong>Designed for measurable impact.</strong>
           </p>
         </section>
 
