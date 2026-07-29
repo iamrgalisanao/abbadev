@@ -326,6 +326,7 @@ function CaseStudyPage({ study, theme, setTheme }) {
     ['Duration', study.duration],
     ['Stack', study.stack],
   ]
+  const summaryPdfHref = `/downloads/case-studies/${study.slug}.pdf`
 
   return (
     <div className="site-shell case-page-shell">
@@ -385,8 +386,8 @@ function CaseStudyPage({ study, theme, setTheme }) {
           </p>
         </section>
 
-        <a className="case-download-button" href="/#contact">
-          Request summary PDF <ArrowRight size={15} aria-hidden="true" />
+        <a className="case-download-button" href={summaryPdfHref} download>
+          Download summary PDF <ArrowRight size={15} aria-hidden="true" />
         </a>
 
         <section className="case-page-section case-page-list-section">
@@ -470,11 +471,11 @@ function CaseStudyPage({ study, theme, setTheme }) {
         <section className="case-page-cta">
           <div>
             <span className="kicker">Take this with you</span>
-            <h2>Request a 1-page case summary</h2>
+            <h2>Summary PDF - 1 page, print-ready</h2>
             <p>Problem, approach, implementation path, and results packaged for stakeholder review.</p>
           </div>
-          <a className="primary-button" href="/#contact">
-            Request PDF <ArrowRight size={18} aria-hidden="true" />
+          <a className="primary-button" href={summaryPdfHref} download>
+            Download PDF <ArrowRight size={18} aria-hidden="true" />
           </a>
         </section>
 
