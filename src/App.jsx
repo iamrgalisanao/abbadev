@@ -390,25 +390,27 @@ function CaseStudyPage({ study, theme, setTheme }) {
           Download summary PDF <ArrowRight size={15} aria-hidden="true" />
         </a>
 
-        <section className="case-page-section case-page-list-section">
-          <span className="kicker">01 / Problem</span>
-          <h2>Problem</h2>
-          <ul>
-            {study.problems.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-        </section>
+        <div className="case-page-split">
+          <section className="case-page-section case-page-list-section">
+            <span className="kicker">01 / Problem</span>
+            <h2>Problem</h2>
+            <ul>
+              {study.problems.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
 
-        <section className="case-page-section case-page-list-section">
-          <span className="kicker">02 / Approach</span>
-          <h2>Approach</h2>
-          <ul>
-            {study.approaches.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-        </section>
+          <section className="case-page-section case-page-list-section">
+            <span className="kicker">02 / Approach</span>
+            <h2>Approach</h2>
+            <ul>
+              {study.approaches.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </section>
+        </div>
 
         <section className="case-page-section case-page-list-section">
           <span className="kicker">03 / Implementation</span>
