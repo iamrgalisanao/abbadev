@@ -9,7 +9,13 @@ import { Check } from 'lucide-react'
 const STEP_MS = 1150
 const HOLD_MS = 1900
 
-export default function CaseWorkflow({ title = 'Workflow', caption, steps = [] }) {
+export default function CaseWorkflow({
+  title = 'Workflow',
+  caption,
+  completeLabel = 'Complete',
+  completeDetail = 'pipeline settled',
+  steps = [],
+}) {
   const total = steps.length
 
   const [reducedMotion] = useState(
@@ -79,9 +85,9 @@ export default function CaseWorkflow({ title = 'Workflow', caption, steps = [] }
         <div className="cw-status" role="status" aria-live="polite">
           <span className={`cw-status-dot${complete ? ' is-complete' : ''}`} aria-hidden="true" />
           <span className="cw-status-text">
-            <strong>{complete ? 'Lead routed' : current.label}</strong>
+            <strong>{complete ? completeLabel : current.label}</strong>
             {' / '}
-            {complete ? 'founder alerted' : String(current.active || '').toLowerCase()}
+            {complete ? completeDetail : String(current.active || '').toLowerCase()}
           </span>
         </div>
       </div>
