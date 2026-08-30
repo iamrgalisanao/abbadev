@@ -35,6 +35,7 @@ import {
 } from 'lucide-react'
 import Assistant from './Assistant'
 import CaseWorkflow from './CaseWorkflow'
+import { EMAIL_PATTERN } from './lib/patterns'
 import './App.css'
 
 const platformSurfaces = [
@@ -874,13 +875,12 @@ function CasesIndexPage({ theme, setTheme }) {
           </p>
         </section>
 
-        <div className="cx-filter" role="tablist" aria-label="Filter case studies by type">
+        <div className="cx-filter" role="group" aria-label="Filter case studies by type">
           {filters.map((option) => (
             <button
               key={option}
               type="button"
-              role="tab"
-              aria-selected={filter === option}
+              aria-pressed={filter === option}
               className={`cx-pill${filter === option ? ' is-active' : ''}`}
               onClick={() => setFilter(option)}
             >
@@ -1103,7 +1103,6 @@ const workbenchEvents = [
 const SEQUENCE_STEPS = sequenceStages.length
 const STAGE_MS = 1500
 const HOLD_MS = 1500
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 
 function App() {
   const [activeMode, setActiveMode] = useState(1)

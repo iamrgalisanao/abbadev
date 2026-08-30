@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { ArrowRight, Bot, Send, Sparkles, X } from 'lucide-react'
+import { EMAIL_PATTERN } from './lib/patterns'
 
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 const LOG_KEY = 'abba-chat-log'
 const OPEN_KEY = 'abba-chat-open'
 const MAX_LOG = 40
@@ -177,7 +177,6 @@ export default function Assistant() {
 
   const scrollRef = useRef(null)
   const inputRef = useRef(null)
-  const panelRef = useRef(null)
   const timers = useRef([])
 
   useEffect(() => {
@@ -367,7 +366,6 @@ export default function Assistant() {
           role="dialog"
           aria-label="ABBADev assistant"
           aria-modal="false"
-          ref={panelRef}
         >
           <header className="assistant-head">
             <span className="assistant-avatar" aria-hidden="true">
