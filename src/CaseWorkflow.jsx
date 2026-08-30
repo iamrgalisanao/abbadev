@@ -82,7 +82,7 @@ export default function CaseWorkflow({
           <strong>{title}</strong>
           {caption && <p>{caption}</p>}
         </div>
-        <div className="cw-status" role="status" aria-live="polite">
+        <div className="cw-status" aria-hidden="true">
           <span className={`cw-status-dot${complete ? ' is-complete' : ''}`} aria-hidden="true" />
           <span className="cw-status-text">
             <strong>{complete ? completeLabel : current.label}</strong>

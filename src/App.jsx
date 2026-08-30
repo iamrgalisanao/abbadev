@@ -636,8 +636,51 @@ const contentPages = {
   },
 }
 
-function CaseStudyPage({ study, theme, setTheme }) {
+// Shared nav header for the standalone pages (case study, cases directory,
+// content pages). Owns its own mobile-menu state.
+function CasePageHeader({ theme, setTheme }) {
   const [menuOpen, setMenuOpen] = useState(false)
+  return (
+    <header className="nav case-page-header">
+      <a className="brand" href="/#top" aria-label="ABBADev Tech Solutions home">
+        <img className="brand-mark" src="/images/abbadev-logo.png" alt="" width="42" height="42" />
+        <span className="brand-wordmark">
+          <strong>ABBADEV</strong>
+          <small>Tech Solutions</small>
+        </span>
+      </a>
+      <div className="nav-right">
+        <button
+          className="icon-button theme-toggle"
+          type="button"
+          aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+          onClick={() => setTheme((current) => (current === 'dark' ? 'light' : 'dark'))}
+        >
+          {theme === 'dark' ? <Sun size={19} aria-hidden="true" /> : <Moon size={19} aria-hidden="true" />}
+        </button>
+        <button
+          className="icon-button mobile-only"
+          type="button"
+          aria-label="Toggle navigation"
+          onClick={() => setMenuOpen((open) => !open)}
+        >
+          {menuOpen ? <X size={20} /> : <Menu size={20} />}
+        </button>
+        <nav className={menuOpen ? 'nav-links open' : 'nav-links'}>
+          <a href="/#platform" onClick={() => setMenuOpen(false)}>Platform</a>
+          <a href="/#workflow" onClick={() => setMenuOpen(false)}>Workflow</a>
+          <a href="/#services" onClick={() => setMenuOpen(false)}>Services</a>
+          <a href="/#resources" onClick={() => setMenuOpen(false)}>Insights</a>
+          <a className="nav-cta" href="/#contact" onClick={() => setMenuOpen(false)}>
+            Book a systems consult
+          </a>
+        </nav>
+      </div>
+    </header>
+  )
+}
+
+function CaseStudyPage({ study, theme, setTheme }) {
   const currentIndex = caseStudies.findIndex((item) => item.slug === study.slug)
   const previousStudy = caseStudies[(currentIndex - 1 + caseStudies.length) % caseStudies.length]
   const nextStudy = caseStudies[(currentIndex + 1) % caseStudies.length]
@@ -651,42 +694,7 @@ function CaseStudyPage({ study, theme, setTheme }) {
 
   return (
     <div className="site-shell case-page-shell">
-      <header className="nav case-page-header">
-        <a className="brand" href="/#top" aria-label="ABBADev Tech Solutions home">
-          <img className="brand-mark" src="/images/abbadev-logo.png" alt="" width="42" height="42" />
-          <span className="brand-wordmark">
-            <strong>ABBADEV</strong>
-            <small>Tech Solutions</small>
-          </span>
-        </a>
-        <div className="nav-right">
-          <button
-            className="icon-button theme-toggle"
-            type="button"
-            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-            onClick={() => setTheme((current) => (current === 'dark' ? 'light' : 'dark'))}
-          >
-            {theme === 'dark' ? <Sun size={19} aria-hidden="true" /> : <Moon size={19} aria-hidden="true" />}
-          </button>
-          <button
-            className="icon-button mobile-only"
-            type="button"
-            aria-label="Toggle navigation"
-            onClick={() => setMenuOpen((open) => !open)}
-          >
-            {menuOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
-          <nav className={menuOpen ? 'nav-links open' : 'nav-links'}>
-            <a href="/#platform" onClick={() => setMenuOpen(false)}>Platform</a>
-            <a href="/#workflow" onClick={() => setMenuOpen(false)}>Workflow</a>
-            <a href="/#services" onClick={() => setMenuOpen(false)}>Services</a>
-            <a href="/#resources" onClick={() => setMenuOpen(false)}>Insights</a>
-            <a className="nav-cta" href="/#contact" onClick={() => setMenuOpen(false)}>
-              Book a systems consult
-            </a>
-          </nav>
-        </div>
-      </header>
+      <CasePageHeader theme={theme} setTheme={setTheme} />
 
       <main className="case-page-main">
         <a className="case-page-back" href="/#work">Back to case studies</a>
@@ -847,49 +855,13 @@ function CaseStudyPage({ study, theme, setTheme }) {
 }
 
 function CasesIndexPage({ theme, setTheme }) {
-  const [menuOpen, setMenuOpen] = useState(false)
   const [filter, setFilter] = useState('All')
   const filters = ['All', ...Array.from(new Set(caseStudies.map((study) => study.type)))]
   const visible = filter === 'All' ? caseStudies : caseStudies.filter((study) => study.type === filter)
 
   return (
     <div className="site-shell cases-index-shell">
-      <header className="nav case-page-header">
-        <a className="brand" href="/#top" aria-label="ABBADev Tech Solutions home">
-          <img className="brand-mark" src="/images/abbadev-logo.png" alt="" width="42" height="42" />
-          <span className="brand-wordmark">
-            <strong>ABBADEV</strong>
-            <small>Tech Solutions</small>
-          </span>
-        </a>
-        <div className="nav-right">
-          <button
-            className="icon-button theme-toggle"
-            type="button"
-            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-            onClick={() => setTheme((current) => (current === 'dark' ? 'light' : 'dark'))}
-          >
-            {theme === 'dark' ? <Sun size={19} aria-hidden="true" /> : <Moon size={19} aria-hidden="true" />}
-          </button>
-          <button
-            className="icon-button mobile-only"
-            type="button"
-            aria-label="Toggle navigation"
-            onClick={() => setMenuOpen((open) => !open)}
-          >
-            {menuOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
-          <nav className={menuOpen ? 'nav-links open' : 'nav-links'}>
-            <a href="/#platform" onClick={() => setMenuOpen(false)}>Platform</a>
-            <a href="/#workflow" onClick={() => setMenuOpen(false)}>Workflow</a>
-            <a href="/#services" onClick={() => setMenuOpen(false)}>Services</a>
-            <a href="/#resources" onClick={() => setMenuOpen(false)}>Insights</a>
-            <a className="nav-cta" href="/#contact" onClick={() => setMenuOpen(false)}>
-              Book a systems consult
-            </a>
-          </nav>
-        </div>
-      </header>
+      <CasePageHeader theme={theme} setTheme={setTheme} />
 
       <main className="cases-index-main">
         <section className="cases-index-hero">
@@ -981,47 +953,11 @@ function CasesIndexPage({ theme, setTheme }) {
 }
 
 function ContentPage({ page, theme, setTheme }) {
-  const [menuOpen, setMenuOpen] = useState(false)
   const PageIcon = page.icon
 
   return (
     <div className="site-shell case-page-shell content-page-shell">
-      <header className="nav case-page-header">
-        <a className="brand" href="/#top" aria-label="ABBADev Tech Solutions home">
-          <img className="brand-mark" src="/images/abbadev-logo.png" alt="" width="42" height="42" />
-          <span className="brand-wordmark">
-            <strong>ABBADEV</strong>
-            <small>Tech Solutions</small>
-          </span>
-        </a>
-        <div className="nav-right">
-          <button
-            className="icon-button theme-toggle"
-            type="button"
-            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-            onClick={() => setTheme((current) => (current === 'dark' ? 'light' : 'dark'))}
-          >
-            {theme === 'dark' ? <Sun size={19} aria-hidden="true" /> : <Moon size={19} aria-hidden="true" />}
-          </button>
-          <button
-            className="icon-button mobile-only"
-            type="button"
-            aria-label="Toggle navigation"
-            onClick={() => setMenuOpen((open) => !open)}
-          >
-            {menuOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
-          <nav className={menuOpen ? 'nav-links open' : 'nav-links'}>
-            <a href="/#platform" onClick={() => setMenuOpen(false)}>Platform</a>
-            <a href="/#workflow" onClick={() => setMenuOpen(false)}>Workflow</a>
-            <a href="/#services" onClick={() => setMenuOpen(false)}>Services</a>
-            <a href="/#resources" onClick={() => setMenuOpen(false)}>Insights</a>
-            <a className="nav-cta" href="/#contact" onClick={() => setMenuOpen(false)}>
-              Book a systems consult
-            </a>
-          </nav>
-        </div>
-      </header>
+      <CasePageHeader theme={theme} setTheme={setTheme} />
 
       <main className="case-page-main content-page-main">
         <a className="case-page-back" href="/#top">Back to home</a>
