@@ -1688,10 +1688,10 @@ function App() {
         <section className="founder-section" id="founder" aria-label="About the founder">
           <div className="founder-portrait">
             <img
-              src="/images/profile.webp"
+              src="/images/founder.png"
               alt="Rommel Galisanao, founder of ABBADev Tech Solutions"
               width="360"
-              height="360"
+              height="450"
               loading="lazy"
               decoding="async"
             />

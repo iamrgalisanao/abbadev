@@ -755,8 +755,9 @@ main {
 .founder-portrait img {
   width: 100%;
   max-width: 360px;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 4 / 5;
   object-fit: cover;
+  object-position: 50% 20%;
   border-radius: var(--radius-xl);
   border: var(--rule-hairline) solid var(--color-rule);
   background: var(--color-card);
