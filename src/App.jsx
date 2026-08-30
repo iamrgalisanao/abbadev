@@ -499,21 +499,6 @@ const contentPages = {
     cta: 'Review the case studies',
     ctaHref: '/cases',
   },
-  '/cases': {
-    icon: FileText,
-    label: 'Work',
-    title: 'Case studies',
-    intro: 'Representative proof pages that show the business problem, approach, implementation path, governance, and results.',
-    blocks: [
-      ['Metric-led summaries', 'Each case starts with a measurable before and after signal.'],
-      ['Problem and approach', 'The business context is documented before architecture details appear.'],
-      ['Implementation path', 'The page explains phases, tradeoffs, governance, and handoff.'],
-      ['Printable summaries', 'Each case can support stakeholder review through a concise PDF.'],
-    ],
-    examples: caseStudies.map((study) => study.title),
-    cta: 'Read the latest case',
-    ctaHref: `/cases/${caseStudies[0].slug}`,
-  },
   '/workflow-demos': {
     icon: Blocks,
     label: 'Work',
@@ -876,6 +861,140 @@ function CaseStudyPage({ study, theme, setTheme }) {
   )
 }
 
+function CasesIndexPage({ theme, setTheme }) {
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [filter, setFilter] = useState('All')
+  const filters = ['All', ...Array.from(new Set(caseStudies.map((study) => study.type)))]
+  const visible = filter === 'All' ? caseStudies : caseStudies.filter((study) => study.type === filter)
+
+  return (
+    <div className="site-shell cases-index-shell">
+      <header className="nav case-page-header">
+        <a className="brand" href="/#top" aria-label="ABBADev Tech Solutions home">
+          <img className="brand-mark" src="/images/abbadev-logo.png" alt="" width="42" height="42" />
+          <span className="brand-wordmark">
+            <strong>ABBADEV</strong>
+            <small>Tech Solutions</small>
+          </span>
+        </a>
+        <div className="nav-right">
+          <button
+            className="icon-button theme-toggle"
+            type="button"
+            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            onClick={() => setTheme((current) => (current === 'dark' ? 'light' : 'dark'))}
+          >
+            {theme === 'dark' ? <Sun size={19} aria-hidden="true" /> : <Moon size={19} aria-hidden="true" />}
+          </button>
+          <button
+            className="icon-button mobile-only"
+            type="button"
+            aria-label="Toggle navigation"
+            onClick={() => setMenuOpen((open) => !open)}
+          >
+            {menuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+          <nav className={menuOpen ? 'nav-links open' : 'nav-links'}>
+            <a href="/#platform" onClick={() => setMenuOpen(false)}>Platform</a>
+            <a href="/#workflow" onClick={() => setMenuOpen(false)}>Workflow</a>
+            <a href="/#services" onClick={() => setMenuOpen(false)}>Services</a>
+            <a href="/#resources" onClick={() => setMenuOpen(false)}>Insights</a>
+            <a className="nav-cta" href="/#contact" onClick={() => setMenuOpen(false)}>
+              Book a systems consult
+            </a>
+          </nav>
+        </div>
+      </header>
+
+      <main className="cases-index-main">
+        <section className="cases-index-hero">
+          <span className="kicker">Selected work</span>
+          <h1>Case studies</h1>
+          <p>
+            Real systems ABBADev has designed and shipped - each one shows the business problem,
+            the approach, the implementation path, governance, and a measurable before and after.
+            Filter by the kind of system you are building.
+          </p>
+        </section>
+
+        <div className="cx-filter" role="tablist" aria-label="Filter case studies by type">
+          {filters.map((option) => (
+            <button
+              key={option}
+              type="button"
+              role="tab"
+              aria-selected={filter === option}
+              className={`cx-pill${filter === option ? ' is-active' : ''}`}
+              onClick={() => setFilter(option)}
+            >
+              {option}
+              {option !== 'All' && (
+                <span className="cx-pill-count">
+                  {caseStudies.filter((study) => study.type === option).length}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+
+        <div className="cx-grid">
+          {visible.map((study) => {
+            const Icon = study.icon
+            return (
+              <article className="cx-card" key={study.slug}>
+                <a className="cx-card-link" href={`/cases/${study.slug}`} aria-label={`Read case study: ${study.title}`}>
+                  <div className="cx-media">
+                    <div className="cx-chrome" aria-hidden="true">
+                      <span className="cx-dot" />
+                      <span className="cx-dot" />
+                      <span className="cx-dot" />
+                      <em>{study.code}</em>
+                    </div>
+                    <div className="cx-shot">
+                      <img src={study.image} alt={study.imageAlt || ''} decoding="async" width="640" height="360" />
+                    </div>
+                  </div>
+                  <div className="cx-body">
+                    <span className="cx-cat">
+                      <Icon size={14} aria-hidden="true" />
+                      {study.type}
+                    </span>
+                    <h3>{study.title}</h3>
+                    <p>{study.result}</p>
+                    <div className="cx-metric" aria-label={`${study.metric.label}: before ${study.metric.before}, after ${study.metric.after}`}>
+                      <span className="cx-metric-label">{study.metric.label}</span>
+                      <span className="cx-metric-values">
+                        <del>{study.metric.before}</del>
+                        <ArrowRight size={12} aria-hidden="true" />
+                        <strong>{study.metric.after}</strong>
+                      </span>
+                    </div>
+                    <span className="cx-readmore">
+                      Read case study
+                      <ArrowRight size={15} aria-hidden="true" />
+                    </span>
+                  </div>
+                </a>
+              </article>
+            )
+          })}
+        </div>
+
+        <section className="cx-cta">
+          <div className="cx-cta-copy">
+            <span className="kicker">Your workflow could be next</span>
+            <h2>Recognize one of these patterns in your own operations?</h2>
+            <p>Bring the workflow that costs you the most time. We will map the system around it.</p>
+          </div>
+          <a className="primary-button" href="/consulting-intake">
+            Book a systems consult <ArrowRight size={18} aria-hidden="true" />
+          </a>
+        </section>
+      </main>
+    </div>
+  )
+}
+
 function ContentPage({ page, theme, setTheme }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const PageIcon = page.icon
@@ -1094,6 +1213,7 @@ function App() {
   }, [])
 
   const normalizedPath = path.replace(/\/$/, '') || '/'
+  const routeCasesIndex = normalizedPath === '/cases'
   const routeContent = contentPages[normalizedPath] || null
   const routeCase = path.startsWith('/cases/')
     ? caseStudies.find((study) => study.slug === path.replace('/cases/', '').replace(/\/$/, ''))
@@ -1198,6 +1318,15 @@ function App() {
 
   const sequenceComplete = activeIndex >= SEQUENCE_STEPS
   const currentStage = sequenceStages[Math.min(activeIndex, SEQUENCE_STEPS - 1)]
+
+  if (routeCasesIndex) {
+    return (
+      <>
+        <CasesIndexPage theme={theme} setTheme={setTheme} />
+        <Assistant />
+      </>
+    )
+  }
 
   if (routeCase) {
     return (
