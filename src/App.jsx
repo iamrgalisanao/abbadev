@@ -34,6 +34,7 @@ import {
   X,
 } from 'lucide-react'
 import Assistant from './Assistant'
+import CaseWorkflow from './CaseWorkflow'
 import './App.css'
 
 const platformSurfaces = [
@@ -336,6 +337,14 @@ const caseStudies = [
     quote: 'The assistant is the argument. It answers within guardrails and only escalates a real lead to a person - the same AI-with-ownership model we build for clients.',
     quoteBy: 'Rommel Galisanao, ABBADev Tech Solutions',
     disclaimer: 'Live on this site - the assistant in the corner is the system described here.',
+    workflow: [
+      { icon: Bot, kind: 'client', label: 'Site assistant', tag: 'book a consult', idle: 'Brief captured', active: 'Capturing brief', done: 'Brief captured' },
+      { icon: ShieldCheck, kind: 'guard', label: 'Proxy', tag: 'validate + stamp', idle: 'Validated', active: 'Validating email', done: 'Validated' },
+      { icon: Workflow, kind: 'n8n', label: 'n8n webhook', tag: 'Header Auth', idle: 'Authorized', active: 'Authorizing', done: 'Authorized' },
+      { icon: ListChecks, kind: 'n8n', label: 'Normalize', tag: 'code node', idle: 'Normalized', active: 'Normalizing', done: 'Normalized' },
+      { icon: Database, kind: 'store', label: 'Postgres', tag: 'insert lead', idle: 'Lead stored', active: 'Storing lead', done: 'Lead stored' },
+      { icon: Send, kind: 'notify', label: 'Telegram', tag: 'notify founder', idle: 'Founder alerted', active: 'Alerting founder', done: 'Founder alerted' },
+    ],
     tags: [
       { icon: Bot, label: 'Guardrailed assistant' },
       { icon: ShieldCheck, label: 'Server-stamped intake' },
@@ -749,6 +758,18 @@ function CaseStudyPage({ study, theme, setTheme }) {
             ))}
           </div>
         </section>
+
+        {study.workflow && (
+          <section className="case-page-section case-workflow-section">
+            <span className="kicker">Live pipeline</span>
+            <h2>How a lead flows</h2>
+            <CaseWorkflow
+              title="Chat lead pipeline"
+              caption="From the site assistant to a Telegram alert - the exact n8n path a qualified lead travels."
+              steps={study.workflow}
+            />
+          </section>
+        )}
 
         <section className="case-page-section case-page-list-section">
           <span className="kicker">04 / Results</span>
