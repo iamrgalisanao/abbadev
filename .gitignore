@@ -36,3 +36,6 @@ public/images/case-studies/digital-transformation-2.png
 *.njsproj
 *.sln
 *.sw?
+
+# Local Claude Code tooling (agents, session cache)
+.claude/

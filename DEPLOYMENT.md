@@ -53,11 +53,21 @@ sudo nano /etc/abbadev/abbadev.env
 Use this shape:
 
 ```env
+# Website consultation/intake form
 N8N_WEBHOOK_URL=https://n8nautomation.abbadev.com/webhook/abbadev-consultation
-N8N_JWT=replace-with-your-real-jwt
+N8N_JWT=replace-with-your-consultation-token
+
+# Chat-assistant consultation lead (separate pipeline + secret)
+N8N_CHAT_WEBHOOK_URL=https://n8nautomation.abbadev.com/webhook/abbadev-chat-lead
+N8N_CHAT_JWT=replace-with-your-chat-token
+
 ALLOWED_ORIGIN=https://abbadev.com
 PORT=8787
 ```
+
+> `N8N_CHAT_WEBHOOK_URL` falls back to `N8N_WEBHOOK_URL` and `N8N_CHAT_JWT` falls
+> back to `N8N_JWT` if omitted — so set both chat vars explicitly, otherwise chat
+> leads silently reuse the consultation webhook and token.
 
 Lock down the file:
 
