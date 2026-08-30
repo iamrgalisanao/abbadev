@@ -33,6 +33,7 @@ import {
   Workflow,
   X,
 } from 'lucide-react'
+import Assistant from './Assistant'
 import './App.css'
 
 const platformSurfaces = [
@@ -1768,6 +1769,8 @@ function App() {
           ))}
         </div>
       </footer>
+
+      <Assistant />
     </div>
   )
 }
