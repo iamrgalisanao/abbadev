@@ -280,6 +280,68 @@ const caseStudies = [
       { icon: Radar, label: 'Monitoring' },
     ],
   },
+  {
+    icon: Bot,
+    badge: Sparkles,
+    image: '/images/case-studies/ai-connection.png',
+    imageAlt: 'Blue AI assistant connection badge',
+    type: 'Applied AI',
+    code: '004 / Assistant',
+    slug: 'guardrailed-site-assistant',
+    title: 'Guardrailed site assistant',
+    result: 'A generic website chatbot becomes a scoped intake assistant that answers within guardrails and escalates only qualified consultation leads to a human.',
+    metric: {
+      label: 'Escalation to a human',
+      before: 'Every visitor',
+      after: 'Qualified leads',
+      note: 'General questions are answered in the browser; only a completed consult brief reaches the founder.',
+    },
+    metrics: [
+      { label: 'Assistant answers', before: 'Open-ended AI', after: 'Guardrailed KB', note: 'Deterministic intent matching keeps replies scoped to real ABBADev services, with no free-text model call that could go off-script.' },
+      { label: 'Escalation to a human', before: 'Every visitor', after: 'Qualified leads', note: 'Only a completed Book a consult flow - a workflow challenge plus a validated email - is routed to a person.' },
+      { label: 'Lead pipeline isolation', before: 'Shared secret', after: 'Dedicated token', note: 'Chat leads run through their own n8n webhook and secret, separate from the website consultation form.' },
+    ],
+    client: 'ABBADev Tech Solutions (this website)',
+    sector: 'Professional services / lead generation',
+    duration: 'One focused increment',
+    stack: 'React/Vite - Node proxy - n8n - Postgres - Telegram',
+    meta: [
+      ['Audience', 'Prospective consultation clients'],
+      ['System type', 'Guardrailed assistant + lead pipeline'],
+      ['Primary value', 'Qualified intake without losing human ownership'],
+      ['Governance', 'Server-stamped channel, email validation, isolated secret'],
+    ],
+    problem: 'The site had one call to action - the full consultation form - and no low-friction, guarded way for visitors to self-qualify or get scoped answers first.',
+    problems: [
+      'The site had a single call to action, the full consultation form, with no low-friction way for a visitor to ask a scoped question or self-qualify before committing.',
+      'A generic AI chatbot would risk off-topic or fabricated answers, directly contradicting the "AI with guardrails" thesis the site argues for.',
+      'Any lead capture had to reach the founder reliably without burying real prospects under every casual visitor question.',
+    ],
+    approach: 'Answer scoped questions from a guardrailed knowledge base, and escalate only completed consultation flows into an isolated automation pipeline.',
+    approaches: [
+      'Answer scoped questions client-side from a curated knowledge base using deterministic intent matching - no free-text model call that could drift off-script.',
+      'Make the assistant itself the proof: AI-guided intake, deterministic rules, and a human owner confirming the path.',
+      'Escalate only a completed brief - a workflow challenge plus a validated email - rather than every conversation.',
+      'Keep the chat lead pipeline separate from the website form, with its own webhook and secret.',
+    ],
+    automation: 'The assistant collects a two-question brief and posts it to a Node proxy, which validates the email and stamps the channel server-side before forwarding to a dedicated n8n webhook that normalizes the lead, writes it to Postgres, and alerts the founder on Telegram.',
+    governance: 'The browser is never trusted for the channel tag - the proxy stamps it and re-validates the email - and the chat webhook uses its own bearer secret, isolated from the consultation form, while general questions never leave the browser.',
+    outcome: 'The site now qualifies visitors and routes only real consultation leads to a person, and the assistant doubles as a live demonstration of the guardrailed-AI model ABBADev sells.',
+    phases: [
+      ['Guardrailed knowledge base', 'Curated intent matching answers services, proof, pricing, and process questions in the browser, with no free-text model call to go off-script.'],
+      ['Guided consult flow', 'A two-question brief - workflow challenge, then a validated email - prepares a qualified lead inside the chat.'],
+      ['Isolated lead pipeline', 'A Node proxy validates the email, stamps the channel server-side, and forwards the lead to a dedicated n8n webhook with its own secret.'],
+      ['Store and notify', 'n8n normalizes the lead, writes it to a Postgres table, and alerts the founder on Telegram in real time.'],
+    ],
+    quote: 'The assistant is the argument. It answers within guardrails and only escalates a real lead to a person - the same AI-with-ownership model we build for clients.',
+    quoteBy: 'Rommel Galisanao, ABBADev Tech Solutions',
+    disclaimer: 'Live on this site - the assistant in the corner is the system described here.',
+    tags: [
+      { icon: Bot, label: 'Guardrailed assistant' },
+      { icon: ShieldCheck, label: 'Server-stamped intake' },
+      { icon: Workflow, label: 'n8n lead pipeline' },
+    ],
+  },
 ]
 
 const resources = [
@@ -640,13 +702,15 @@ function CaseStudyPage({ study, theme, setTheme }) {
             ))}
           </div>
           <p className="case-page-disclaimer">
-            Details anonymized to protect the client operating context.
+            {study.disclaimer || 'Details anonymized to protect the client operating context.'}
           </p>
         </section>
 
-        <a className="case-download-link" href={summaryPdfHref} download>
-          Download the 1-page summary <ArrowRight size={15} aria-hidden="true" />
-        </a>
+        {study.summaryPdf !== false && (
+          <a className="case-download-link" href={summaryPdfHref} download>
+            Download the 1-page summary <ArrowRight size={15} aria-hidden="true" />
+          </a>
+        )}
 
         <div className="case-page-split">
           <section className="case-page-section case-page-list-section">
@@ -728,16 +792,29 @@ function CaseStudyPage({ study, theme, setTheme }) {
           </ul>
         </section>
 
-        <section className="case-page-cta">
-          <div>
-            <span className="kicker">Take this with you</span>
-            <h2>Summary PDF - 1 page, print-ready</h2>
-            <p>Problem, approach, implementation path, and results packaged for stakeholder review.</p>
-          </div>
-          <a className="primary-button" href={summaryPdfHref} download>
-            Download PDF <ArrowRight size={18} aria-hidden="true" />
-          </a>
-        </section>
+        {study.summaryPdf !== false ? (
+          <section className="case-page-cta">
+            <div>
+              <span className="kicker">Take this with you</span>
+              <h2>Summary PDF - 1 page, print-ready</h2>
+              <p>Problem, approach, implementation path, and results packaged for stakeholder review.</p>
+            </div>
+            <a className="primary-button" href={summaryPdfHref} download>
+              Download PDF <ArrowRight size={18} aria-hidden="true" />
+            </a>
+          </section>
+        ) : (
+          <section className="case-page-cta">
+            <div>
+              <span className="kicker">See it live</span>
+              <h2>The assistant is in the corner of this site</h2>
+              <p>Open it, ask about services or pricing, then try Book a consult to walk the exact intake flow described here.</p>
+            </div>
+            <a className="primary-button" href="/#contact">
+              Book a systems consult <ArrowRight size={18} aria-hidden="true" />
+            </a>
+          </section>
+        )}
 
         <nav className="case-page-pagination" aria-label="Case study navigation">
           <a className="case-next-link" href={`/cases/${previousStudy.slug}`}>
