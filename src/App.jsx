@@ -484,21 +484,6 @@ const contentPages = {
     cta: 'Request technical advisory',
     ctaHref: '/consulting-intake',
   },
-  '/work': {
-    icon: LayoutDashboard,
-    label: 'Work',
-    title: 'Portfolio',
-    intro: 'A practical view of representative systems, automations, and architecture patterns ABBADev can deliver.',
-    blocks: [
-      ['Operating systems', 'Command centers, workflow apps, dashboards, and portals for daily business operations.'],
-      ['Automation layers', 'n8n workflows, notifications, data updates, intake routing, and exception queues.'],
-      ['Architecture foundations', 'APIs, sync jobs, role boundaries, observability, and data ownership rules.'],
-      ['Knowledge systems', 'Documentation, training resources, implementation notes, and reusable templates.'],
-    ],
-    examples: ['Transaction intake command center', 'Document intake assistant', 'Integration foundation'],
-    cta: 'Review the case studies',
-    ctaHref: '/cases',
-  },
   '/workflow-demos': {
     icon: Blocks,
     label: 'Work',
@@ -1104,7 +1089,6 @@ const footerGroups = [
   {
     title: 'Work',
     links: [
-      ['Portfolio', '/work'],
       ['Case studies', '/cases'],
       ['Workflow demos', '/workflow-demos'],
       ['Implementation notes', '/implementation-notes'],
@@ -1212,12 +1196,22 @@ function App() {
     return () => window.removeEventListener('popstate', handleRouteChange)
   }, [])
 
-  const normalizedPath = path.replace(/\/$/, '') || '/'
+  const rawPath = path.replace(/\/$/, '') || '/'
+  // /work is a legacy alias for the canonical case-studies directory at /cases.
+  const normalizedPath = rawPath === '/work' ? '/cases' : rawPath
   const routeCasesIndex = normalizedPath === '/cases'
   const routeContent = contentPages[normalizedPath] || null
   const routeCase = path.startsWith('/cases/')
     ? caseStudies.find((study) => study.slug === path.replace('/cases/', '').replace(/\/$/, ''))
     : null
+
+  useEffect(() => {
+    // Canonicalize the legacy /work URL to /cases without a full navigation;
+    // normalizedPath already renders the directory for both.
+    if (rawPath === '/work' && typeof window !== 'undefined') {
+      window.history.replaceState(null, '', '/cases')
+    }
+  }, [rawPath])
 
   const [leadStatus, setLeadStatus] = useState('idle')
   const [leadMessage, setLeadMessage] = useState('')
