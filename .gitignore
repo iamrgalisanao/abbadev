@@ -19,6 +19,9 @@ dist-ssr
 .agents/
 .hallmark/
 
+# Lead exports must never be served from the public web root
+public/images/*.csv
+
 # Unused local/archive assets that should not deploy
 public/images/_Oceanofgames.com_Snake_Pass/
 public/images/_Oceanofgames.com_Snake_Pass.zip

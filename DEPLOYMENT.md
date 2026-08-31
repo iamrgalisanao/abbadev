@@ -61,13 +61,19 @@ N8N_JWT=replace-with-your-consultation-token
 N8N_CHAT_WEBHOOK_URL=https://n8nautomation.abbadev.com/webhook/abbadev-chat-lead
 N8N_CHAT_JWT=replace-with-your-chat-token
 
+# Seminar/webinar registration (separate pipeline + secret)
+N8N_EVENT_WEBHOOK_URL=https://n8nautomation.abbadev.com/webhook/abbadev-event-registration
+N8N_EVENT_JWT=replace-with-your-event-token
+
 ALLOWED_ORIGIN=https://abbadev.com
 PORT=8787
 ```
 
 > `N8N_CHAT_WEBHOOK_URL` falls back to `N8N_WEBHOOK_URL` and `N8N_CHAT_JWT` falls
 > back to `N8N_JWT` if omitted — so set both chat vars explicitly, otherwise chat
-> leads silently reuse the consultation webhook and token.
+> leads silently reuse the consultation webhook and token. The same applies to
+> `N8N_EVENT_WEBHOOK_URL` / `N8N_EVENT_JWT` for the `POST /api/event-registration`
+> endpoint (seminar/webinar sign-ups, tagged `channel: "event"`).
 
 Lock down the file:
 
