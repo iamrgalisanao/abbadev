@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   ArrowRight,
   Blocks,
@@ -1424,17 +1424,18 @@ const aboutSegments = [
 // `mode` is Online | In-person (add `location` for in-person sessions).
 const eventOfferings = [
   {
-    id: 'ai-automation-smes',
-    title: 'AI & Automation for Business',
-    type: 'Webinar',
-    mode: 'Online',
-    audience: ['SME owners'],
-    date: 'Sep 24, 2026',
+    id: 'idea-to-intelligent-system',
+    title: 'From Idea to Intelligent System',
+    type: 'Seminar',
+    mode: 'In-person',
+    location: 'Twinniz Cafe, Olongapo',
+    audience: ['Students', 'SME owners'],
+    date: 'Sep 5, 2026',
     time: '2:00 PM PHT',
-    duration: '90 minutes',
+    duration: '3 hours',
     level: 'Beginner',
-    price: 'Free',
-    blurb: 'Where AI and automation realistically save time in a small business - assistants, follow-ups, and reporting - and how to start without a big budget.',
+    price: '₱399',
+    blurb: 'Transform ideas into intelligent systems using AI, modern software development, and structured project delivery - the practical tools and best practices that turn concepts into real, measurable impact.',
   },
   {
     id: 'first-chatbot',
@@ -2209,6 +2210,773 @@ function CrmShowcase() {
   )
 }
 
+// ---------------------------------------------------------------------------
+// Standalone Facebook-ad landing page (/seminar)
+//
+// A single-offer conversion page for cold traffic coming from a paid FB post.
+// Deliberately distraction-free: no main nav, no chat widget, one call to
+// action (reserve a seat), and a reserve-then-pay flow. Edit `seminar` to
+// change the offer, and update `paymentMethods` with your real GCash/Maya
+// details before running ads against this page.
+const seminar = {
+  eyebrow: 'ABBADev Live Seminar',
+  title: 'From Idea to Intelligent System',
+  subtitle: 'AI, Software Development & Project Delivery',
+  tagline: 'A practical, beginner-friendly seminar',
+  promise:
+    'Transform ideas into intelligent systems using AI, modern software development, and structured project delivery. Learn the tools, processes, and best practices that turn concepts into real, measurable impact.',
+  date: 'Saturday, September 5, 2026',
+  dateShort: 'Sep 5, 2026',
+  time: '2:00 PM PHT',
+  duration: '3-hour live seminar',
+  mode: 'Twinniz Cafe, Olongapo',
+  venue: 'Twinniz Cafe, Olongapo City',
+  venueNote: 'Held at Twinniz Cafe, Olongapo City. Directions are emailed to you once your seat is confirmed.',
+  price: '₱399',
+  priceNote: 'Includes a free snack',
+  capacity: 40,
+  // Countdown target: Sept 5, 2026 at 2:00 PM Philippine time (UTC+8).
+  startsAtIso: '2026-09-05T14:00:00+08:00',
+}
+
+const seminarLearn = [
+  { icon: BrainCircuit, title: 'AI Fundamentals', copy: 'What AI really is, where it creates value, and where people should stay in control.' },
+  { icon: Workflow, title: 'Automation Workflows', copy: 'Connect tools and automate approvals, follow-ups, and repetitive back-office work.' },
+  { icon: Wand2, title: 'AI Tools for Productivity', copy: 'The practical assistants and tools that save hours every week — and how to use them well.' },
+  { icon: Code2, title: 'Software Development Direction', copy: 'How modern software gets built, and how to choose the right path from idea to shipped app.' },
+  { icon: Network, title: 'Intelligent Systems Design', copy: 'Design systems around real workflows, data, and business rules — not hype.' },
+  { icon: ListChecks, title: 'Project Delivery with AI', copy: 'Scope, plan, and deliver technology projects that actually reach the finish line.' },
+]
+
+const seminarAudience = [
+  { icon: GraduationCap, title: 'Students', copy: 'Exploring a tech career and want a practical head start with AI and software.' },
+  { icon: Code2, title: 'Developers', copy: 'Ready to add AI, automation, and delivery discipline to your toolkit.' },
+  { icon: Users, title: 'Professionals & owners', copy: 'Looking to apply AI and better systems to how your team and business actually run.' },
+]
+
+const seminarOutcomes = [
+  'A clear mental model of where AI fits in real, everyday work',
+  'A practical map from idea → prototype → delivered system',
+  'Tools and workflows you can apply the very next day',
+  'A certificate of participation on request',
+]
+
+const seminarFaq = [
+  [
+    'Do I need a technical background?',
+    'No. The seminar is beginner-friendly and built for students, developers, and professionals alike. We start from the fundamentals and keep everything practical.',
+  ],
+  [
+    'What is included in the ₱399?',
+    'Your seat at the 3-hour live seminar, all the session walkthroughs, a free snack, and a certificate of participation on request.',
+  ],
+  [
+    'How does payment work?',
+    'Reserve your seat with the form below, then complete the ₱399 payment via GCash or Maya using the details we send. Your seat is confirmed once payment is received.',
+  ],
+  [
+    'Where is it held?',
+    'In person at Twinniz Cafe, Olongapo City. Directions are emailed to you right after you reserve your seat.',
+  ],
+  [
+    'Are seats really limited?',
+    'Yes. This is a hands-on, in-person session with live Q&A, so the room is capped at 40 participants and seats are first come, first served.',
+  ],
+]
+
+// Replace these placeholders with your real payment details before advertising.
+const paymentMethods = [
+  { label: 'GCash', value: '0917 000 0000', name: 'ABBADev Tech Solutions' },
+  { label: 'Maya', value: '0917 000 0000', name: 'ABBADev Tech Solutions' },
+]
+
+// Live countdown to the seminar start. Ticks once a second and reports the
+// remaining days/hours/minutes/seconds, plus whether the target has passed.
+function useCountdown(targetIso) {
+  const target = useMemo(() => new Date(targetIso).getTime(), [targetIso])
+  const [now, setNow] = useState(() => Date.now())
+
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 1000)
+    return () => clearInterval(id)
+  }, [])
+
+  const diff = Math.max(0, target - now)
+  return {
+    days: Math.floor(diff / 86400000),
+    hours: Math.floor((diff % 86400000) / 3600000),
+    minutes: Math.floor((diff % 3600000) / 60000),
+    seconds: Math.floor((diff % 60000) / 1000),
+    expired: diff === 0,
+  }
+}
+
+function CountdownUnits({ countdown }) {
+  const units = [
+    ['Days', countdown.days],
+    ['Hours', countdown.hours],
+    ['Minutes', countdown.minutes],
+    ['Seconds', countdown.seconds],
+  ]
+  return (
+    <div className="lp-countdown" role="timer" aria-label="Time left until the seminar begins">
+      {units.map(([label, value]) => (
+        <div className="lp-count-unit" key={label}>
+          <strong>{String(value).padStart(2, '0')}</strong>
+          <span>{label}</span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function SeminarLandingPage({ theme, setTheme }) {
+  const countdown = useCountdown(seminar.startsAtIso)
+  const [audience, setAudience] = useState('')
+  const [status, setStatus] = useState('idle') // idle | submitting | reserved | error
+  const [message, setMessage] = useState('')
+  const [reservedEmail, setReservedEmail] = useState('')
+  const formRef = useRef(null)
+
+  const scrollToForm = () => {
+    formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
+  const audienceLabel = { student: 'Student', developer: 'Developer', professional: 'Professional & owner' }
+
+  const handleReserve = async (formEvent) => {
+    formEvent.preventDefault()
+    if (status === 'submitting') return
+
+    const form = formEvent.currentTarget
+    const payload = Object.fromEntries(new FormData(form).entries())
+    const email = String(payload.email || '').trim()
+
+    if (!EMAIL_PATTERN.test(email)) {
+      setStatus('error')
+      setMessage('Enter a valid email address, such as name@example.com.')
+      return
+    }
+    if (!audience) {
+      setStatus('error')
+      setMessage('Let us know whether you are joining as a student, developer, or professional.')
+      return
+    }
+
+    // Preserve Facebook / UTM attribution from the ad URL so leads are traceable.
+    let utm = {}
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search)
+      utm = Object.fromEntries(params.entries())
+    }
+
+    setStatus('submitting')
+    setMessage('')
+
+    try {
+      const endpoint = import.meta.env.VITE_EVENT_ENDPOINT || '/api/event-registration'
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...payload,
+          email,
+          audience: audienceLabel[audience] || audience,
+          eventId: 'idea-to-intelligent-system',
+          eventTitle: `${seminar.title} — ${seminar.subtitle}`,
+          eventDate: seminar.date,
+          price: seminar.price,
+          flow: 'reserve-then-pay',
+          source: 'abbadev.com',
+          // The proxy stamps a server-side `channel` (event), so use a separate
+          // field here to tag the FB-ad seminar funnel — it survives the merge.
+          leadSource: 'fb-ad-landing',
+          utm,
+          pageUrl: typeof window !== 'undefined' ? window.location.href : 'https://abbadev.com/seminar',
+          submittedAt: new Date().toISOString(),
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error(`Reservation failed with status ${response.status}`)
+      }
+
+      setReservedEmail(email)
+      setStatus('reserved')
+      setMessage('')
+      form.reset()
+      setAudience('')
+    } catch (error) {
+      console.error(error)
+      setStatus('error')
+      setMessage('Your reservation could not be sent right now. Please try again or message ABBADev directly.')
+    }
+  }
+
+  return (
+    <div className="site-shell lp-shell" data-theme={theme}>
+      <header className="lp-header">
+        <a className="brand" href="/#top" aria-label="ABBADev Tech Solutions home">
+          <img className="brand-mark" src="/images/abbadev-logo.png" alt="" width="42" height="42" />
+          <span className="brand-wordmark">
+            <strong>ABBADEV</strong>
+            <small>Tech Solutions</small>
+          </span>
+        </a>
+        <div className="lp-header-right">
+          <span className="lp-header-date">
+            <Calendar size={15} aria-hidden="true" />
+            {seminar.dateShort} · {seminar.time}
+          </span>
+          <button
+            className="icon-button theme-toggle"
+            type="button"
+            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            onClick={() => setTheme((current) => (current === 'dark' ? 'light' : 'dark'))}
+          >
+            {theme === 'dark' ? <Sun size={19} aria-hidden="true" /> : <Moon size={19} aria-hidden="true" />}
+          </button>
+          <button type="button" className="primary-button lp-header-cta" onClick={scrollToForm}>
+            Reserve — {seminar.price}
+          </button>
+        </div>
+      </header>
+
+      <main className="lp-main">
+        {/* Hero ------------------------------------------------------------ */}
+        <section className="lp-hero">
+          <div className="lp-hero-copy">
+            <span className="lp-pill">
+              <Sparkles size={14} aria-hidden="true" />
+              {seminar.eyebrow} · {seminar.tagline}
+            </span>
+            <h1 className="lp-hero-title">
+              {seminar.title}
+              <span>{seminar.subtitle}</span>
+            </h1>
+            <p className="lp-hero-lede">{seminar.promise}</p>
+
+            <div className="lp-hero-highlights">
+              <span><CheckCircle2 size={16} aria-hidden="true" /> For students, developers & professionals</span>
+              <span><CheckCircle2 size={16} aria-hidden="true" /> Beginner-friendly · no prior AI experience</span>
+              <span><CheckCircle2 size={16} aria-hidden="true" /> {seminar.priceNote}</span>
+            </div>
+
+            <div className="lp-hero-actions">
+              <button type="button" className="primary-button lp-cta-lg" onClick={scrollToForm}>
+                Reserve my seat — {seminar.price} <ArrowRight size={18} aria-hidden="true" />
+              </button>
+              <span className="lp-seats-inline">
+                <Users size={15} aria-hidden="true" />
+                Limited-capacity seminar · Max <strong>{seminar.capacity}</strong> participants
+              </span>
+            </div>
+          </div>
+
+          <aside className="lp-hero-card" aria-label="Seminar details">
+            <div className="lp-card-head">
+              <span className="lp-card-price">{seminar.price}</span>
+              <span className="lp-card-price-note">{seminar.priceNote}</span>
+            </div>
+            <ul className="lp-card-meta">
+              <li><Calendar size={16} aria-hidden="true" /> <span>{seminar.date}</span></li>
+              <li><Clock size={16} aria-hidden="true" /> <span>{seminar.time} · {seminar.duration}</span></li>
+              <li><MapPin size={16} aria-hidden="true" /> <span>{seminar.mode}</span></li>
+              <li><Users size={16} aria-hidden="true" /> <span>Maximum of {seminar.capacity} participants</span></li>
+            </ul>
+            <div className="lp-card-countdown">
+              <span className="lp-card-countdown-label">
+                {countdown.expired ? 'Registration closing' : 'Seminar starts in'}
+              </span>
+              <CountdownUnits countdown={countdown} />
+            </div>
+            <button type="button" className="primary-button lp-card-cta" onClick={scrollToForm}>
+              Reserve my seat <ArrowRight size={17} aria-hidden="true" />
+            </button>
+            <p className="lp-card-fineprint">
+              <ShieldCheck size={14} aria-hidden="true" />
+              Reserve now, pay ₱399 by GCash or Maya to confirm.
+            </p>
+          </aside>
+        </section>
+
+        {/* Urgency strip -------------------------------------------------- */}
+        <section className="lp-urgency">
+          <span className="lp-urgency-icon" aria-hidden="true"><Users size={22} /></span>
+          <div className="lp-urgency-copy">
+            <span className="kicker">Limited-capacity seminar</span>
+            <strong>Maximum of {seminar.capacity} participants</strong>
+          </div>
+          <button type="button" className="secondary-button lp-urgency-btn" onClick={scrollToForm}>
+            Reserve a seat <ArrowRight size={16} aria-hidden="true" />
+          </button>
+        </section>
+
+        {/* What you'll learn --------------------------------------------- */}
+        <section className="lp-section">
+          <div className="lp-section-head">
+            <span className="kicker">What you&apos;ll learn</span>
+            <h2>Six practical building blocks — in one afternoon.</h2>
+            <p>Every topic is hands-on and grounded in real work, not theory or hype.</p>
+          </div>
+          <div className="lp-learn-grid">
+            {seminarLearn.map((item) => {
+              const Icon = item.icon
+              return (
+                <article className="lp-learn-card" key={item.title}>
+                  <span className="lp-learn-icon" aria-hidden="true"><Icon size={20} /></span>
+                  <h3>{item.title}</h3>
+                  <p>{item.copy}</p>
+                </article>
+              )
+            })}
+          </div>
+        </section>
+
+        {/* Who it's for --------------------------------------------------- */}
+        <section className="lp-section lp-audience-section">
+          <div className="lp-section-head">
+            <span className="kicker">Who it&apos;s for</span>
+            <h2>Built for anyone turning ideas into working systems.</h2>
+          </div>
+          <div className="lp-audience-grid">
+            {seminarAudience.map((item) => {
+              const Icon = item.icon
+              return (
+                <article className="lp-audience-card" key={item.title}>
+                  <span className="lp-audience-icon" aria-hidden="true"><Icon size={22} /></span>
+                  <h3>{item.title}</h3>
+                  <p>{item.copy}</p>
+                </article>
+              )
+            })}
+          </div>
+        </section>
+
+        {/* Outcomes + facilitator ---------------------------------------- */}
+        <section className="lp-section lp-outcome-section">
+          <div className="lp-outcome-copy">
+            <span className="kicker">What you walk away with</span>
+            <h2>Leave with a plan you can actually use.</h2>
+            <ul className="lp-outcome-list">
+              {seminarOutcomes.map((point) => (
+                <li key={point}>
+                  <CheckCircle2 size={18} aria-hidden="true" />
+                  <span>{point}</span>
+                </li>
+              ))}
+            </ul>
+            <button type="button" className="primary-button lp-cta-lg" onClick={scrollToForm}>
+              Reserve my seat — {seminar.price} <ArrowRight size={18} aria-hidden="true" />
+            </button>
+          </div>
+          <aside className="lp-facilitator">
+            <span className="kicker">Your facilitator</span>
+            <div className="lp-facilitator-head">
+              <img src="/images/founder.png" alt="Rommel Galisanao" width="72" height="72" loading="lazy" onError={(e) => { e.currentTarget.style.display = 'none' }} />
+              <div>
+                <strong>{founderProfile.name}</strong>
+                <span>Founder & Principal Systems Architect</span>
+              </div>
+            </div>
+            <p>{founderProfile.bio}</p>
+            <ul className="lp-facilitator-points">
+              {founderProfile.points.map((point) => (
+                <li key={point}><Check size={15} aria-hidden="true" /> {point}</li>
+              ))}
+            </ul>
+          </aside>
+        </section>
+
+        {/* FAQ ------------------------------------------------------------ */}
+        <section className="lp-section lp-faq-section">
+          <div className="lp-section-head">
+            <span className="kicker">Questions</span>
+            <h2>Everything you need to know before you reserve.</h2>
+          </div>
+          <div className="lp-faq-list">
+            {seminarFaq.map(([q, a]) => (
+              <details className="lp-faq-item" key={q}>
+                <summary>{q}<ChevronRight size={18} aria-hidden="true" /></summary>
+                <p>{a}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+
+        {/* Registration (reserve-then-pay) -------------------------------- */}
+        <section className="lp-register" ref={formRef} id="reserve">
+          <div className="lp-register-intro">
+            <span className="kicker">Reserve your seat</span>
+            <h2>Two steps: reserve now, then pay ₱399 to confirm.</h2>
+            <p>
+              Fill in your details to hold a seat. We&apos;ll email you the GCash/Maya payment
+              details — your spot is locked in once the ₱399 lands.
+            </p>
+            <div className="lp-register-meta">
+              <span><Calendar size={16} aria-hidden="true" /> {seminar.date} · {seminar.time}</span>
+              <span><MapPin size={16} aria-hidden="true" /> {seminar.mode}</span>
+              <span><Users size={16} aria-hidden="true" /> Limited to {seminar.capacity} participants</span>
+            </div>
+            <div className="lp-register-countdown">
+              <span className="lp-card-countdown-label">
+                {countdown.expired ? 'Registration closing' : 'Closes in'}
+              </span>
+              <CountdownUnits countdown={countdown} />
+            </div>
+          </div>
+
+          {status === 'reserved' ? (
+            <div className="lp-pay" role="status">
+              <span className="register-success-icon" aria-hidden="true"><CheckCircle2 size={26} /></span>
+              <h3>Seat reserved — one step left</h3>
+              <p>
+                Thanks! We&apos;ve noted your reservation{reservedEmail ? ` for ${reservedEmail}` : ''}.
+                Complete your <strong>{seminar.price}</strong> payment to confirm your seat. A
+                confirmation with the venue details follows once we receive it.
+              </p>
+              <div className="lp-pay-methods">
+                {paymentMethods.map((method) => (
+                  <div className="lp-pay-method" key={method.label}>
+                    <span className="lp-pay-label">{method.label}</span>
+                    <strong>{method.value}</strong>
+                    <small>{method.name}</small>
+                  </div>
+                ))}
+              </div>
+              <p className="lp-pay-note">
+                <ShieldCheck size={15} aria-hidden="true" />
+                Use your full name as the payment reference, then reply to our email with a screenshot of your receipt.
+              </p>
+              <button
+                type="button"
+                className="secondary-button"
+                onClick={() => { setStatus('idle'); setMessage('') }}
+              >
+                Reserve another seat <ArrowRight size={16} aria-hidden="true" />
+              </button>
+            </div>
+          ) : (
+            <form className="register-form lp-form" onSubmit={handleReserve} noValidate>
+              <div className="register-field">
+                <label htmlFor="lp-name">Full name</label>
+                <input id="lp-name" name="name" type="text" autoComplete="name" required placeholder="Juan Dela Cruz" />
+              </div>
+              <div className="register-field">
+                <label htmlFor="lp-email">Email address</label>
+                <input id="lp-email" name="email" type="email" autoComplete="email" required placeholder="name@example.com" />
+              </div>
+              <fieldset className="register-field register-audience">
+                <legend>I&apos;m joining as a</legend>
+                <div className="lp-audience-toggle">
+                  <button type="button" aria-pressed={audience === 'student'} className={`register-audience-btn${audience === 'student' ? ' is-active' : ''}`} onClick={() => setAudience('student')}>
+                    <GraduationCap size={17} aria-hidden="true" /> Student
+                  </button>
+                  <button type="button" aria-pressed={audience === 'developer'} className={`register-audience-btn${audience === 'developer' ? ' is-active' : ''}`} onClick={() => setAudience('developer')}>
+                    <Code2 size={17} aria-hidden="true" /> Developer
+                  </button>
+                  <button type="button" aria-pressed={audience === 'professional'} className={`register-audience-btn${audience === 'professional' ? ' is-active' : ''}`} onClick={() => setAudience('professional')}>
+                    <Users size={17} aria-hidden="true" /> Professional
+                  </button>
+                </div>
+              </fieldset>
+              <div className="register-field">
+                <label htmlFor="lp-phone">Mobile number</label>
+                <input id="lp-phone" name="phone" type="tel" autoComplete="tel" required placeholder="+63 9XX XXX XXXX" />
+              </div>
+              <div className="register-field">
+                <label htmlFor="lp-org">School / company <span className="register-optional">(optional)</span></label>
+                <input id="lp-org" name="organization" type="text" autoComplete="organization" placeholder="Where you study or work" />
+              </div>
+              <div className="register-field register-field-full">
+                <label htmlFor="lp-goal">What do you want to get out of the seminar? <span className="register-optional">(optional)</span></label>
+                <textarea id="lp-goal" name="message" rows="3" placeholder="A goal, a question, or a topic you're hoping to cover." />
+              </div>
+
+              {status === 'error' && (
+                <p className="register-status is-error" role="alert">{message}</p>
+              )}
+
+              <button type="submit" className="primary-button register-submit" disabled={status === 'submitting'}>
+                {status === 'submitting' ? 'Reserving…' : `Reserve my seat — ${seminar.price}`}
+                {status !== 'submitting' && <ArrowRight size={18} aria-hidden="true" />}
+              </button>
+              <p className="lp-form-trust">
+                <ShieldCheck size={14} aria-hidden="true" />
+                We use your details only to confirm your seat and send seminar updates.
+              </p>
+            </form>
+          )}
+        </section>
+      </main>
+
+      <footer className="lp-footer">
+        <div className="lp-footer-inner">
+          <a className="brand" href="/#top" aria-label="ABBADev Tech Solutions home">
+            <img className="brand-mark" src="/images/abbadev-logo.png" alt="" width="36" height="36" />
+            <span className="brand-wordmark">
+              <strong>ABBADEV</strong>
+              <small>Tech Solutions</small>
+            </span>
+          </a>
+          <p className="lp-footer-legal">
+            © 2026 ABBADev Tech Solutions. This seminar is independent and not affiliated with or
+            endorsed by Meta. Seats are limited and payment confirms your reservation.
+          </p>
+          <nav className="lp-footer-links">
+            <a href="/#top">Home</a>
+            <a href="/privacy">Privacy</a>
+            <a href="/terms">Terms</a>
+            <a href="/#contact">Contact</a>
+          </nav>
+        </div>
+      </footer>
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Legal pages (/privacy, /terms)
+//
+// Plain-language Privacy Policy and Terms of Service for the ABBADev seminar
+// funnel, written for the Philippine Data Privacy Act (RA 10173). Update
+// LEGAL_CONTACT and the effective date if the operating details change.
+const LEGAL_CONTACT = 'info@abbadev.com'
+const LEGAL_UPDATED = 'August 31, 2026'
+
+const privacyDoc = {
+  title: 'Privacy Policy',
+  updated: LEGAL_UPDATED,
+  intro:
+    'ABBADev Tech Solutions ("ABBADev", "we", "us") respects your privacy. This policy explains what personal information we collect when you reserve a seat at our seminars or use this website, how we use it, and the rights you have under the Philippine Data Privacy Act of 2012 (Republic Act No. 10173).',
+  sections: [
+    {
+      h: '1. Information we collect',
+      p: ['When you reserve a seat or contact us, we collect the details you provide, which may include:'],
+      ul: [
+        'Your name, email address, and mobile number',
+        'Your school or company, and whether you are joining as a student, developer, or professional',
+        'Any goals, questions, or notes you choose to share in the form',
+        'Attribution data from the link you arrived through (for example, Facebook and UTM campaign parameters)',
+      ],
+      after: [
+        'Seminar fees are paid directly through GCash or Maya. We do not collect or store your card, wallet PIN, or banking credentials — those are handled by the payment app you use.',
+      ],
+    },
+    {
+      h: '2. How we use your information',
+      p: ['We use the information you provide to:'],
+      ul: [
+        'Confirm your reservation and send you the venue details, payment instructions, and schedule',
+        'Contact you about the seminar you registered for, including changes or reminders',
+        'Respond to your questions and, if you agree, send occasional updates about future sessions',
+        'Understand which campaigns bring people to our seminars so we can improve them',
+      ],
+    },
+    {
+      h: '3. Cookies and advertising pixels',
+      p: [
+        'This website uses first-party cookies to keep the site working. If we run ads, we may use the Meta (Facebook) Pixel and Conversion API to measure the performance of our campaigns; these may set cookies such as _fbp and _fbc and share hashed contact details with Meta.',
+        'You can control or opt out of ad tracking through your Facebook ad preferences and your browser settings without affecting your ability to register.',
+      ],
+    },
+    {
+      h: '4. When we share information',
+      p: ['We do not sell your personal information. We share it only where necessary to run the seminar:'],
+      ul: [
+        'With service providers that help us send email and process registrations (for example, our automation and email tools), under confidentiality obligations',
+        'With payment providers (GCash, Maya) when you choose to pay — you interact with them directly',
+        'When required by law, regulation, or a valid legal request',
+      ],
+    },
+    {
+      h: '5. Your rights under RA 10173',
+      p: [
+        'As a data subject, you have the right to be informed, to access, to correct, to object, to erasure or blocking, to data portability, and to damages. To exercise any of these, email us at ' +
+          LEGAL_CONTACT +
+          ' and we will respond within a reasonable period (generally 15 working days).',
+        'If you believe your rights have been violated, you may file a complaint with the National Privacy Commission at privacy.gov.ph.',
+      ],
+    },
+    {
+      h: '6. How long we keep your information',
+      p: [
+        'We keep your information only as long as needed to deliver the seminar and stay in touch about related sessions, unless a longer period is required by law. Records that are no longer needed are securely deleted.',
+      ],
+    },
+    {
+      h: '7. How we protect your information',
+      p: [
+        'We apply reasonable organizational and technical measures to protect your information. No method of transmission or storage is completely secure, but we work to keep your data safe and to limit access to it.',
+      ],
+    },
+    {
+      h: '8. Changes to this policy',
+      p: [
+        'We may update this policy from time to time. The latest version will always be posted on this page with a new effective date.',
+      ],
+    },
+    {
+      h: '9. Contact us',
+      p: [
+        'For any privacy question or request, email ABBADev Tech Solutions at ' + LEGAL_CONTACT + '.',
+      ],
+    },
+  ],
+}
+
+const termsDoc = {
+  title: 'Terms of Service',
+  updated: LEGAL_UPDATED,
+  intro:
+    'These Terms of Service govern your registration for and attendance at seminars offered by ABBADev Tech Solutions ("ABBADev", "we", "us"), including "From Idea to Intelligent System", and your use of this website. Please read them before you reserve a seat.',
+  sections: [
+    {
+      h: '1. Agreement',
+      p: [
+        'By reserving a seat, paying the seminar fee, or attending, you agree to these Terms. If you do not agree, please do not register or attend.',
+      ],
+    },
+    {
+      h: '2. What you are registering for',
+      p: [
+        'You are registering for a live, in-person seminar. Unless stated otherwise on this page, the session is a 3-hour seminar held at Twinniz Cafe, Olongapo City, and includes a snack. Dates, times, and the venue are as shown on the registration page and in your confirmation.',
+      ],
+    },
+    {
+      h: '3. Reservation and payment',
+      p: [
+        'Seats are reserved on a first-come, first-served basis and are limited (maximum of 40 participants). Reserving through the form holds a seat; your reservation is confirmed only once the seminar fee is received via GCash or Maya using the details we send. If payment is not completed before the seminar fills or begins, your reservation may be released.',
+      ],
+    },
+    {
+      h: '4. Cancellations, refunds, and transfers',
+      p: ['Our aim is to be fair to both attendees and to the participants waiting for a limited seat:'],
+      ul: [
+        'If ABBADev cancels or reschedules the seminar and you cannot attend the new date, you may request a full refund of the fee you paid.',
+        'If you notify us at least 3 days before the seminar that you cannot attend, you may request a refund or transfer your seat to another session or another person.',
+        'Cancellations made less than 3 days before the seminar, and no-shows, are generally non-refundable, though your paid seat may be transferred to another person.',
+        'To request a refund or transfer, email ' + LEGAL_CONTACT + ' with your name and reservation details.',
+      ],
+    },
+    {
+      h: '5. Use of seminar materials',
+      p: [
+        'Any materials shared during the seminar are provided for your personal and internal business use. You may not resell, republish, record, or publicly distribute them without our written permission.',
+      ],
+    },
+    {
+      h: '6. No guarantee of results',
+      p: [
+        'The seminar is educational. Outcomes depend on your own effort, situation, and many factors outside our control, so we do not guarantee any specific result, income, or business outcome.',
+      ],
+    },
+    {
+      h: '7. Limitation of liability',
+      p: [
+        'To the fullest extent permitted by law, ABBADev’s total liability arising from your registration or attendance is limited to the amount you paid for the seminar. We are not liable for indirect or consequential losses.',
+      ],
+    },
+    {
+      h: '8. Governing law',
+      p: [
+        'These Terms are governed by the laws of the Republic of the Philippines. Any dispute will be handled by the courts with proper jurisdiction in Olongapo City / Zambales.',
+      ],
+    },
+    {
+      h: '9. Changes to these Terms',
+      p: [
+        'We may update these Terms from time to time. The current version is always posted on this page with its effective date, and registered attendees may be notified of material changes.',
+      ],
+    },
+    {
+      h: '10. Independence and third parties',
+      p: [
+        'ABBADev Tech Solutions is an independent business. This seminar is not affiliated with, endorsed by, or sponsored by Meta (Facebook), Anthropic, GCash, Maya, or any other third-party platform mentioned. All trademarks belong to their respective owners.',
+      ],
+    },
+    {
+      h: '11. Contact us',
+      p: ['Questions about these Terms? Email ABBADev Tech Solutions at ' + LEGAL_CONTACT + '.'],
+    },
+  ],
+}
+
+function LegalPage({ doc, theme, setTheme }) {
+  return (
+    <div className="site-shell lp-shell">
+      <header className="lp-header">
+        <a className="brand" href="/#top" aria-label="ABBADev Tech Solutions home">
+          <img className="brand-mark" src="/images/abbadev-logo.png" alt="" width="42" height="42" />
+          <span className="brand-wordmark">
+            <strong>ABBADEV</strong>
+            <small>Tech Solutions</small>
+          </span>
+        </a>
+        <div className="lp-header-right">
+          <button
+            className="icon-button theme-toggle"
+            type="button"
+            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            onClick={() => setTheme((current) => (current === 'dark' ? 'light' : 'dark'))}
+          >
+            {theme === 'dark' ? <Sun size={19} aria-hidden="true" /> : <Moon size={19} aria-hidden="true" />}
+          </button>
+          <a className="secondary-button lp-header-cta" href="/seminar">Back to seminar</a>
+        </div>
+      </header>
+
+      <main className="lp-legal">
+        <a className="case-page-back" href="/seminar">Back to the seminar</a>
+        <header className="lp-legal-head">
+          <span className="kicker">ABBADev Tech Solutions</span>
+          <h1>{doc.title}</h1>
+          <p className="lp-legal-updated">Effective date: {doc.updated}</p>
+          <p className="lp-legal-intro">{doc.intro}</p>
+        </header>
+
+        {doc.sections.map((section) => (
+          <section className="lp-legal-section" key={section.h}>
+            <h2>{section.h}</h2>
+            {section.p?.map((para) => (
+              <p key={para}>{para}</p>
+            ))}
+            {section.ul && (
+              <ul>
+                {section.ul.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            )}
+            {section.after?.map((para) => (
+              <p key={para}>{para}</p>
+            ))}
+          </section>
+        ))}
+      </main>
+
+      <footer className="lp-footer">
+        <div className="lp-footer-inner">
+          <a className="brand" href="/#top" aria-label="ABBADev Tech Solutions home">
+            <img className="brand-mark" src="/images/abbadev-logo.png" alt="" width="36" height="36" />
+            <span className="brand-wordmark">
+              <strong>ABBADEV</strong>
+              <small>Tech Solutions</small>
+            </span>
+          </a>
+          <p className="lp-footer-legal">© 2026 ABBADev Tech Solutions. All rights reserved.</p>
+          <nav className="lp-footer-links">
+            <a href="/seminar">Seminar</a>
+            <a href="/privacy">Privacy</a>
+            <a href="/terms">Terms</a>
+            <a href="/#contact">Contact</a>
+          </nav>
+        </div>
+      </footer>
+    </div>
+  )
+}
+
 function App() {
   const [activeMode, setActiveMode] = useState(1)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -2243,6 +3011,9 @@ function App() {
   const routeAbout = normalizedPath === '/about'
   const routeServices = normalizedPath === '/services'
   const routeRegister = normalizedPath === '/register'
+  const routeSeminar = normalizedPath === '/seminar'
+  const routePrivacy = normalizedPath === '/privacy'
+  const routeTerms = normalizedPath === '/terms'
   const routeContent = contentPages[normalizedPath] || null
   const routeCase = path.startsWith('/cases/')
     ? caseStudies.find((study) => study.slug === path.replace('/cases/', '').replace(/\/$/, ''))
@@ -2399,6 +3170,19 @@ function App() {
         <Assistant />
       </>
     )
+  }
+
+  if (routeSeminar) {
+    // Distraction-free ad landing page: no chat widget, single call to action.
+    return <SeminarLandingPage theme={theme} setTheme={setTheme} />
+  }
+
+  if (routePrivacy) {
+    return <LegalPage doc={privacyDoc} theme={theme} setTheme={setTheme} />
+  }
+
+  if (routeTerms) {
+    return <LegalPage doc={termsDoc} theme={theme} setTheme={setTheme} />
   }
 
   if (routeContent) {
