@@ -2216,7 +2216,7 @@ function CrmShowcase() {
 // A single-offer conversion page for cold traffic coming from a paid FB post.
 // Deliberately distraction-free: no main nav, no chat widget, one call to
 // action (reserve a seat), and a reserve-then-pay flow. Edit `seminar` to
-// change the offer, and update `paymentMethods` with your real GCash/Maya
+// change the offer, and update `paymentMethods` with your real GCash
 // details before running ads against this page.
 const seminar = {
   eyebrow: 'ABBADev Live Seminar',
@@ -2272,7 +2272,7 @@ const seminarFaq = [
   ],
   [
     'How does payment work?',
-    'Reserve your seat with the form below, then complete the ₱399 payment via GCash or Maya using the details we send. Your seat is confirmed once payment is received.',
+    'Reserve your seat with the form below, then complete the ₱399 payment via GCash using the details we send. Your seat is confirmed once payment is received.',
   ],
   [
     'Where is it held?',
@@ -2286,8 +2286,7 @@ const seminarFaq = [
 
 // Replace these placeholders with your real payment details before advertising.
 const paymentMethods = [
-  { label: 'GCash', value: '0917 000 0000', name: 'ABBADev Tech Solutions' },
-  { label: 'Maya', value: '0917 000 0000', name: 'ABBADev Tech Solutions' },
+  { label: 'GCash', value: '0928 320 7029', name: 'ROM***L G.' },
 ]
 
 // Live countdown to the seminar start. Ticks once a second and reports the
@@ -2495,7 +2494,7 @@ function SeminarLandingPage({ theme, setTheme }) {
             </button>
             <p className="lp-card-fineprint">
               <ShieldCheck size={14} aria-hidden="true" />
-              Reserve now, pay ₱399 by GCash or Maya to confirm.
+              Reserve now, pay ₱399 by GCash to confirm.
             </p>
           </aside>
         </section>
@@ -2610,7 +2609,7 @@ function SeminarLandingPage({ theme, setTheme }) {
             <span className="kicker">Reserve your seat</span>
             <h2>Two steps: reserve now, then pay ₱399 to confirm.</h2>
             <p>
-              Fill in your details to hold a seat. We&apos;ll email you the GCash/Maya payment
+              Fill in your details to hold a seat. We&apos;ll email you the GCash payment
               details — your spot is locked in once the ₱399 lands.
             </p>
             <div className="lp-register-meta">
@@ -2760,7 +2759,7 @@ const privacyDoc = {
         'Attribution data from the link you arrived through (for example, Facebook and UTM campaign parameters)',
       ],
       after: [
-        'Seminar fees are paid directly through GCash or Maya. We do not collect or store your card, wallet PIN, or banking credentials — those are handled by the payment app you use.',
+        'Seminar fees are paid directly through GCash. We do not collect or store your card, wallet PIN, or banking credentials — those are handled by the payment app you use.',
       ],
     },
     {
@@ -2785,7 +2784,7 @@ const privacyDoc = {
       p: ['We do not sell your personal information. We share it only where necessary to run the seminar:'],
       ul: [
         'With service providers that help us send email and process registrations (for example, our automation and email tools), under confidentiality obligations',
-        'With payment providers (GCash, Maya) when you choose to pay — you interact with them directly',
+        'With your payment provider (GCash) when you choose to pay — you interact with them directly',
         'When required by law, regulation, or a valid legal request',
       ],
     },
@@ -2846,7 +2845,7 @@ const termsDoc = {
     {
       h: '3. Reservation and payment',
       p: [
-        'Seats are reserved on a first-come, first-served basis and are limited (maximum of 40 participants). Reserving through the form holds a seat; your reservation is confirmed only once the seminar fee is received via GCash or Maya using the details we send. If payment is not completed before the seminar fills or begins, your reservation may be released.',
+        'Seats are reserved on a first-come, first-served basis and are limited (maximum of 40 participants). Reserving through the form holds a seat; your reservation is confirmed only once the seminar fee is received via GCash using the details we send. If payment is not completed before the seminar fills or begins, your reservation may be released.',
       ],
     },
     {
@@ -2892,7 +2891,7 @@ const termsDoc = {
     {
       h: '10. Independence and third parties',
       p: [
-        'ABBADev Tech Solutions is an independent business. This seminar is not affiliated with, endorsed by, or sponsored by Meta (Facebook), Anthropic, GCash, Maya, or any other third-party platform mentioned. All trademarks belong to their respective owners.',
+        'ABBADev Tech Solutions is an independent business. This seminar is not affiliated with, endorsed by, or sponsored by Meta (Facebook), Anthropic, GCash, or any other third-party platform mentioned. All trademarks belong to their respective owners.',
       ],
     },
     {

@@ -89,14 +89,14 @@ needs, so those nodes stay simple:
 ## Behavior notes
 
 - `isPaid` is any non-free priced event. Paid events set `status: "reserved"`
-  and send the **pay-to-confirm** email (GCash/Maya); free events set
+  and send the **pay-to-confirm** email (GCash); free events set
   `status: "registered"` and send the standard confirmation. `notify-next`
   is the waitlist path.
 - This means all paid events (the ₱750 / ₱1,200 workshops too), not only the
   ad-funnel seminar, get the payment email. To limit it to the ad funnel,
   change the catalog `isPaid` line to `isPaid = flow === 'reserve-then-pay'`.
-- Update the `PAYMENT` numbers with the real GCash/Maya details — keep them in
-  sync with `paymentMethods` in `src/App.jsx` (the `/seminar` payment panel).
+- Keep the `PAYMENT` GCash details in sync with `paymentMethods` in
+  `src/App.jsx` (the `/seminar` payment panel).
 
 ## `Normalize Registration` code
 
@@ -215,12 +215,10 @@ const EVENTS = {
 
 const WAITLIST_EVENT_ID = 'notify-next'
 
-// GCash / Maya details for paid (reserve-then-pay) events.
-// Replace with your real numbers before advertising.
+// GCash details for paid (reserve-then-pay) events.
 const PAYMENT = {
-  gcash: '0917 000 0000',
-  maya: '0917 000 0000',
-  accountName: 'ABBADev Tech Solutions',
+  gcash: '0928 320 7029',
+  accountName: 'ROM***L G.',
 }
 
 // ---------------------------------------------------------
@@ -571,9 +569,8 @@ if (isWaitlist) {
     locationLine,
     `Amount: ${eventPrice}`,
     '',
-    `To confirm, please pay ${eventPrice} via:`,
+    `To confirm, please pay ${eventPrice} via GCash:`,
     `  • GCash — ${PAYMENT.gcash} (${PAYMENT.accountName})`,
-    `  • Maya  — ${PAYMENT.maya} (${PAYMENT.accountName})`,
     '',
     `Use your full name (${name}) as the payment reference, then reply to this email with a screenshot of your receipt. We’ll confirm your seat and send the venue details.`,
     '',
@@ -633,8 +630,7 @@ if (isWaitlist) {
           <strong>Pay ${escapeHtml(eventPrice)} to confirm your seat</strong>
         </p>
         <p style="margin:0;">
-          GCash — ${escapeHtml(PAYMENT.gcash)} (${escapeHtml(PAYMENT.accountName)})<br>
-          Maya — ${escapeHtml(PAYMENT.maya)} (${escapeHtml(PAYMENT.accountName)})
+          GCash — ${escapeHtml(PAYMENT.gcash)} (${escapeHtml(PAYMENT.accountName)})
         </p>
       </div>
 
