@@ -2699,6 +2699,34 @@ main {
   text-transform: uppercase;
 }
 
+.case-page-shot {
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid color-mix(in oklch, var(--color-accent-pale) 22%, transparent);
+  border-radius: var(--radius-lg);
+  background: rgba(3, 13, 24, 0.3);
+  box-shadow: var(--shadow-stage);
+}
+
+.case-page-shot picture {
+  display: block;
+}
+
+.case-page-shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.case-page-shot figcaption {
+  padding: 12px 18px;
+  border-top: 1px solid color-mix(in oklch, var(--color-accent-pale) 14%, transparent);
+  color: rgba(196, 213, 234, 0.62);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
 .case-page-quote {
   margin: 0;
   padding: 4px 0 4px 28px;
@@ -5508,6 +5536,56 @@ main {
   perspective: 1600px;
 }
 
+/* Live-product screenshot: idle float + cursor magnet */
+.crm-float {
+  animation: crm-float 6.5s var(--ease-in-out) infinite;
+  will-change: transform;
+}
+
+.crm-float:hover {
+  animation-play-state: paused;
+}
+
+@keyframes crm-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-9px);
+  }
+}
+
+.crm-shot {
+  overflow: hidden;
+  border: var(--rule-hairline) solid var(--color-rule-strong);
+  border-radius: var(--radius-lg);
+  background: var(--color-card);
+  box-shadow: var(--shadow-stage);
+}
+
+.crm-shot picture {
+  display: block;
+}
+
+.crm-shot-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: transform 0.22s var(--ease-out);
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .crm-float {
+    animation: none;
+  }
+
+  .crm-shot-img {
+    transition: none;
+  }
+}
+
 .crm-mock {
   --crm-fg: var(--color-ink);
   --crm-sub: var(--color-muted);
@@ -5902,4 +5980,21 @@ main {
 
 .cx-mock-frame .crm-mock-body {
   min-height: 300px;
+}
+
+/* Real product screenshot inside a case-card mock frame */
+.cx-mock-frame picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.cx-shot--mock .cx-mock-frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: cover;
+  object-position: top center;
 }

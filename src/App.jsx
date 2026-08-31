@@ -40,7 +40,6 @@ import {
 } from 'lucide-react'
 import Assistant from './Assistant'
 import CaseWorkflow from './CaseWorkflow'
-import CrmMockup from './CrmMockup'
 import { EMAIL_PATTERN } from './lib/patterns'
 import './App.css'
 
@@ -384,6 +383,8 @@ const caseStudies = [
     icon: LayoutDashboard,
     badge: Sparkles,
     mockup: 'crm',
+    image: '/images/mockup_crm.png',
+    imageWebp: '/images/mockup_crm.webp',
     imageAlt: 'ABBADev CRM dashboard preview',
     type: 'Product',
     code: '005 / Product',
@@ -816,6 +817,23 @@ function CaseStudyPage({ study, theme, setTheme }) {
           </a>
         )}
 
+        {study.mockup === 'crm' && (
+          <figure className="case-page-shot">
+            <picture>
+              <source srcSet="/images/mockup_crm.webp" type="image/webp" />
+              <img
+                src="/images/mockup_crm.png"
+                alt="The ABBADev CRM dashboard running in production"
+                width="1672"
+                height="941"
+                loading="lazy"
+                decoding="async"
+              />
+            </picture>
+            <figcaption>The live ABBADev CRM - contacts, deal pipeline, tasks, and a live dashboard in one system.</figcaption>
+          </figure>
+        )}
+
         <div className="case-page-split">
           <section className="case-page-section case-page-list-section">
             <span className="kicker">01 / Problem</span>
@@ -1020,7 +1038,10 @@ function CasesIndexPage({ theme, setTheme }) {
                     <div className={study.mockup ? 'cx-shot cx-shot--mock' : 'cx-shot'}>
                       {study.mockup === 'crm' ? (
                         <div className="cx-mock-frame">
-                          <CrmMockup />
+                          <picture>
+                            <source srcSet={study.imageWebp} type="image/webp" />
+                            <img src={study.image} alt={study.imageAlt || ''} width="1672" height="941" loading="lazy" decoding="async" />
+                          </picture>
                         </div>
                       ) : (
                         <img src={study.image} alt={study.imageAlt || ''} decoding="async" width="640" height="360" />
@@ -2137,6 +2158,57 @@ const SEQUENCE_STEPS = sequenceStages.length
 const STAGE_MS = 1500
 const HOLD_MS = 1500
 
+// Live-product screenshot with a subtle cursor-magnet and an idle float. The
+// frame catches the pointer and nudges the image toward it (scaled slightly so
+// the shift never reveals an edge); both effects are off under reduced motion.
+function CrmShowcase() {
+  const frameRef = useRef(null)
+  const imgRef = useRef(null)
+
+  const handleMove = (event) => {
+    const frame = frameRef.current
+    const img = imgRef.current
+    if (!frame || !img) return
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return
+    const rect = frame.getBoundingClientRect()
+    const relX = event.clientX - (rect.left + rect.width / 2)
+    const relY = event.clientY - (rect.top + rect.height / 2)
+    const cap = 16
+    const x = Math.max(-cap, Math.min(cap, relX * 0.05))
+    const y = Math.max(-cap, Math.min(cap, relY * 0.05))
+    img.style.transform = `translate(${x}px, ${y}px) scale(1.045)`
+  }
+
+  const handleLeave = () => {
+    if (imgRef.current) imgRef.current.style.transform = ''
+  }
+
+  return (
+    <div className="crm-float">
+      <div
+        ref={frameRef}
+        className="crm-shot"
+        onMouseMove={handleMove}
+        onMouseLeave={handleLeave}
+      >
+        <picture>
+          <source srcSet="/images/mockup_crm.webp" type="image/webp" />
+          <img
+            ref={imgRef}
+            className="crm-shot-img"
+            src="/images/mockup_crm.png"
+            alt="The ABBADev CRM dashboard running in production"
+            width="1672"
+            height="941"
+            loading="lazy"
+            decoding="async"
+          />
+        </picture>
+      </div>
+    </div>
+  )
+}
+
 function App() {
   const [activeMode, setActiveMode] = useState(1)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -2754,7 +2826,7 @@ function App() {
             </div>
 
             <div className="product-preview">
-              <CrmMockup />
+              <CrmShowcase />
             </div>
           </div>
         </section>
