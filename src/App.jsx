@@ -2351,6 +2351,17 @@ function TwoStepRegister({ seminar }) {
 
   const audienceLabel = { student: 'Student', developer: 'Developer', professional: 'Professional & owner' }
 
+  // Pull a human-readable message out of a Laravel error response (422 carries
+  // { message, errors: { field: [msg] } }).
+  const errorMessageFrom = async (response, fallback) => {
+    const data = await response.json().catch(() => ({}))
+    if (data.errors) {
+      const first = Object.values(data.errors)[0]
+      if (Array.isArray(first) && first[0]) return first[0]
+    }
+    return data.message || fallback
+  }
+
   const collectUtm = () => {
     if (typeof window === 'undefined') return {}
     return Object.fromEntries(new URLSearchParams(window.location.search).entries())
@@ -2394,7 +2405,7 @@ function TwoStepRegister({ seminar }) {
       })
 
       if (!response.ok) {
-        throw new Error(`Registration failed with status ${response.status}`)
+        throw new Error(await errorMessageFrom(response, 'Your registration could not be started right now. Please try again.'))
       }
 
       setRegistration(await response.json())
@@ -2403,7 +2414,7 @@ function TwoStepRegister({ seminar }) {
     } catch (error) {
       console.error(error)
       setStatus('error')
-      setMessage('Your registration could not be started right now. Please try again.')
+      setMessage(error.message || 'Your registration could not be started right now. Please try again.')
     }
   }
 
@@ -2422,7 +2433,7 @@ function TwoStepRegister({ seminar }) {
       })
 
       if (!response.ok) {
-        throw new Error(`Payment submission failed with status ${response.status}`)
+        throw new Error(await errorMessageFrom(response, 'Your payment details could not be submitted. Check the receipt file and try again.'))
       }
 
       setResult(await response.json())
@@ -2431,7 +2442,7 @@ function TwoStepRegister({ seminar }) {
     } catch (error) {
       console.error(error)
       setStatus('error')
-      setMessage('Your payment details could not be submitted. Check the receipt file and try again.')
+      setMessage(error.message || 'Your payment details could not be submitted. Check the receipt file and try again.')
     }
   }
 
