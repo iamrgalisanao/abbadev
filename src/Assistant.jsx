@@ -1,15 +1,18 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { ArrowRight, Bot, Send, Sparkles, X } from 'lucide-react'
+import { EMAIL_PATTERN } from './lib/patterns'
 
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 const LOG_KEY = 'abba-chat-log'
 const OPEN_KEY = 'abba-chat-open'
 const MAX_LOG = 40
 
+// Per-load prefix so ids minted this session can never collide with ids from a
+// persisted transcript restored on reload - both counters otherwise restart at 1.
+const SESSION_ID = Math.random().toString(36).slice(2, 9)
 let messageSeq = 0
 const nextId = () => {
   messageSeq += 1
-  return `m${messageSeq}`
+  return `m-${SESSION_ID}-${messageSeq}`
 }
 
 // Curated, guardrailed knowledge base. Deterministic intent matching keeps the
@@ -174,7 +177,6 @@ export default function Assistant() {
 
   const scrollRef = useRef(null)
   const inputRef = useRef(null)
-  const panelRef = useRef(null)
   const timers = useRef([])
 
   useEffect(() => {
@@ -364,7 +366,6 @@ export default function Assistant() {
           role="dialog"
           aria-label="ABBADev assistant"
           aria-modal="false"
-          ref={panelRef}
         >
           <header className="assistant-head">
             <span className="assistant-avatar" aria-hidden="true">

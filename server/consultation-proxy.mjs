@@ -9,6 +9,10 @@ const N8N_JWT = process.env.N8N_JWT
 // Optional: dedicated secret for the chat-assistant webhook so a leak of one
 // token does not expose the other pipeline. Falls back to N8N_JWT when unset.
 const N8N_CHAT_JWT = process.env.N8N_CHAT_JWT || process.env.N8N_JWT
+// Optional: route seminar/webinar registrations to their own n8n workflow.
+// Both fall back to the main consultation pipeline when unset.
+const N8N_EVENT_WEBHOOK_URL = process.env.N8N_EVENT_WEBHOOK_URL || process.env.N8N_WEBHOOK_URL
+const N8N_EVENT_JWT = process.env.N8N_EVENT_JWT || process.env.N8N_JWT
 const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || 'https://abbadev.com'
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 
@@ -105,6 +109,11 @@ const server = http.createServer(async (request, response) => {
 
   if (request.method === 'POST' && request.url === '/api/chat-lead') {
     await forwardLead(request, response, responseOrigin, { webhookUrl: N8N_CHAT_WEBHOOK_URL, token: N8N_CHAT_JWT, channel: 'chat' })
+    return
+  }
+
+  if (request.method === 'POST' && request.url === '/api/event-registration') {
+    await forwardLead(request, response, responseOrigin, { webhookUrl: N8N_EVENT_WEBHOOK_URL, token: N8N_EVENT_JWT, channel: 'event' })
     return
   }
 

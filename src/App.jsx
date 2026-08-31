@@ -5,10 +5,12 @@ import {
   BookOpen,
   Bot,
   BrainCircuit,
+  Calendar,
   Check,
   CheckCircle2,
   ChevronRight,
   CircleDot,
+  Clock,
   Code2,
   Database,
   FileText,
@@ -18,6 +20,7 @@ import {
   Inbox,
   LayoutDashboard,
   ListChecks,
+  MapPin,
   Menu,
   MessageSquareText,
   Moon,
@@ -29,11 +32,16 @@ import {
   ShieldCheck,
   Sparkles,
   Sun,
+  Users,
+  Video,
   Wand2,
   Workflow,
   X,
 } from 'lucide-react'
 import Assistant from './Assistant'
+import CaseWorkflow from './CaseWorkflow'
+import CrmMockup from './CrmMockup'
+import { EMAIL_PATTERN } from './lib/patterns'
 import './App.css'
 
 const platformSurfaces = [
@@ -157,6 +165,21 @@ const caseStudies = [
     ],
     quote: 'The system gave us one place to see whether a transaction was accepted, rejected, queued, or stuck. That changed support from guessing to triage.',
     quoteBy: 'Anonymized operations/support lead',
+    workflow: {
+      heading: 'How a transaction flows',
+      title: 'Transaction intake pipeline',
+      caption: 'From a POS submission to a traceable status - intake stays separate from processing, with an exception safety net.',
+      completeLabel: 'Transaction traced',
+      completeDetail: 'exceptions handled',
+      steps: [
+        { icon: Inbox, kind: 'client', label: 'POS submission', tag: 'terminal intake', idle: 'Submission received', active: 'Receiving submission', done: 'Submission received' },
+        { icon: ListChecks, kind: 'guard', label: 'Intake gate', tag: 'structure check', idle: 'Shape validated', active: 'Validating shape', done: 'Shape validated' },
+        { icon: ShieldCheck, kind: 'guard', label: 'Integrity layer', tag: 'SHA-256 checksum', idle: 'Checksum verified', active: 'Verifying checksum', done: 'Checksum verified' },
+        { icon: Workflow, kind: 'n8n', label: 'Queue', tag: 'Horizon jobs', idle: 'Queued with backpressure', active: 'Queuing job', done: 'Queued with backpressure' },
+        { icon: Radar, kind: 'store', label: 'Status endpoints', tag: 'observability', idle: 'Status traceable', active: 'Exposing status', done: 'Status traceable' },
+        { icon: History, kind: 'notify', label: 'Exception handling', tag: 'quarantine / retry', idle: 'Exceptions triaged', active: 'Routing exceptions', done: 'Exceptions triaged' },
+      ],
+    },
     tags: [
       { icon: Database, label: 'Transaction intake' },
       { icon: ShieldCheck, label: 'Checksum validation' },
@@ -280,6 +303,162 @@ const caseStudies = [
       { icon: Radar, label: 'Monitoring' },
     ],
   },
+  {
+    icon: Bot,
+    badge: Sparkles,
+    image: '/images/case-studies/ai-connection.png',
+    imageAlt: 'Blue AI assistant connection badge',
+    type: 'Applied AI',
+    code: '004 / Assistant',
+    slug: 'guardrailed-site-assistant',
+    title: 'Guardrailed site assistant',
+    result: 'A generic website chatbot becomes a scoped intake assistant that answers within guardrails and escalates only qualified consultation leads to a human.',
+    metric: {
+      label: 'Escalation to a human',
+      before: 'Every visitor',
+      after: 'Qualified leads',
+      note: 'General questions are answered in the browser; only a completed consult brief reaches the founder.',
+    },
+    metrics: [
+      { label: 'Assistant answers', before: 'Open-ended AI', after: 'Guardrailed KB', note: 'Deterministic intent matching keeps replies scoped to real ABBADev services, with no free-text model call that could go off-script.' },
+      { label: 'Escalation to a human', before: 'Every visitor', after: 'Qualified leads', note: 'Only a completed Book a consult flow - a workflow challenge plus a validated email - is routed to a person.' },
+      { label: 'Lead pipeline isolation', before: 'Shared secret', after: 'Dedicated token', note: 'Chat leads run through their own n8n webhook and secret, separate from the website consultation form.' },
+    ],
+    client: 'ABBADev Tech Solutions (this website)',
+    sector: 'Professional services / lead generation',
+    duration: 'One focused increment',
+    stack: 'React/Vite - Node proxy - n8n - Postgres - Telegram',
+    meta: [
+      ['Audience', 'Prospective consultation clients'],
+      ['System type', 'Guardrailed assistant + lead pipeline'],
+      ['Primary value', 'Qualified intake without losing human ownership'],
+      ['Governance', 'Server-stamped channel, email validation, isolated secret'],
+    ],
+    problem: 'The site had one call to action - the full consultation form - and no low-friction, guarded way for visitors to self-qualify or get scoped answers first.',
+    problems: [
+      'The site had a single call to action, the full consultation form, with no low-friction way for a visitor to ask a scoped question or self-qualify before committing.',
+      'A generic AI chatbot would risk off-topic or fabricated answers, directly contradicting the "AI with guardrails" thesis the site argues for.',
+      'Any lead capture had to reach the founder reliably without burying real prospects under every casual visitor question.',
+    ],
+    approach: 'Answer scoped questions from a guardrailed knowledge base, and escalate only completed consultation flows into an isolated automation pipeline.',
+    approaches: [
+      'Answer scoped questions client-side from a curated knowledge base using deterministic intent matching - no free-text model call that could drift off-script.',
+      'Make the assistant itself the proof: AI-guided intake, deterministic rules, and a human owner confirming the path.',
+      'Escalate only a completed brief - a workflow challenge plus a validated email - rather than every conversation.',
+      'Keep the chat lead pipeline separate from the website form, with its own webhook and secret.',
+    ],
+    automation: 'The assistant collects a two-question brief and posts it to a Node proxy, which validates the email and stamps the channel server-side before forwarding to a dedicated n8n webhook that normalizes the lead, writes it to Postgres, and alerts the founder on Telegram.',
+    governance: 'The browser is never trusted for the channel tag - the proxy stamps it and re-validates the email - and the chat webhook uses its own bearer secret, isolated from the consultation form, while general questions never leave the browser.',
+    outcome: 'The site now qualifies visitors and routes only real consultation leads to a person, and the assistant doubles as a live demonstration of the guardrailed-AI model ABBADev sells.',
+    phases: [
+      ['Guardrailed knowledge base', 'Curated intent matching answers services, proof, pricing, and process questions in the browser, with no free-text model call to go off-script.'],
+      ['Guided consult flow', 'A two-question brief - workflow challenge, then a validated email - prepares a qualified lead inside the chat.'],
+      ['Isolated lead pipeline', 'A Node proxy validates the email, stamps the channel server-side, and forwards the lead to a dedicated n8n webhook with its own secret.'],
+      ['Store and notify', 'n8n normalizes the lead, writes it to a Postgres table, and alerts the founder on Telegram in real time.'],
+    ],
+    quote: 'The assistant is the argument. It answers within guardrails and only escalates a real lead to a person - the same AI-with-ownership model we build for clients.',
+    quoteBy: 'Rommel Galisanao, ABBADev Tech Solutions',
+    disclaimer: 'Live on this site - the assistant in the corner is the system described here.',
+    workflow: {
+      heading: 'How a lead flows',
+      title: 'Chat lead pipeline',
+      caption: 'From the site assistant to a Telegram alert - the exact n8n path a qualified lead travels.',
+      completeLabel: 'Lead routed',
+      completeDetail: 'founder alerted',
+      steps: [
+        { icon: Bot, kind: 'client', label: 'Site assistant', tag: 'book a consult', idle: 'Brief captured', active: 'Capturing brief', done: 'Brief captured' },
+        { icon: ShieldCheck, kind: 'guard', label: 'Proxy', tag: 'validate + stamp', idle: 'Validated', active: 'Validating email', done: 'Validated' },
+        { icon: Workflow, kind: 'n8n', label: 'n8n webhook', tag: 'Header Auth', idle: 'Authorized', active: 'Authorizing', done: 'Authorized' },
+        { icon: ListChecks, kind: 'n8n', label: 'Normalize', tag: 'code node', idle: 'Normalized', active: 'Normalizing', done: 'Normalized' },
+        { icon: Database, kind: 'store', label: 'Postgres', tag: 'insert lead', idle: 'Lead stored', active: 'Storing lead', done: 'Lead stored' },
+        { icon: Send, kind: 'notify', label: 'Telegram', tag: 'notify founder', idle: 'Founder alerted', active: 'Alerting founder', done: 'Founder alerted' },
+      ],
+    },
+    tags: [
+      { icon: Bot, label: 'Guardrailed assistant' },
+      { icon: ShieldCheck, label: 'Server-stamped intake' },
+      { icon: Workflow, label: 'n8n lead pipeline' },
+    ],
+  },
+  {
+    icon: LayoutDashboard,
+    badge: Sparkles,
+    mockup: 'crm',
+    imageAlt: 'ABBADev CRM dashboard preview',
+    type: 'Product',
+    code: '005 / Product',
+    slug: 'abbadev-crm',
+    title: 'ABBADev CRM',
+    result: 'Scattered leads across spreadsheets, chat threads, and inboxes become one governed CRM where every contact, deal, and follow-up has an owner and a status.',
+    metric: {
+      label: 'Lead visibility',
+      before: 'Spreadsheets',
+      after: 'Live pipeline',
+      note: 'Contacts, deals, and activities live in one system instead of scattered files and chat threads.',
+    },
+    metrics: [
+      { label: 'Lead visibility', before: 'Spreadsheets', after: 'Live pipeline', note: 'Every contact and deal sits in one shared pipeline with a stage, an owner, and a next action.' },
+      { label: 'Follow-up discipline', before: 'Memory', after: 'Tasks + reminders', note: 'Activities and due tasks make sure no qualified lead goes quiet by accident.' },
+      { label: 'Reporting effort', before: 'Manual rollups', after: 'Live dashboard', note: 'Pipeline value, win rate, and stage movement update as the team works, not at month-end.' },
+    ],
+    client: 'ABBADev Tech Solutions (our own product)',
+    sector: 'SME sales and operations',
+    duration: 'Running in production',
+    stack: 'Laravel - React/Vite - MySQL - Sanctum',
+    liveUrl: 'https://crm.abbadev.com',
+    summaryPdf: false,
+    disclaimer: 'Live product - running in production at crm.abbadev.com.',
+    meta: [
+      ['Audience', 'Owners, sales, and operations teams at SMEs'],
+      ['System type', 'Contact, deal, and pipeline CRM'],
+      ['Primary value', 'One governed place for leads, deals, and follow-ups'],
+      ['Governance', 'Role-based access and per-record ownership'],
+    ],
+    problem: 'Small teams track leads across spreadsheets, chat threads, and inboxes, so deals stall, follow-ups slip, and no one can see the true state of the pipeline.',
+    problems: [
+      'Leads and deals live in spreadsheets, chat threads, and personal inboxes, so the same prospect is worked twice or dropped entirely.',
+      'Without owned records and clear stages, follow-ups depend on memory and qualified deals quietly go cold.',
+      'Owners have no live view of pipeline value, win rate, or what each rep is working on without asking around or rebuilding a spreadsheet.',
+    ],
+    approach: 'Give SMEs a right-sized CRM that models contacts, deals, and activities as governed records with clear ownership - not another spreadsheet.',
+    approaches: [
+      'Model contacts, companies, deals, and activities as first-class records so nothing important lives only in a chat thread.',
+      'Make the pipeline the center of gravity: every deal has a stage, an owner, a value, and a next action.',
+      'Turn follow-ups into tasks and logged activities so discipline comes from the system, not from memory.',
+      'Keep it right-sized for SMEs - the essentials that drive revenue, without enterprise overhead or a long rollout.',
+    ],
+    automation: 'New leads land in the pipeline with an owner and a first task, stage changes are logged as activities, and the dashboard recomputes pipeline value and win rate as the team works.',
+    governance: 'Role-based access separates what owners, sales, and operations can see and do, while per-record ownership keeps every contact and deal accountable to a named person.',
+    outcome: 'Teams get one live pipeline where every lead has an owner and a next action, and owners can see pipeline health without chasing updates.',
+    phases: [
+      ['Contact and company records', 'Centralized contacts and companies so every lead has a single, shared source of truth.'],
+      ['Deal pipeline', 'Modeled stages, values, and ownership so the whole team sees where each deal stands.'],
+      ['Activities and tasks', 'Logged calls, emails, and notes, plus due tasks that keep follow-ups from slipping.'],
+      ['Dashboard and reporting', 'Live pipeline value, win rate, and stage movement for owners, updated as work happens.'],
+    ],
+    quote: 'We built the CRM we wanted our own clients to have - one place where every lead has an owner and a next step, not a spreadsheet that goes stale by Friday.',
+    quoteBy: 'Rommel Galisanao, ABBADev Tech Solutions',
+    workflow: {
+      heading: 'How a lead moves through the CRM',
+      title: 'Lead-to-deal pipeline',
+      caption: 'From a captured contact to a tracked deal - every stage owned, logged, and reflected on the dashboard.',
+      completeLabel: 'Deal tracked',
+      completeDetail: 'dashboard updated',
+      steps: [
+        { icon: Inbox, kind: 'client', label: 'New lead', tag: 'contact captured', idle: 'Lead captured', active: 'Capturing lead', done: 'Lead captured' },
+        { icon: Users, kind: 'store', label: 'Contact record', tag: 'single source', idle: 'Record created', active: 'Creating record', done: 'Record created' },
+        { icon: GitBranch, kind: 'guard', label: 'Pipeline stage', tag: 'owned + valued', idle: 'Stage assigned', active: 'Assigning stage', done: 'Stage assigned' },
+        { icon: ListChecks, kind: 'n8n', label: 'Follow-up task', tag: 'next action', idle: 'Task scheduled', active: 'Scheduling task', done: 'Task scheduled' },
+        { icon: History, kind: 'notify', label: 'Activity log', tag: 'calls + emails', idle: 'Activity logged', active: 'Logging activity', done: 'Activity logged' },
+        { icon: Radar, kind: 'store', label: 'Dashboard', tag: 'pipeline health', idle: 'Metrics updated', active: 'Updating metrics', done: 'Metrics updated' },
+      ],
+    },
+    tags: [
+      { icon: Users, label: 'Contact management' },
+      { icon: GitBranch, label: 'Deal pipeline' },
+      { icon: LayoutDashboard, label: 'Live dashboard' },
+    ],
+  },
 ]
 
 const resources = [
@@ -331,6 +510,21 @@ const founderProfile = {
 }
 
 const contentPages = {
+  '/community': {
+    icon: GraduationCap,
+    label: 'Community',
+    title: 'Community & learning',
+    intro: 'Beyond client projects, ABBADev shares practical technology knowledge so students, developers, entrepreneurs, and business owners can apply modern tools in the real world.',
+    blocks: [
+      ['AI education', 'Where AI creates real value, how to use it responsibly, and where people should stay in control.'],
+      ['Software & delivery craft', 'Practical software development and project management - how real systems get built and shipped.'],
+      ['Business technology', 'How automation, integration, and software actually improve day-to-day operations.'],
+      ['Hands-on formats', 'Webinars, workshops, tutorials, and demonstrations - learning by doing, not just by watching.'],
+    ],
+    examples: ['Webinars', 'Workshops', 'Tutorials', 'Tech demonstrations', 'AI education', 'Community discussions'],
+    cta: 'Reserve a seat',
+    ctaHref: '/register',
+  },
   '/services/ai-automation': {
     icon: BrainCircuit,
     label: 'Services',
@@ -390,36 +584,6 @@ const contentPages = {
     examples: ['Architecture second opinion', 'AI adoption review', 'Build versus buy decision', 'Integration planning'],
     cta: 'Request technical advisory',
     ctaHref: '/consulting-intake',
-  },
-  '/work': {
-    icon: LayoutDashboard,
-    label: 'Work',
-    title: 'Portfolio',
-    intro: 'A practical view of representative systems, automations, and architecture patterns ABBADev can deliver.',
-    blocks: [
-      ['Operating systems', 'Command centers, workflow apps, dashboards, and portals for daily business operations.'],
-      ['Automation layers', 'n8n workflows, notifications, data updates, intake routing, and exception queues.'],
-      ['Architecture foundations', 'APIs, sync jobs, role boundaries, observability, and data ownership rules.'],
-      ['Knowledge systems', 'Documentation, training resources, implementation notes, and reusable templates.'],
-    ],
-    examples: ['Transaction intake command center', 'Document intake assistant', 'Integration foundation'],
-    cta: 'Review the case studies',
-    ctaHref: '/cases',
-  },
-  '/cases': {
-    icon: FileText,
-    label: 'Work',
-    title: 'Case studies',
-    intro: 'Representative proof pages that show the business problem, approach, implementation path, governance, and results.',
-    blocks: [
-      ['Metric-led summaries', 'Each case starts with a measurable before and after signal.'],
-      ['Problem and approach', 'The business context is documented before architecture details appear.'],
-      ['Implementation path', 'The page explains phases, tradeoffs, governance, and handoff.'],
-      ['Printable summaries', 'Each case can support stakeholder review through a concise PDF.'],
-    ],
-    examples: caseStudies.map((study) => study.title),
-    cta: 'Read the latest case',
-    ctaHref: `/cases/${caseStudies[0].slug}`,
   },
   '/workflow-demos': {
     icon: Blocks,
@@ -511,21 +675,6 @@ const contentPages = {
     cta: 'Plan a transformation roadmap',
     ctaHref: '/consulting-intake',
   },
-  '/about': {
-    icon: ShieldCheck,
-    label: 'ABBADev',
-    title: 'About',
-    intro: 'ABBADev Tech Solutions is led by Rommel Galisanao to help organizations turn business complexity into practical software systems.',
-    blocks: [
-      ['Founder-led systems work', 'Rommel brings together software architecture, project leadership, AI automation, and business process analysis.'],
-      ['Business and technical translation', 'The work bridges executive clarity and developer-ready implementation.'],
-      ['AI-assisted delivery', 'AI is used to accelerate research, documentation, workflow design, and implementation while keeping accountability human.'],
-      ['Operating principles', 'Clear scope, practical architecture, measurable outcomes, and maintainable systems.'],
-    ],
-    examples: ['Software architecture', 'AI automation', 'Digital transformation', 'Custom systems'],
-    cta: 'Start a conversation',
-    ctaHref: '/contact',
-  },
   '/contact': {
     icon: MessageSquareText,
     label: 'ABBADev',
@@ -573,8 +722,51 @@ const contentPages = {
   },
 }
 
-function CaseStudyPage({ study, theme, setTheme }) {
+// Shared nav header for the standalone pages (case study, cases directory,
+// content pages). Owns its own mobile-menu state.
+function CasePageHeader({ theme, setTheme }) {
   const [menuOpen, setMenuOpen] = useState(false)
+  return (
+    <header className="nav case-page-header">
+      <a className="brand" href="/#top" aria-label="ABBADev Tech Solutions home">
+        <img className="brand-mark" src="/images/abbadev-logo.png" alt="" width="42" height="42" />
+        <span className="brand-wordmark">
+          <strong>ABBADEV</strong>
+          <small>Tech Solutions</small>
+        </span>
+      </a>
+      <div className="nav-right">
+        <button
+          className="icon-button theme-toggle"
+          type="button"
+          aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+          onClick={() => setTheme((current) => (current === 'dark' ? 'light' : 'dark'))}
+        >
+          {theme === 'dark' ? <Sun size={19} aria-hidden="true" /> : <Moon size={19} aria-hidden="true" />}
+        </button>
+        <button
+          className="icon-button mobile-only"
+          type="button"
+          aria-label="Toggle navigation"
+          onClick={() => setMenuOpen((open) => !open)}
+        >
+          {menuOpen ? <X size={20} /> : <Menu size={20} />}
+        </button>
+        <nav className={menuOpen ? 'nav-links open' : 'nav-links'}>
+          <a href="/#platform" onClick={() => setMenuOpen(false)}>Platform</a>
+          <a href="/#workflow" onClick={() => setMenuOpen(false)}>Workflow</a>
+          <a href="/#services" onClick={() => setMenuOpen(false)}>Services</a>
+          <a href="/#resources" onClick={() => setMenuOpen(false)}>Insights</a>
+          <a className="nav-cta" href="/#contact" onClick={() => setMenuOpen(false)}>
+            Book a systems consult
+          </a>
+        </nav>
+      </div>
+    </header>
+  )
+}
+
+function CaseStudyPage({ study, theme, setTheme }) {
   const currentIndex = caseStudies.findIndex((item) => item.slug === study.slug)
   const previousStudy = caseStudies[(currentIndex - 1 + caseStudies.length) % caseStudies.length]
   const nextStudy = caseStudies[(currentIndex + 1) % caseStudies.length]
@@ -588,42 +780,7 @@ function CaseStudyPage({ study, theme, setTheme }) {
 
   return (
     <div className="site-shell case-page-shell">
-      <header className="nav case-page-header">
-        <a className="brand" href="/#top" aria-label="ABBADev Tech Solutions home">
-          <img className="brand-mark" src="/images/abbadev-logo.png" alt="" width="42" height="42" />
-          <span className="brand-wordmark">
-            <strong>ABBADEV</strong>
-            <small>Tech Solutions</small>
-          </span>
-        </a>
-        <div className="nav-right">
-          <button
-            className="icon-button theme-toggle"
-            type="button"
-            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-            onClick={() => setTheme((current) => (current === 'dark' ? 'light' : 'dark'))}
-          >
-            {theme === 'dark' ? <Sun size={19} aria-hidden="true" /> : <Moon size={19} aria-hidden="true" />}
-          </button>
-          <button
-            className="icon-button mobile-only"
-            type="button"
-            aria-label="Toggle navigation"
-            onClick={() => setMenuOpen((open) => !open)}
-          >
-            {menuOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
-          <nav className={menuOpen ? 'nav-links open' : 'nav-links'}>
-            <a href="/#platform" onClick={() => setMenuOpen(false)}>Platform</a>
-            <a href="/#workflow" onClick={() => setMenuOpen(false)}>Workflow</a>
-            <a href="/#services" onClick={() => setMenuOpen(false)}>Services</a>
-            <a href="/#resources" onClick={() => setMenuOpen(false)}>Insights</a>
-            <a className="nav-cta" href="/#contact" onClick={() => setMenuOpen(false)}>
-              Book a systems consult
-            </a>
-          </nav>
-        </div>
-      </header>
+      <CasePageHeader theme={theme} setTheme={setTheme} />
 
       <main className="case-page-main">
         <a className="case-page-back" href="/#work">Back to case studies</a>
@@ -640,13 +797,24 @@ function CaseStudyPage({ study, theme, setTheme }) {
             ))}
           </div>
           <p className="case-page-disclaimer">
-            Details anonymized to protect the client operating context.
+            {study.disclaimer || 'Details anonymized to protect the client operating context.'}
           </p>
         </section>
 
-        <a className="case-download-link" href={summaryPdfHref} download>
-          Download the 1-page summary <ArrowRight size={15} aria-hidden="true" />
-        </a>
+        {study.liveUrl ? (
+          <a
+            className="case-download-link"
+            href={study.liveUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Launch the live app <ArrowRight size={15} aria-hidden="true" />
+          </a>
+        ) : study.summaryPdf !== false && (
+          <a className="case-download-link" href={summaryPdfHref} download>
+            Download the 1-page summary <ArrowRight size={15} aria-hidden="true" />
+          </a>
+        )}
 
         <div className="case-page-split">
           <section className="case-page-section case-page-list-section">
@@ -685,6 +853,20 @@ function CaseStudyPage({ study, theme, setTheme }) {
             ))}
           </div>
         </section>
+
+        {study.workflow && (
+          <section className="case-page-section case-workflow-section">
+            <span className="kicker">Live pipeline</span>
+            <h2>{study.workflow.heading}</h2>
+            <CaseWorkflow
+              title={study.workflow.title}
+              caption={study.workflow.caption}
+              completeLabel={study.workflow.completeLabel}
+              completeDetail={study.workflow.completeDetail}
+              steps={study.workflow.steps}
+            />
+          </section>
+        )}
 
         <section className="case-page-section case-page-list-section">
           <span className="kicker">04 / Results</span>
@@ -728,16 +910,45 @@ function CaseStudyPage({ study, theme, setTheme }) {
           </ul>
         </section>
 
-        <section className="case-page-cta">
-          <div>
-            <span className="kicker">Take this with you</span>
-            <h2>Summary PDF - 1 page, print-ready</h2>
-            <p>Problem, approach, implementation path, and results packaged for stakeholder review.</p>
-          </div>
-          <a className="primary-button" href={summaryPdfHref} download>
-            Download PDF <ArrowRight size={18} aria-hidden="true" />
-          </a>
-        </section>
+        {study.liveUrl ? (
+          <section className="case-page-cta">
+            <div>
+              <span className="kicker">See it live</span>
+              <h2>Explore the CRM running in production</h2>
+              <p>Open the live app to walk the same contacts, pipeline, tasks, and dashboard described here.</p>
+            </div>
+            <a
+              className="primary-button"
+              href={study.liveUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Launch the CRM <ArrowRight size={18} aria-hidden="true" />
+            </a>
+          </section>
+        ) : study.summaryPdf !== false ? (
+          <section className="case-page-cta">
+            <div>
+              <span className="kicker">Take this with you</span>
+              <h2>Summary PDF - 1 page, print-ready</h2>
+              <p>Problem, approach, implementation path, and results packaged for stakeholder review.</p>
+            </div>
+            <a className="primary-button" href={summaryPdfHref} download>
+              Download PDF <ArrowRight size={18} aria-hidden="true" />
+            </a>
+          </section>
+        ) : (
+          <section className="case-page-cta">
+            <div>
+              <span className="kicker">See it live</span>
+              <h2>The assistant is in the corner of this site</h2>
+              <p>Open it, ask about services or pricing, then try Book a consult to walk the exact intake flow described here.</p>
+            </div>
+            <a className="primary-button" href="/#contact">
+              Book a systems consult <ArrowRight size={18} aria-hidden="true" />
+            </a>
+          </section>
+        )}
 
         <nav className="case-page-pagination" aria-label="Case study navigation">
           <a className="case-next-link" href={`/cases/${previousStudy.slug}`}>
@@ -754,48 +965,1029 @@ function CaseStudyPage({ study, theme, setTheme }) {
   )
 }
 
+function CasesIndexPage({ theme, setTheme }) {
+  const [filter, setFilter] = useState('All')
+  const filters = ['All', ...Array.from(new Set(caseStudies.map((study) => study.type)))]
+  const visible = filter === 'All' ? caseStudies : caseStudies.filter((study) => study.type === filter)
+
+  return (
+    <div className="site-shell cases-index-shell">
+      <CasePageHeader theme={theme} setTheme={setTheme} />
+
+      <main className="cases-index-main">
+        <section className="cases-index-hero">
+          <span className="kicker">Selected work</span>
+          <h1>Case studies</h1>
+          <p>
+            Real systems ABBADev has designed and shipped - each one shows the business problem,
+            the approach, the implementation path, governance, and a measurable before and after.
+            Filter by the kind of system you are building.
+          </p>
+        </section>
+
+        <div className="cx-filter" role="group" aria-label="Filter case studies by type">
+          {filters.map((option) => (
+            <button
+              key={option}
+              type="button"
+              aria-pressed={filter === option}
+              className={`cx-pill${filter === option ? ' is-active' : ''}`}
+              onClick={() => setFilter(option)}
+            >
+              {option}
+              {option !== 'All' && (
+                <span className="cx-pill-count">
+                  {caseStudies.filter((study) => study.type === option).length}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+
+        <div className="cx-grid">
+          {visible.map((study) => {
+            const Icon = study.icon
+            return (
+              <article className="cx-card" key={study.slug}>
+                <a className="cx-card-link" href={`/cases/${study.slug}`} aria-label={`Read case study: ${study.title}`}>
+                  <div className="cx-media">
+                    <div className="cx-chrome" aria-hidden="true">
+                      <span className="cx-dot" />
+                      <span className="cx-dot" />
+                      <span className="cx-dot" />
+                      <em>{study.code}</em>
+                    </div>
+                    <div className={study.mockup ? 'cx-shot cx-shot--mock' : 'cx-shot'}>
+                      {study.mockup === 'crm' ? (
+                        <div className="cx-mock-frame">
+                          <CrmMockup />
+                        </div>
+                      ) : (
+                        <img src={study.image} alt={study.imageAlt || ''} decoding="async" width="640" height="360" />
+                      )}
+                    </div>
+                  </div>
+                  <div className="cx-body">
+                    <span className="cx-cat">
+                      <Icon size={14} aria-hidden="true" />
+                      {study.type}
+                    </span>
+                    <h3>{study.title}</h3>
+                    <p>{study.result}</p>
+                    <div className="cx-metric" aria-label={`${study.metric.label}: before ${study.metric.before}, after ${study.metric.after}`}>
+                      <span className="cx-metric-label">{study.metric.label}</span>
+                      <span className="cx-metric-values">
+                        <del>{study.metric.before}</del>
+                        <ArrowRight size={12} aria-hidden="true" />
+                        <strong>{study.metric.after}</strong>
+                      </span>
+                    </div>
+                    <span className="cx-readmore">
+                      Read case study
+                      <ArrowRight size={15} aria-hidden="true" />
+                    </span>
+                  </div>
+                </a>
+              </article>
+            )
+          })}
+        </div>
+
+        <section className="cx-cta">
+          <div className="cx-cta-copy">
+            <span className="kicker">Your workflow could be next</span>
+            <h2>Recognize one of these patterns in your own operations?</h2>
+            <p>Bring the workflow that costs you the most time. We will map the system around it.</p>
+          </div>
+          <a className="primary-button" href="/consulting-intake">
+            Book a systems consult <ArrowRight size={18} aria-hidden="true" />
+          </a>
+        </section>
+      </main>
+    </div>
+  )
+}
+
+// Scroll-reveal wrapper: an IntersectionObserver toggles a CSS class that drives
+// a compositor transition. Content reveals once on first view, and is shown
+// immediately when the observer is unavailable or reduced motion is preferred.
+function Reveal({ as: Tag = 'div', className, children, delay = 0 }) {
+  const ref = useRef(null)
+  const [shown, setShown] = useState(false)
+
+  useEffect(() => {
+    const node = ref.current
+    const prefersReduced =
+      typeof window !== 'undefined' &&
+      window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+    if (!node || prefersReduced || !('IntersectionObserver' in window)) {
+      setShown(true)
+      return undefined
+    }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setShown(true)
+            observer.disconnect()
+          }
+        })
+      },
+      { threshold: 0.15 },
+    )
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [])
+
+  return (
+    <Tag
+      ref={ref}
+      className={`reveal${shown ? ' is-visible' : ''}${className ? ` ${className}` : ''}`}
+      style={delay ? { transitionDelay: `${delay}ms` } : undefined}
+    >
+      {children}
+    </Tag>
+  )
+}
+
+// Renders a WebP source with a JPEG fallback. `src` is the .jpg path; the .webp
+// sibling is served to browsers that support it.
+function Photo({ src, alt, width, height, loading = 'lazy' }) {
+  const webp = src.replace(/\.jpg$/, '.webp')
+  return (
+    <picture>
+      <source srcSet={webp} type="image/webp" />
+      <img
+        src={src}
+        alt={alt}
+        width={width}
+        height={height}
+        loading={loading}
+        decoding="async"
+      />
+    </picture>
+  )
+}
+
+const serviceCategories = [
+  {
+    num: '01',
+    title: 'AI & Automation',
+    image: '/images/services/ai-automation.jpg',
+    alt: 'Abstract 3D rendering of the letters A I over a connected network',
+    copy: 'AI assistants, chatbots, document processing, and content generation - plus automation of approvals, notifications, reporting, and repetitive back-office work using n8n, APIs, and the tools you already run.',
+    points: ['AI assistants & chatbots', 'Lead qualification', 'Document processing', 'Workflow automation'],
+    href: '/services/ai-automation',
+  },
+  {
+    num: '02',
+    title: 'Custom Software Development',
+    image: '/images/services/custom-software.jpg',
+    alt: 'Close-up of source code on a dark editor screen',
+    copy: 'Web and internal business applications built around how you operate - admin portals, dashboards, CRM, HR, inventory, and sales systems, plus corporate sites and client portals.',
+    points: ['Web applications', 'Admin portals & dashboards', 'Client portals', 'API-connected sites'],
+    href: '/services/custom-systems',
+  },
+  {
+    num: '03',
+    title: 'Business Systems & Internal Tools',
+    image: '/images/services/business-systems.jpg',
+    alt: 'Analytics dashboard with charts displayed on a laptop screen',
+    copy: 'Right-sized systems for SMEs - CRM, sales and quotation tracking, approvals, inventory, HR records, task management, and operational reporting - without enterprise overhead.',
+    points: ['CRM & sales tracking', 'Quotation & approvals', 'Inventory & HR records', 'Operational reporting'],
+    href: '/business-solutions',
+  },
+  {
+    num: '04',
+    title: 'Systems Integration',
+    image: '/images/services/systems-integration.jpg',
+    alt: 'Server racks connected by colorful network cabling',
+    copy: 'Connect the systems you already use so data flows automatically between websites, CRMs, accounting, HR, messaging platforms, databases, forms, and third-party applications.',
+    points: ['API integrations', 'Automated data sync', 'Third-party connectors', 'Single source of truth'],
+    href: '/consulting-intake',
+  },
+  {
+    num: '05',
+    title: 'Software Architecture & Technology Consulting',
+    image: '/images/services/software-architecture.jpg',
+    alt: 'Person arranging application wireframes and flow diagrams on a wall',
+    copy: 'System and database design, API and cloud architecture, scalability and integration planning, technical documentation, and technology-stack guidance for platforms built to last.',
+    points: ['System & database design', 'API & cloud architecture', 'Scalability planning', 'Tech-stack guidance'],
+    href: '/services/software-architecture',
+  },
+  {
+    num: '06',
+    title: 'Project Management & Digital Transformation',
+    image: '/images/services/project-delivery.jpg',
+    alt: 'Modern office workspace with a laptop by a window',
+    copy: 'Requirements, planning, sprints, UAT, and deployment - plus digital-transformation reviews that find where software, automation, or integration can improve day-to-day operations.',
+    points: ['Requirements & planning', 'Delivery & UAT', 'Project recovery', 'Transformation roadmaps'],
+    href: '/services/technical-advisory',
+  },
+]
+
+function ServicesPage({ theme, setTheme }) {
+  return (
+    <div className="site-shell case-page-shell content-page-shell services-page-shell">
+      <CasePageHeader theme={theme} setTheme={setTheme} />
+
+      <main className="case-page-main services-page-main">
+        <a className="case-page-back" href="/#top">Back to home</a>
+
+        <section className="services-hero">
+          <Reveal className="services-hero-copy">
+            <span className="content-page-icon" aria-hidden="true">
+              <Blocks size={24} />
+            </span>
+            <span className="kicker">Services</span>
+            <h1>Design, build, automate, and improve the systems you use every day.</h1>
+            <p>
+              From AI-powered automation and custom software to business systems, integrations,
+              architecture, and technology project management, ABBADev turns operational problems
+              into practical digital solutions.
+            </p>
+            <div className="content-page-actions">
+              <a className="primary-button" href="/consulting-intake">
+                Map an engagement <ArrowRight size={18} aria-hidden="true" />
+              </a>
+              <a className="secondary-button" href="/cases">
+                Review proof <FileText size={17} aria-hidden="true" />
+              </a>
+            </div>
+          </Reveal>
+          <Reveal className="services-hero-media" delay={120}>
+            <Photo
+              src="/images/services/hero.jpg"
+              alt="A team collaborating around laptops at a shared workspace"
+              width="1200"
+              height="800"
+              loading="eager"
+            />
+            <span className="services-hero-badge">
+              <Sparkles size={15} aria-hidden="true" />
+              Technology Solutions Partner for SMEs
+            </span>
+          </Reveal>
+        </section>
+
+        <Reveal as="section" className="services-positioning">
+          <span className="kicker">Where ABBADev fits</span>
+          <p>
+            More than a software company - a <strong>technology solutions partner for SMEs</strong>,
+            combining software, AI, automation, and project management. Start with a chatbot, a
+            report, or a broken workflow; grow into the platform your operations actually need.
+          </p>
+        </Reveal>
+
+        <section className="services-grid" aria-label="Service categories">
+          {serviceCategories.map((service) => (
+            <Reveal as="article" className="services-card" key={service.title}>
+              <a className="services-card-link" href={service.href} aria-label={service.title}>
+                <div className="services-card-media">
+                  <Photo src={service.image} alt={service.alt} width="1200" height="800" />
+                  <span className="services-card-num" aria-hidden="true">{service.num}</span>
+                </div>
+                <div className="services-card-body">
+                  <h2>{service.title}</h2>
+                  <p>{service.copy}</p>
+                  <ul className="services-points">
+                    {service.points.map((point) => (
+                      <li key={point}>
+                        <Check size={15} aria-hidden="true" />
+                        <span>{point}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <span className="services-card-more">
+                    Explore <ArrowRight size={15} aria-hidden="true" />
+                  </span>
+                </div>
+              </a>
+            </Reveal>
+          ))}
+        </section>
+
+        <section className="services-training">
+          <Reveal className="services-training-media">
+            <Photo
+              src="/images/services/training.jpg"
+              alt="A presenter leading a workshop for a seated audience"
+              width="1200"
+              height="800"
+            />
+          </Reveal>
+          <Reveal className="services-training-copy" delay={100}>
+            <span className="kicker">Training & workshops</span>
+            <h2>Build capability inside the team, not just software.</h2>
+            <p>
+              Seminars, webinars, and customized corporate training on AI for business, automation,
+              software development, project management, and practical digital transformation - so
+              your people can carry the momentum forward.
+            </p>
+            <div className="services-training-tags">
+              {['AI for business', 'Automation', 'Software delivery', 'Digital transformation'].map((tag) => (
+                <span key={tag}>{tag}</span>
+              ))}
+            </div>
+            <a className="secondary-button" href="/register">
+              Browse upcoming sessions <ArrowRight size={17} aria-hidden="true" />
+            </a>
+          </Reveal>
+        </section>
+
+        <Reveal as="section" className="case-page-cta services-cta">
+          <div>
+            <span className="kicker">Start with one problem</span>
+            <h2>A chatbot, a report, a broken workflow - bring the one that costs you most.</h2>
+            <p>
+              Tell us what you want to improve and we will map the software, automation, or
+              integration path around it.
+            </p>
+          </div>
+          <a className="primary-button" href="/consulting-intake">
+            Map an engagement <ArrowRight size={18} aria-hidden="true" />
+          </a>
+        </Reveal>
+      </main>
+    </div>
+  )
+}
+
+const aboutCapabilities = [
+  {
+    icon: BrainCircuit,
+    title: 'AI & intelligent automation',
+    copy: 'Put AI where it removes repetitive work - assistance, lead qualification, follow-ups, document processing, and reporting - with human judgment kept in control.',
+  },
+  {
+    icon: Workflow,
+    title: 'Business process automation',
+    copy: 'Connect websites, databases, email, messaging, CRMs, and APIs so intake, approvals, and handoffs move without manual re-entry.',
+  },
+  {
+    icon: Code2,
+    title: 'Custom software development',
+    copy: 'CRM, sales, HRIS, inventory, operations, dashboards, and internal apps built around how the organization actually works.',
+  },
+  {
+    icon: Network,
+    title: 'Software architecture',
+    copy: 'Systems designed for scalability, maintainability, and security so a platform can grow without becoming expensive to maintain later.',
+  },
+  {
+    icon: ListChecks,
+    title: 'Project management & delivery',
+    copy: 'Discovery through deployment, managed with clear scope, stakeholder visibility, and defined goals - where most projects actually succeed or fail.',
+  },
+]
+
+const aboutApproach = [
+  ['Understand before we build', 'Start with the problem, the users, the workflow, and the outcome you actually want.'],
+  ['Simplify before we automate', 'Automating a broken process only makes it fail faster. Where possible, we fix the workflow first.'],
+  ['Automate what makes sense', 'Remove unnecessary work while keeping people involved where judgment and accountability matter.'],
+  ['Build for growth', 'Systems should be able to evolve as the organization grows, not get rebuilt every year.'],
+  ['Measure the outcome', 'Success shows up as real gains in efficiency, visibility, accuracy, or operating capability.'],
+]
+
+const aboutVisionMission = [
+  {
+    label: 'Our vision',
+    copy: 'To help businesses and communities confidently adopt technology, automation, and AI to create better ways of working.',
+  },
+  {
+    label: 'Our mission',
+    copy: 'To design practical, scalable, and accessible technology that simplifies operations, empowers people, and helps organizations grow.',
+  },
+]
+
+const aboutValues = [
+  { icon: CircleDot, title: 'Purpose', copy: 'Technology should solve meaningful problems, not add to them.' },
+  { icon: Sparkles, title: 'Excellence', copy: 'Solutions are thoughtfully designed and professionally delivered.' },
+  { icon: ShieldCheck, title: 'Integrity', copy: 'Trust, transparency, and responsible technology come first.' },
+  { icon: GraduationCap, title: 'Continuous learning', copy: 'Technology changes constantly, and we keep learning with it.' },
+  { icon: CheckCircle2, title: 'Service', copy: 'Technology matters when it improves the work of the people using it.' },
+  { icon: Wand2, title: 'Innovation', copy: 'We stay open to better tools, approaches, and ways of solving problems.' },
+]
+
+const aboutSegments = [
+  {
+    icon: Blocks,
+    title: 'Small & medium enterprises',
+    copy: 'Replace spreadsheets, paper processes, and disconnected tools with systems that fit how the team works.',
+  },
+  {
+    icon: Workflow,
+    title: 'Growing companies',
+    copy: 'Already running multiple applications, now needing automation, integrations, reporting, or custom software.',
+  },
+  {
+    icon: Sparkles,
+    title: 'Entrepreneurs & startups',
+    copy: 'Turn an idea into a working application or digital product with the right foundation from day one.',
+  },
+  {
+    icon: Radar,
+    title: 'Digital transformation',
+    copy: 'Organizations modernizing existing processes and technology infrastructure in phases teams can adopt.',
+  },
+  {
+    icon: GraduationCap,
+    title: 'Students & professionals',
+    copy: 'Individuals learning how AI, software, project management, and modern practices apply in the real world.',
+  },
+]
+
+// Placeholder sessions - replace `date`, `time`, `location`, and `price` with
+// real events. `audience` drives the filter and the registration form: use
+// 'Students', 'SME owners', or both. `type` is Webinar | Seminar | Workshop;
+// `mode` is Online | In-person (add `location` for in-person sessions).
+const eventOfferings = [
+  {
+    id: 'ai-automation-smes',
+    title: 'AI & Automation for Business',
+    type: 'Webinar',
+    mode: 'Online',
+    audience: ['SME owners'],
+    date: 'Sep 24, 2026',
+    time: '2:00 PM PHT',
+    duration: '90 minutes',
+    level: 'Beginner',
+    price: 'Free',
+    blurb: 'Where AI and automation realistically save time in a small business - assistants, follow-ups, and reporting - and how to start without a big budget.',
+  },
+  {
+    id: 'first-chatbot',
+    title: 'Build Your First AI Chatbot',
+    type: 'Workshop',
+    mode: 'Online',
+    audience: ['Students', 'SME owners'],
+    date: 'Oct 8, 2026',
+    time: '10:00 AM PHT',
+    duration: '3 hours',
+    level: 'Hands-on',
+    price: '₱750',
+    blurb: 'A hands-on session building and deploying a working chatbot from scratch - no prior AI experience required.',
+  },
+  {
+    id: 'intro-software-dev',
+    title: 'Intro to Software Development',
+    type: 'Seminar',
+    mode: 'In-person',
+    location: 'Metro Manila',
+    audience: ['Students'],
+    date: 'Oct 18, 2026',
+    time: '9:00 AM PHT',
+    duration: 'Half day',
+    level: 'Beginner',
+    price: 'Free',
+    blurb: 'How real software gets built - languages, tools, and the path from idea to shipped app - for students exploring a tech career.',
+  },
+  {
+    id: 'digital-transformation-smes',
+    title: 'Digital Transformation for SMEs',
+    type: 'Seminar',
+    mode: 'In-person',
+    location: 'Metro Manila',
+    audience: ['SME owners'],
+    date: 'Nov 5, 2026',
+    time: '1:00 PM PHT',
+    duration: 'Half day',
+    level: 'Intermediate',
+    price: '₱1,200',
+    blurb: 'Move from spreadsheets and manual steps to connected systems - a practical roadmap you can adopt in phases.',
+  },
+  {
+    id: 'no-code-automation',
+    title: 'No-Code Automation with n8n',
+    type: 'Workshop',
+    mode: 'Online',
+    audience: ['Students', 'SME owners'],
+    date: 'Nov 19, 2026',
+    time: '2:00 PM PHT',
+    duration: '3 hours',
+    level: 'Hands-on',
+    price: '₱750',
+    blurb: 'Connect apps and automate approvals, notifications, and data entry visually - build a real working workflow live.',
+  },
+  {
+    id: 'project-management',
+    title: 'Project Management Fundamentals',
+    type: 'Webinar',
+    mode: 'Online',
+    audience: ['Students', 'SME owners'],
+    date: 'Dec 3, 2026',
+    time: '3:00 PM PHT',
+    duration: '2 hours',
+    level: 'Beginner',
+    price: 'Free',
+    blurb: 'Scope, planning, and delivery basics that keep technology projects on track - for aspiring PMs and owners alike.',
+  },
+]
+
+const eventTypeIcon = { Webinar: BookOpen, Seminar: Users, Workshop: Wand2 }
+
+const registerFilters = [
+  { key: 'all', label: 'All sessions' },
+  { key: 'Students', label: 'For students' },
+  { key: 'SME owners', label: 'For SME owners' },
+]
+
+const registerBenefits = [
+  'Practical, hands-on content you can apply the next day',
+  'Sessions sized for both students and business owners',
+  'Live Q&A with a working technology practitioner',
+  'A certificate of participation on request',
+]
+
+function RegisterPage({ theme, setTheme }) {
+  const [filter, setFilter] = useState('all')
+  const [selectedEventId, setSelectedEventId] = useState('')
+  const [audience, setAudience] = useState('')
+  const [status, setStatus] = useState('idle')
+  const [message, setMessage] = useState('')
+  const formRef = useRef(null)
+
+  const visibleEvents =
+    filter === 'all'
+      ? eventOfferings
+      : eventOfferings.filter((event) => event.audience.includes(filter))
+
+  const selectEvent = (event) => {
+    setSelectedEventId(event.id)
+    if (event.audience.length === 1) {
+      setAudience(event.audience[0] === 'Students' ? 'student' : 'sme')
+    }
+    if (typeof window !== 'undefined') {
+      formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }
+
+  const handleRegister = async (formEvent) => {
+    formEvent.preventDefault()
+    if (status === 'submitting') return
+
+    const form = formEvent.currentTarget
+    const payload = Object.fromEntries(new FormData(form).entries())
+    const email = String(payload.email || '').trim()
+
+    if (!EMAIL_PATTERN.test(email)) {
+      setStatus('error')
+      setMessage('Enter a valid email address, such as name@example.com.')
+      return
+    }
+    if (!audience) {
+      setStatus('error')
+      setMessage('Let us know whether you are registering as a student or an SME owner.')
+      return
+    }
+
+    const selected = eventOfferings.find((event) => event.id === selectedEventId)
+    setStatus('submitting')
+    setMessage('')
+
+    try {
+      const endpoint = import.meta.env.VITE_EVENT_ENDPOINT || '/api/event-registration'
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...payload,
+          email,
+          audience: audience === 'student' ? 'Student' : 'SME owner',
+          eventId: selectedEventId || 'notify-next',
+          eventTitle: selected ? selected.title : 'Notify me of the next session',
+          eventDate: selected ? selected.date : '',
+          source: 'abbadev.com',
+          pageUrl: typeof window !== 'undefined' ? window.location.href : 'https://abbadev.com/register',
+          submittedAt: new Date().toISOString(),
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error(`Registration failed with status ${response.status}`)
+      }
+
+      setStatus('submitted')
+      setMessage('You are registered. A confirmation with the session details will arrive by email shortly.')
+      form.reset()
+      setAudience('')
+      setSelectedEventId('')
+    } catch (error) {
+      console.error(error)
+      setStatus('error')
+      setMessage('Registration could not be sent right now. Please try again or email ABBADev directly.')
+    }
+  }
+
+  return (
+    <div className="site-shell case-page-shell content-page-shell register-page-shell">
+      <CasePageHeader theme={theme} setTheme={setTheme} />
+
+      <main className="case-page-main register-page-main">
+        <a className="case-page-back" href="/#top">Back to home</a>
+
+        <Reveal as="section" className="case-page-hero register-hero">
+          <span className="content-page-icon" aria-hidden="true">
+            <GraduationCap size={24} />
+          </span>
+          <span className="kicker">Seminars & webinars</span>
+          <h1>Learn practical technology - and put it to work.</h1>
+          <p>
+            Hands-on sessions on AI, automation, software, and project management for
+            <strong> students</strong> starting out and <strong> SME owners</strong> improving how
+            their business runs. Pick a session below and reserve your seat.
+          </p>
+          <ul className="register-benefits">
+            {registerBenefits.map((benefit) => (
+              <li key={benefit}>
+                <CheckCircle2 size={17} aria-hidden="true" />
+                <span>{benefit}</span>
+              </li>
+            ))}
+          </ul>
+        </Reveal>
+
+        <section className="register-events" aria-label="Upcoming sessions">
+          <div className="register-events-head">
+            <h2>Upcoming sessions</h2>
+            <div className="register-filter" role="group" aria-label="Filter sessions by audience">
+              {registerFilters.map((option) => (
+                <button
+                  key={option.key}
+                  type="button"
+                  aria-pressed={filter === option.key}
+                  className={`register-pill${filter === option.key ? ' is-active' : ''}`}
+                  onClick={() => setFilter(option.key)}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="register-grid">
+            {visibleEvents.map((event) => {
+              const TypeIcon = eventTypeIcon[event.type] || BookOpen
+              const ModeIcon = event.mode === 'Online' ? Video : MapPin
+              const isSelected = selectedEventId === event.id
+              return (
+                <article className={`register-event${isSelected ? ' is-selected' : ''}`} key={event.id}>
+                  <div className="register-event-top">
+                    <span className="register-type">
+                      <TypeIcon size={14} aria-hidden="true" />
+                      {event.type}
+                    </span>
+                    <span className="register-mode">
+                      <ModeIcon size={13} aria-hidden="true" />
+                      {event.mode === 'In-person' && event.location ? event.location : event.mode}
+                    </span>
+                  </div>
+                  <h3>{event.title}</h3>
+                  <p>{event.blurb}</p>
+                  <ul className="register-event-meta">
+                    <li><Calendar size={14} aria-hidden="true" /> {event.date}</li>
+                    <li><Clock size={14} aria-hidden="true" /> {event.time} · {event.duration}</li>
+                    <li><Users size={14} aria-hidden="true" /> {event.audience.join(' & ')}</li>
+                  </ul>
+                  <div className="register-event-foot">
+                    <span className={`register-price${event.price === 'Free' ? ' is-free' : ''}`}>
+                      {event.price}
+                    </span>
+                    <button type="button" className="register-select-btn" onClick={() => selectEvent(event)}>
+                      {isSelected ? 'Selected' : 'Register'}
+                      {isSelected ? <Check size={15} aria-hidden="true" /> : <ArrowRight size={15} aria-hidden="true" />}
+                    </button>
+                  </div>
+                </article>
+              )
+            })}
+          </div>
+        </section>
+
+        <section className="register-form-section" ref={formRef}>
+          <div className="register-form-intro">
+            <span className="kicker">Reserve your seat</span>
+            <h2>Register in under a minute.</h2>
+            <p>
+              Fill in your details and we will confirm your spot by email. Not sure which session
+              yet? Choose <em>Notify me of the next session</em> and we will keep you posted.
+            </p>
+            <div className="register-form-note">
+              <ShieldCheck size={17} aria-hidden="true" />
+              <span>We use your details only to confirm your registration and share session updates.</span>
+            </div>
+          </div>
+
+          {status === 'submitted' ? (
+            <div className="register-success" role="status">
+              <span className="register-success-icon" aria-hidden="true">
+                <CheckCircle2 size={26} />
+              </span>
+              <h3>You&apos;re registered</h3>
+              <p>{message}</p>
+              <button
+                type="button"
+                className="secondary-button"
+                onClick={() => {
+                  setStatus('idle')
+                  setMessage('')
+                }}
+              >
+                Register for another session <ArrowRight size={17} aria-hidden="true" />
+              </button>
+            </div>
+          ) : (
+            <form className="register-form" onSubmit={handleRegister} noValidate>
+              <div className="register-field">
+                <label htmlFor="reg-name">Full name</label>
+                <input id="reg-name" name="name" type="text" autoComplete="name" required placeholder="Juan Dela Cruz" />
+              </div>
+
+              <div className="register-field">
+                <label htmlFor="reg-email">Email address</label>
+                <input id="reg-email" name="email" type="email" autoComplete="email" required placeholder="name@example.com" />
+              </div>
+
+              <fieldset className="register-field register-audience">
+                <legend>I am registering as a</legend>
+                <div className="register-audience-toggle">
+                  <button
+                    type="button"
+                    aria-pressed={audience === 'student'}
+                    className={`register-audience-btn${audience === 'student' ? ' is-active' : ''}`}
+                    onClick={() => setAudience('student')}
+                  >
+                    <GraduationCap size={18} aria-hidden="true" />
+                    Student
+                  </button>
+                  <button
+                    type="button"
+                    aria-pressed={audience === 'sme'}
+                    className={`register-audience-btn${audience === 'sme' ? ' is-active' : ''}`}
+                    onClick={() => setAudience('sme')}
+                  >
+                    <Blocks size={18} aria-hidden="true" />
+                    SME owner
+                  </button>
+                </div>
+              </fieldset>
+
+              <div className="register-field">
+                <label htmlFor="reg-org">
+                  {audience === 'student' ? 'School / institution' : audience === 'sme' ? 'Company' : 'School or company'}
+                </label>
+                <input
+                  id="reg-org"
+                  name="organization"
+                  type="text"
+                  autoComplete="organization"
+                  placeholder={audience === 'student' ? 'Your school or university' : 'Your business name'}
+                />
+              </div>
+
+              <div className="register-field">
+                <label htmlFor="reg-event">Session</label>
+                <select
+                  id="reg-event"
+                  name="eventId"
+                  value={selectedEventId}
+                  onChange={(changeEvent) => setSelectedEventId(changeEvent.target.value)}
+                >
+                  <option value="">Notify me of the next session</option>
+                  {eventOfferings.map((event) => (
+                    <option key={event.id} value={event.id}>
+                      {event.title} — {event.date}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="register-field">
+                <label htmlFor="reg-phone">Phone <span className="register-optional">(optional)</span></label>
+                <input id="reg-phone" name="phone" type="tel" autoComplete="tel" placeholder="+63 9XX XXX XXXX" />
+              </div>
+
+              <div className="register-field register-field-full">
+                <label htmlFor="reg-message">Anything you want to get out of the session? <span className="register-optional">(optional)</span></label>
+                <textarea id="reg-message" name="message" rows="3" placeholder="A question, a goal, or a topic you're hoping to cover." />
+              </div>
+
+              {status === 'error' && (
+                <p className="register-status is-error" role="alert">{message}</p>
+              )}
+
+              <button type="submit" className="primary-button register-submit" disabled={status === 'submitting'}>
+                {status === 'submitting' ? 'Sending…' : 'Reserve my seat'}
+                {status !== 'submitting' && <ArrowRight size={18} aria-hidden="true" />}
+              </button>
+            </form>
+          )}
+        </section>
+      </main>
+    </div>
+  )
+}
+
+function AboutPage({ theme, setTheme }) {
+  return (
+    <div className="site-shell case-page-shell content-page-shell about-page-shell">
+      <CasePageHeader theme={theme} setTheme={setTheme} />
+
+      <main className="case-page-main about-page-main">
+        <a className="case-page-back" href="/#top">Back to home</a>
+
+        <section className="case-page-hero about-hero">
+          <span className="content-page-icon" aria-hidden="true">
+            <ShieldCheck size={24} />
+          </span>
+          <span className="kicker">About ABBADev</span>
+          <h1>Practical technology that moves the business forward.</h1>
+          <p>
+            ABBADev Tech Solutions helps organizations turn business complexity into practical,
+            scalable systems - combining AI automation, custom software, software architecture,
+            and project delivery so technology fits how you actually operate.
+          </p>
+          <div className="content-page-actions">
+            <a className="primary-button" href="/consulting-intake">
+              Start a conversation <ArrowRight size={18} aria-hidden="true" />
+            </a>
+            <a className="secondary-button" href="/cases">
+              Review proof <FileText size={17} aria-hidden="true" />
+            </a>
+          </div>
+        </section>
+
+        <section className="case-page-section about-lead">
+          <span className="kicker">What we&apos;re about</span>
+          <h2>Technology should solve real problems - not create more of them.</h2>
+          <p>
+            Many teams know they need automation, AI, or better systems but do not know where to
+            begin. Some still run operations through spreadsheets, chat threads, email, and
+            disconnected apps. Others have software that no longer fits the way they work.
+          </p>
+          <p>
+            ABBADev bridges that gap. We learn how you operate today, find where the time goes, and
+            design technology around the organization - instead of forcing the organization to fit
+            the technology. That can mean automating one repetitive process, or designing an entire
+            business platform.
+          </p>
+        </section>
+
+        <section className="about-section">
+          <div className="about-section-head">
+            <span className="kicker">What we do</span>
+            <h2>From one automated workflow to an entire platform.</h2>
+          </div>
+          <div className="about-capabilities">
+            {aboutCapabilities.map(({ icon: Icon, title, copy }) => (
+              <article className="about-capability" key={title}>
+                <span className="about-capability-icon" aria-hidden="true">
+                  <Icon size={20} />
+                </span>
+                <h3>{title}</h3>
+                <p>{copy}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="about-founder" aria-label="Meet the founder">
+          <div className="about-founder-portrait">
+            <img
+              src="/images/founder.png"
+              alt="Rommel Galisanao, founder of ABBADev Tech Solutions"
+              width="360"
+              height="450"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+          <div className="about-founder-copy">
+            <span className="kicker">Meet the founder</span>
+            <h2>Rommel Galisanao</h2>
+            <p className="about-founder-role">Founder &amp; Technology Solutions Architect</p>
+            <p>
+              ABBADev was founded by Rommel Galisanao, whose work spans software engineering,
+              project management, team leadership, systems implementation, and business process
+              improvement - managing development teams, designing business applications, and
+              translating requirements into working software.
+            </p>
+            <p>
+              One pattern kept repeating: most companies do not need more technology - they need
+              technology that works better together. That realization shaped ABBADev. Every project
+              starts with the organization, its workflow, and the problem to solve, before any
+              product or tool is chosen.
+            </p>
+          </div>
+        </section>
+
+        <section className="about-section">
+          <div className="about-section-head">
+            <span className="kicker">Our approach</span>
+            <h2>Understand first. Simplify. Then automate.</h2>
+          </div>
+          <ol className="about-approach">
+            {aboutApproach.map(([title, copy], index) => (
+              <li className="about-step" key={title}>
+                <span className="about-step-num" aria-hidden="true">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+                <div className="about-step-body">
+                  <h3>{title}</h3>
+                  <p>{copy}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <section className="about-philosophy">
+          <blockquote className="case-page-quote about-quote">
+            <p>
+              People + software + automation + AI. The most effective organizations do not replace
+              people with AI - they build systems where people and intelligent technology work
+              together.
+            </p>
+            <cite>ABBADev technology philosophy</cite>
+          </blockquote>
+        </section>
+
+        <section className="about-vm">
+          {aboutVisionMission.map(({ label, copy }) => (
+            <article className="about-vm-card" key={label}>
+              <span className="kicker">{label}</span>
+              <p>{copy}</p>
+            </article>
+          ))}
+        </section>
+
+        <section className="about-section">
+          <div className="about-section-head">
+            <span className="kicker">What ABBADev stands for</span>
+            <h2>Technology built with purpose.</h2>
+          </div>
+          <div className="about-values">
+            {aboutValues.map(({ icon: Icon, title, copy }) => (
+              <article className="about-value" key={title}>
+                <span className="about-value-icon" aria-hidden="true">
+                  <Icon size={18} />
+                </span>
+                <div className="about-value-body">
+                  <h3>{title}</h3>
+                  <p>{copy}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="about-section">
+          <div className="about-section-head">
+            <span className="kicker">Who we work with</span>
+            <h2>Support at every stage of the technology journey.</h2>
+          </div>
+          <div className="about-capabilities">
+            {aboutSegments.map(({ icon: Icon, title, copy }) => (
+              <article className="about-capability" key={title}>
+                <span className="about-capability-icon" aria-hidden="true">
+                  <Icon size={20} />
+                </span>
+                <h3>{title}</h3>
+                <p>{copy}</p>
+              </article>
+            ))}
+          </div>
+          <p className="about-segments-note">
+            Exploring AI, software, or delivery practices for yourself or your team?
+            {' '}
+            <a href="/community">See community &amp; learning</a>.
+          </p>
+        </section>
+
+        <section className="case-page-cta about-cta">
+          <div>
+            <span className="kicker">Let&apos;s build something useful</span>
+            <h2>Start with the problem, not a spec.</h2>
+            <p>
+              Tell us the workflow you want to improve, and we will help you explore how software,
+              automation, or AI can make it possible.
+            </p>
+          </div>
+          <a className="primary-button" href="/consulting-intake">
+            Start a conversation <ArrowRight size={18} aria-hidden="true" />
+          </a>
+        </section>
+      </main>
+    </div>
+  )
+}
+
 function ContentPage({ page, theme, setTheme }) {
-  const [menuOpen, setMenuOpen] = useState(false)
   const PageIcon = page.icon
 
   return (
     <div className="site-shell case-page-shell content-page-shell">
-      <header className="nav case-page-header">
-        <a className="brand" href="/#top" aria-label="ABBADev Tech Solutions home">
-          <img className="brand-mark" src="/images/abbadev-logo.png" alt="" width="42" height="42" />
-          <span className="brand-wordmark">
-            <strong>ABBADEV</strong>
-            <small>Tech Solutions</small>
-          </span>
-        </a>
-        <div className="nav-right">
-          <button
-            className="icon-button theme-toggle"
-            type="button"
-            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-            onClick={() => setTheme((current) => (current === 'dark' ? 'light' : 'dark'))}
-          >
-            {theme === 'dark' ? <Sun size={19} aria-hidden="true" /> : <Moon size={19} aria-hidden="true" />}
-          </button>
-          <button
-            className="icon-button mobile-only"
-            type="button"
-            aria-label="Toggle navigation"
-            onClick={() => setMenuOpen((open) => !open)}
-          >
-            {menuOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
-          <nav className={menuOpen ? 'nav-links open' : 'nav-links'}>
-            <a href="/#platform" onClick={() => setMenuOpen(false)}>Platform</a>
-            <a href="/#workflow" onClick={() => setMenuOpen(false)}>Workflow</a>
-            <a href="/#services" onClick={() => setMenuOpen(false)}>Services</a>
-            <a href="/#resources" onClick={() => setMenuOpen(false)}>Insights</a>
-            <a className="nav-cta" href="/#contact" onClick={() => setMenuOpen(false)}>
-              Book a systems consult
-            </a>
-          </nav>
-        </div>
-      </header>
+      <CasePageHeader theme={theme} setTheme={setTheme} />
 
       <main className="case-page-main content-page-main">
         <a className="case-page-back" href="/#top">Back to home</a>
@@ -854,6 +2046,7 @@ const footerGroups = [
   {
     title: 'Services',
     links: [
+      ['All services', '/services'],
       ['AI automation', '/services/ai-automation'],
       ['Software architecture', '/services/software-architecture'],
       ['Custom systems', '/services/custom-systems'],
@@ -863,7 +2056,6 @@ const footerGroups = [
   {
     title: 'Work',
     links: [
-      ['Portfolio', '/work'],
       ['Case studies', '/cases'],
       ['Workflow demos', '/workflow-demos'],
       ['Implementation notes', '/implementation-notes'],
@@ -876,6 +2068,8 @@ const footerGroups = [
       ['System design', '/insights/system-design'],
       ['AI operations', '/insights/ai-operations'],
       ['Digital transformation', '/insights/digital-transformation'],
+      ['Community & learning', '/community'],
+      ['Seminars & webinars', '/register'],
     ],
   },
   {
@@ -942,7 +2136,6 @@ const workbenchEvents = [
 const SEQUENCE_STEPS = sequenceStages.length
 const STAGE_MS = 1500
 const HOLD_MS = 1500
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 
 function App() {
   const [activeMode, setActiveMode] = useState(1)
@@ -971,11 +2164,25 @@ function App() {
     return () => window.removeEventListener('popstate', handleRouteChange)
   }, [])
 
-  const normalizedPath = path.replace(/\/$/, '') || '/'
+  const rawPath = path.replace(/\/$/, '') || '/'
+  // /work is a legacy alias for the canonical case-studies directory at /cases.
+  const normalizedPath = rawPath === '/work' ? '/cases' : rawPath
+  const routeCasesIndex = normalizedPath === '/cases'
+  const routeAbout = normalizedPath === '/about'
+  const routeServices = normalizedPath === '/services'
+  const routeRegister = normalizedPath === '/register'
   const routeContent = contentPages[normalizedPath] || null
   const routeCase = path.startsWith('/cases/')
     ? caseStudies.find((study) => study.slug === path.replace('/cases/', '').replace(/\/$/, ''))
     : null
+
+  useEffect(() => {
+    // Canonicalize the legacy /work URL to /cases without a full navigation;
+    // normalizedPath already renders the directory for both.
+    if (rawPath === '/work' && typeof window !== 'undefined') {
+      window.history.replaceState(null, '', '/cases')
+    }
+  }, [rawPath])
 
   const [leadStatus, setLeadStatus] = useState('idle')
   const [leadMessage, setLeadMessage] = useState('')
@@ -1077,10 +2284,46 @@ function App() {
   const sequenceComplete = activeIndex >= SEQUENCE_STEPS
   const currentStage = sequenceStages[Math.min(activeIndex, SEQUENCE_STEPS - 1)]
 
+  if (routeCasesIndex) {
+    return (
+      <>
+        <CasesIndexPage theme={theme} setTheme={setTheme} />
+        <Assistant />
+      </>
+    )
+  }
+
   if (routeCase) {
     return (
       <>
         <CaseStudyPage study={routeCase} theme={theme} setTheme={setTheme} />
+        <Assistant />
+      </>
+    )
+  }
+
+  if (routeAbout) {
+    return (
+      <>
+        <AboutPage theme={theme} setTheme={setTheme} />
+        <Assistant />
+      </>
+    )
+  }
+
+  if (routeServices) {
+    return (
+      <>
+        <ServicesPage theme={theme} setTheme={setTheme} />
+        <Assistant />
+      </>
+    )
+  }
+
+  if (routeRegister) {
+    return (
+      <>
+        <RegisterPage theme={theme} setTheme={setTheme} />
         <Assistant />
       </>
     )
@@ -1126,6 +2369,7 @@ function App() {
             <a href="#platform" onClick={() => setMenuOpen(false)}>Platform</a>
             <a href="#workflow" onClick={() => setMenuOpen(false)}>Workflow</a>
             <a href="#services" onClick={() => setMenuOpen(false)}>Services</a>
+            <a href="#product" onClick={() => setMenuOpen(false)}>Product</a>
             <a href="#resources" onClick={() => setMenuOpen(false)}>Insights</a>
             <a className="nav-cta" href="#contact" onClick={() => setMenuOpen(false)}>
               Book a systems consult
@@ -1463,6 +2707,58 @@ function App() {
           </p>
         </section>
 
+        <section className="section product-section" id="product">
+          <div className="product-grid">
+            <div className="product-copy">
+              <span className="kicker">
+                <Sparkles size={15} aria-hidden="true" /> Live product
+              </span>
+              <h2>ABBADev CRM - the system we run ourselves.</h2>
+              <p>
+                A right-sized CRM for SMEs: every contact, deal, and follow-up
+                in one governed pipeline with a clear owner and a next action -
+                not another spreadsheet that goes stale by Friday. It runs in
+                production at <span className="product-url">crm.abbadev.com</span>.
+              </p>
+              <ul className="product-features">
+                <li>
+                  <Users size={17} aria-hidden="true" />
+                  <span><strong>Contacts &amp; companies.</strong> One shared source of truth for every lead.</span>
+                </li>
+                <li>
+                  <GitBranch size={17} aria-hidden="true" />
+                  <span><strong>Deal pipeline.</strong> Stages, values, and ownership the whole team can see.</span>
+                </li>
+                <li>
+                  <ListChecks size={17} aria-hidden="true" />
+                  <span><strong>Tasks &amp; activities.</strong> Logged calls and reminders so follow-ups never slip.</span>
+                </li>
+                <li>
+                  <LayoutDashboard size={17} aria-hidden="true" />
+                  <span><strong>Live dashboard.</strong> Pipeline value and win rate, updated as you work.</span>
+                </li>
+              </ul>
+              <div className="product-actions">
+                <a
+                  className="primary-button"
+                  href="https://crm.abbadev.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Launch the CRM <ArrowRight size={18} aria-hidden="true" />
+                </a>
+                <a className="secondary-button" href="/cases/abbadev-crm">
+                  <Play size={17} aria-hidden="true" /> Read the case study
+                </a>
+              </div>
+            </div>
+
+            <div className="product-preview">
+              <CrmMockup />
+            </div>
+          </div>
+        </section>
+
         <section className="mid-cta" aria-label="Start a project">
           <div className="mid-cta-copy">
             <strong>Recognize this pattern in your own operations?</strong>
@@ -1508,10 +2804,10 @@ function App() {
         <section className="founder-section" id="founder" aria-label="About the founder">
           <div className="founder-portrait">
             <img
-              src="/images/profile.webp"
+              src="/images/founder.png"
               alt="Rommel Galisanao, founder of ABBADev Tech Solutions"
               width="360"
-              height="360"
+              height="450"
               loading="lazy"
               decoding="async"
             />
