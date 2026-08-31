@@ -2329,6 +2329,229 @@ function CountdownUnits({ countdown }) {
   )
 }
 
+// Base URL of the abbadev-events Laravel API. When set (via VITE_EVENTS_API),
+// the /seminar page uses the real two-step register + receipt-upload flow;
+// when empty, it falls back to the simpler reserve-then-pay panel. This lets
+// the switchover happen by setting one env var and rebuilding.
+const EVENTS_API = (import.meta.env.VITE_EVENTS_API || '').replace(/\/$/, '')
+
+// The event slug this landing page registers for (must exist in the events API).
+const SEMINAR_EVENT_SLUG = 'idea-to-intelligent-system'
+
+// Two-step registration against the events API: (1) capture details and create
+// a pending registration, (2) upload the GCash receipt + reference for
+// verification. On success the seat is held pending manual payment review.
+function TwoStepRegister({ seminar }) {
+  const [step, setStep] = useState('details') // details | payment | done
+  const [registration, setRegistration] = useState(null)
+  const [result, setResult] = useState(null)
+  const [audience, setAudience] = useState('')
+  const [status, setStatus] = useState('idle') // idle | submitting | error
+  const [message, setMessage] = useState('')
+
+  const audienceLabel = { student: 'Student', developer: 'Developer', professional: 'Professional & owner' }
+
+  const collectUtm = () => {
+    if (typeof window === 'undefined') return {}
+    return Object.fromEntries(new URLSearchParams(window.location.search).entries())
+  }
+
+  const submitDetails = async (formEvent) => {
+    formEvent.preventDefault()
+    if (status === 'submitting') return
+
+    const form = formEvent.currentTarget
+    const payload = Object.fromEntries(new FormData(form).entries())
+    const email = String(payload.email || '').trim()
+
+    if (!EMAIL_PATTERN.test(email)) {
+      setStatus('error')
+      setMessage('Enter a valid email address, such as name@example.com.')
+      return
+    }
+    if (!audience) {
+      setStatus('error')
+      setMessage('Let us know whether you are joining as a student, developer, or professional.')
+      return
+    }
+
+    setStatus('submitting')
+    setMessage('')
+
+    try {
+      const response = await fetch(`${EVENTS_API}/api/registrations`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...payload,
+          email,
+          event: SEMINAR_EVENT_SLUG,
+          audience: audienceLabel[audience] || audience,
+          source: 'abbadev.com',
+          lead_source: 'fb-ad-landing',
+          utm: collectUtm(),
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error(`Registration failed with status ${response.status}`)
+      }
+
+      setRegistration(await response.json())
+      setStatus('idle')
+      setStep('payment')
+    } catch (error) {
+      console.error(error)
+      setStatus('error')
+      setMessage('Your registration could not be started right now. Please try again.')
+    }
+  }
+
+  const submitPayment = async (formEvent) => {
+    formEvent.preventDefault()
+    if (status === 'submitting') return
+
+    const formData = new FormData(formEvent.currentTarget)
+    setStatus('submitting')
+    setMessage('')
+
+    try {
+      const response = await fetch(`${EVENTS_API}/api/registrations/${registration.registration_id}/payment`, {
+        method: 'POST',
+        body: formData,
+      })
+
+      if (!response.ok) {
+        throw new Error(`Payment submission failed with status ${response.status}`)
+      }
+
+      setResult(await response.json())
+      setStatus('idle')
+      setStep('done')
+    } catch (error) {
+      console.error(error)
+      setStatus('error')
+      setMessage('Your payment details could not be submitted. Check the receipt file and try again.')
+    }
+  }
+
+  if (step === 'done') {
+    return (
+      <div className="lp-pay" role="status">
+        <span className="register-success-icon" aria-hidden="true"><CheckCircle2 size={26} /></span>
+        <h3>Payment received — verification pending</h3>
+        <p>
+          Thanks! Your registration <strong>{registration?.registration_number}</strong> is in.
+          {' '}{result?.message || "We'll verify your payment and email you once your seat is confirmed."}
+        </p>
+        <p className="lp-pay-note">
+          <ShieldCheck size={15} aria-hidden="true" />
+          Keep an eye on your inbox — a confirmation with the venue details follows once your GCash payment is verified.
+        </p>
+      </div>
+    )
+  }
+
+  if (step === 'payment') {
+    const pay = registration?.payment || {}
+    return (
+      <form className="register-form lp-form" onSubmit={submitPayment} noValidate>
+        <div className="lp-step-indicator" aria-hidden="true">Step 2 of 2 · Payment</div>
+
+        <div className="lp-gcash-box">
+          <span className="lp-gcash-label">Send exactly</span>
+          <strong className="lp-gcash-amount">₱{Number(pay.amount ?? seminar.price.replace(/[^\d.]/g, '')).toLocaleString()}</strong>
+          <div className="lp-gcash-to">
+            <span>{(pay.method || 'GCash').toUpperCase()}</span>
+            <strong>{pay.gcash_number}</strong>
+            <small>{pay.account_name}</small>
+          </div>
+          {pay.qr_url && (
+            <img className="lp-gcash-qr" src={pay.qr_url} alt="GCash QR code" width="160" height="160" />
+          )}
+          <p className="lp-gcash-ref">Reservation <strong>{registration?.registration_number}</strong> — use your full name as the payment note.</p>
+        </div>
+
+        <div className="register-field">
+          <label htmlFor="lp-ref">GCash reference number</label>
+          <input id="lp-ref" name="reference_number" type="text" inputMode="numeric" required placeholder="e.g. 1000123456789" />
+        </div>
+        <div className="register-field">
+          <label htmlFor="lp-amount">Amount you paid (₱)</label>
+          <input id="lp-amount" name="amount_submitted" type="number" step="0.01" min="0" required defaultValue={pay.amount} />
+        </div>
+        <div className="register-field register-field-full lp-file-field">
+          <label htmlFor="lp-receipt">GCash receipt screenshot</label>
+          <input id="lp-receipt" name="receipt" type="file" accept="image/*,application/pdf" required />
+          <span className="lp-file-hint">JPG, PNG, or PDF · up to 5 MB</span>
+        </div>
+
+        {status === 'error' && (
+          <p className="register-status is-error" role="alert">{message}</p>
+        )}
+
+        <button type="submit" className="primary-button register-submit" disabled={status === 'submitting'}>
+          {status === 'submitting' ? 'Submitting…' : 'Submit payment for verification'}
+          {status !== 'submitting' && <ArrowRight size={18} aria-hidden="true" />}
+        </button>
+        <p className="lp-form-trust">
+          <ShieldCheck size={14} aria-hidden="true" />
+          Your seat is confirmed by email once we verify the payment against our GCash records.
+        </p>
+      </form>
+    )
+  }
+
+  return (
+    <form className="register-form lp-form" onSubmit={submitDetails} noValidate>
+      <div className="lp-step-indicator" aria-hidden="true">Step 1 of 2 · Your details</div>
+      <div className="register-field">
+        <label htmlFor="lp-name">Full name</label>
+        <input id="lp-name" name="name" type="text" autoComplete="name" required placeholder="Juan Dela Cruz" />
+      </div>
+      <div className="register-field">
+        <label htmlFor="lp-email">Email address</label>
+        <input id="lp-email" name="email" type="email" autoComplete="email" required placeholder="name@example.com" />
+      </div>
+      <fieldset className="register-field register-audience">
+        <legend>I&apos;m joining as a</legend>
+        <div className="lp-audience-toggle">
+          <button type="button" aria-pressed={audience === 'student'} className={`register-audience-btn${audience === 'student' ? ' is-active' : ''}`} onClick={() => setAudience('student')}>
+            <GraduationCap size={17} aria-hidden="true" /> Student
+          </button>
+          <button type="button" aria-pressed={audience === 'developer'} className={`register-audience-btn${audience === 'developer' ? ' is-active' : ''}`} onClick={() => setAudience('developer')}>
+            <Code2 size={17} aria-hidden="true" /> Developer
+          </button>
+          <button type="button" aria-pressed={audience === 'professional'} className={`register-audience-btn${audience === 'professional' ? ' is-active' : ''}`} onClick={() => setAudience('professional')}>
+            <Users size={17} aria-hidden="true" /> Professional
+          </button>
+        </div>
+      </fieldset>
+      <div className="register-field">
+        <label htmlFor="lp-phone">Mobile number</label>
+        <input id="lp-phone" name="phone" type="tel" autoComplete="tel" required placeholder="+63 9XX XXX XXXX" />
+      </div>
+      <div className="register-field register-field-full">
+        <label htmlFor="lp-org">School / company <span className="register-optional">(optional)</span></label>
+        <input id="lp-org" name="organization" type="text" autoComplete="organization" placeholder="Where you study or work" />
+      </div>
+
+      {status === 'error' && (
+        <p className="register-status is-error" role="alert">{message}</p>
+      )}
+
+      <button type="submit" className="primary-button register-submit" disabled={status === 'submitting'}>
+        {status === 'submitting' ? 'Starting…' : 'Continue to payment'}
+        {status !== 'submitting' && <ArrowRight size={18} aria-hidden="true" />}
+      </button>
+      <p className="lp-form-trust">
+        <ShieldCheck size={14} aria-hidden="true" />
+        We use your details only to confirm your seat and send seminar updates.
+      </p>
+    </form>
+  )
+}
+
 function SeminarLandingPage({ theme, setTheme }) {
   const countdown = useCountdown(seminar.startsAtIso)
   const [audience, setAudience] = useState('')
@@ -2625,7 +2848,9 @@ function SeminarLandingPage({ theme, setTheme }) {
             </div>
           </div>
 
-          {status === 'reserved' ? (
+          {EVENTS_API ? (
+            <TwoStepRegister seminar={seminar} />
+          ) : status === 'reserved' ? (
             <div className="lp-pay" role="status">
               <span className="register-success-icon" aria-hidden="true"><CheckCircle2 size={26} /></span>
               <h3>Seat reserved — one step left</h3>

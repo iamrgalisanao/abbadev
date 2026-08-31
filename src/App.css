@@ -6697,3 +6697,113 @@ main {
 }
 
 .lp-legal-section li::marker { color: var(--color-accent-text); }
+
+/* Two-step register (events API flow) --------------------------------------- */
+.lp-step-indicator {
+  grid-column: 1 / -1;
+  font-size: var(--text-xs);
+  font-weight: 820;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: oklch(84% 0.06 254);
+}
+
+.lp-gcash-box {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 4px;
+  padding: 18px;
+  border-radius: var(--radius-md);
+  border: 1px solid oklch(75% 0.12 258 / 0.28);
+  background: oklch(55% 0.19 258 / 0.14);
+}
+
+.lp-gcash-label {
+  font-size: var(--text-xs);
+  font-weight: 780;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: oklch(82% 0.06 254);
+}
+
+.lp-gcash-amount {
+  font-size: clamp(26px, 4vw, 34px);
+  font-weight: 850;
+  color: var(--color-white);
+  line-height: 1;
+}
+
+.lp-gcash-to {
+  display: grid;
+  gap: 1px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid oklch(100% 0 0 / 0.12);
+}
+
+.lp-gcash-to span {
+  font-size: var(--text-xs);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: oklch(82% 0.08 254);
+}
+
+.lp-gcash-to strong {
+  font-family: var(--font-mono);
+  font-size: var(--text-lg);
+  color: var(--color-white);
+  letter-spacing: 0.02em;
+}
+
+.lp-gcash-to small {
+  color: oklch(80% 0.02 245);
+  font-size: var(--text-sm);
+}
+
+.lp-gcash-qr {
+  justify-self: start;
+  margin-top: 10px;
+  border-radius: var(--radius-sm);
+  background: var(--color-white);
+  padding: 6px;
+}
+
+.lp-gcash-ref {
+  margin: 10px 0 0;
+  color: oklch(84% 0.02 245);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+}
+
+.lp-gcash-ref strong {
+  color: var(--color-white);
+  font-family: var(--font-mono);
+}
+
+.lp-file-field input[type='file'] {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px dashed oklch(75% 0.12 258 / 0.4);
+  border-radius: var(--radius-md);
+  color: oklch(88% 0.02 245);
+  background: oklch(2% 0 0 / 0.35);
+  font: inherit;
+  cursor: pointer;
+}
+
+.lp-file-field input[type='file']::file-selector-button {
+  margin-right: 12px;
+  padding: 7px 12px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  color: var(--color-white);
+  background: var(--color-accent);
+  font-weight: 720;
+  cursor: pointer;
+}
+
+.lp-file-hint {
+  margin-top: 6px;
+  color: oklch(70% 0.02 250);
+  font-size: var(--text-xs);
+}
