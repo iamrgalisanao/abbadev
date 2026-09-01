@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import {
+  ArrowLeft,
   ArrowRight,
   Blocks,
   BookOpen,
@@ -1207,6 +1208,273 @@ const serviceCategories = [
   },
 ]
 
+// Interactive self-qualification quiz. Routes the visitor toward a starting
+// service and sends the scoped brief into the same n8n intake as the consultation
+// form (channel is stamped server-side by the proxy).
+const scoperSteps = [
+  {
+    key: 'orgType',
+    question: 'What kind of organization are you?',
+    options: [
+      'Small or medium business',
+      'Growing company',
+      'Startup or entrepreneur',
+      'Enterprise or internal team',
+    ],
+  },
+  {
+    key: 'challenge',
+    question: 'What is slowing you down the most right now?',
+    options: [
+      'Manual, repetitive work',
+      'Disconnected tools and data',
+      'No system for a key workflow',
+      'Poor reporting and visibility',
+      'Not sure yet',
+    ],
+  },
+  {
+    key: 'focus',
+    question: 'What are you hoping to build or improve?',
+    options: [
+      'AI and automation',
+      'Custom software or an internal tool',
+      'A business system (CRM, inventory, HR)',
+      'Connecting systems together',
+      'Architecture and technology advice',
+      'Not sure yet',
+    ],
+  },
+  {
+    key: 'timeline',
+    question: 'How soon do you want to move?',
+    options: ['As soon as possible', 'In the next 1 to 3 months', 'Exploring options for now'],
+  },
+]
+
+const focusToService = {
+  'AI and automation': 'AI & Automation',
+  'Custom software or an internal tool': 'Custom Software Development',
+  'A business system (CRM, inventory, HR)': 'Business Systems & Internal Tools',
+  'Connecting systems together': 'Systems Integration',
+  'Architecture and technology advice': 'Software Architecture & Technology Consulting',
+  'Not sure yet': 'a tailored engagement',
+}
+
+function ProjectScoper() {
+  const [step, setStep] = useState(0)
+  const [answers, setAnswers] = useState({})
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [note, setNote] = useState('')
+  const [status, setStatus] = useState('idle') // idle | submitting | submitted | error
+  const [errorMsg, setErrorMsg] = useState('')
+
+  const totalSteps = scoperSteps.length + 1 // question steps + contact step
+  const isContact = step === scoperSteps.length
+  const current = scoperSteps[step]
+  const recommended = focusToService[answers.focus] || 'a tailored engagement'
+
+  const choose = (key, value) => {
+    setAnswers((prev) => ({ ...prev, [key]: value }))
+    setStep((s) => s + 1)
+  }
+  const back = () => setStep((s) => Math.max(0, s - 1))
+  const restart = () => {
+    setStep(0)
+    setAnswers({})
+    setName('')
+    setEmail('')
+    setNote('')
+    setStatus('idle')
+    setErrorMsg('')
+  }
+
+  const submit = async (event) => {
+    event.preventDefault()
+    if (status === 'submitting') return
+    const cleanEmail = email.trim()
+    if (!EMAIL_PATTERN.test(cleanEmail)) {
+      setStatus('error')
+      setErrorMsg('Enter a valid business email, like name@company.com.')
+      return
+    }
+
+    setStatus('submitting')
+    setErrorMsg('')
+    const endpoint = import.meta.env.VITE_CONSULTATION_ENDPOINT || '/api/consultation'
+    const pageUrl = typeof window !== 'undefined' ? window.location.href : 'https://abbadev.com/'
+
+    try {
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: name.trim() || 'Project Scoper visitor',
+          email: cleanEmail,
+          message: note.trim(),
+          formType: 'project-scoper',
+          orgType: answers.orgType || '',
+          challenge: answers.challenge || '',
+          focus: answers.focus || '',
+          timeline: answers.timeline || '',
+          recommendedService: recommended,
+          source: 'abbadev.com',
+          pageUrl,
+          submittedAt: new Date().toISOString(),
+        }),
+      })
+      if (!response.ok) throw new Error(`Scoper failed with status ${response.status}`)
+      setStatus('submitted')
+    } catch (error) {
+      console.error(error)
+      setStatus('error')
+      setErrorMsg('That could not be sent right now. Please try again, or use the consultation form.')
+    }
+  }
+
+  const progress = status === 'submitted' ? totalSteps : step
+  const pct = Math.round((progress / totalSteps) * 100)
+
+  return (
+    <section className="scoper" aria-label="Project scoper">
+      <Reveal className="scoper-intro">
+        <span className="kicker">Self-qualify in 30 seconds</span>
+        <h2>Not sure which service fits? Let us scope it.</h2>
+        <p>
+          Answer a few quick questions and we will point you to the right starting point, then route
+          your brief to a systems architect. No obligation.
+        </p>
+      </Reveal>
+
+      <Reveal className="scoper-panel" delay={100}>
+        {status !== 'submitted' && (
+          <div className="scoper-progress" aria-hidden="true">
+            <span className="scoper-progress-bar" style={{ width: `${pct}%` }} />
+          </div>
+        )}
+
+        {status === 'submitted' ? (
+          <div className="scoper-result">
+            <span className="scoper-result-icon" aria-hidden="true">
+              <CheckCircle2 size={26} />
+            </span>
+            <h3>Brief received. Thank you.</h3>
+            <p>
+              Based on your answers, <strong>{recommended}</strong> looks like the right place to
+              start. A systems architect will review your brief and reply within one business day.
+            </p>
+            <div className="scoper-result-actions">
+              <a className="primary-button" href="/cases">
+                See related work <ArrowRight size={17} aria-hidden="true" />
+              </a>
+              <button type="button" className="scoper-restart" onClick={restart}>
+                Start over
+              </button>
+            </div>
+          </div>
+        ) : isContact ? (
+          <form className="scoper-body" onSubmit={submit}>
+            <div className="scoper-step-head">
+              <span className="scoper-step-count">Step {step + 1} of {totalSteps}</span>
+              <h3>Where should we send your scoped brief?</h3>
+            </div>
+            {(answers.orgType || answers.challenge || answers.focus || answers.timeline) && (
+              <div className="scoper-summary">
+                {scoperSteps.map((s) =>
+                  answers[s.key] ? (
+                    <span key={s.key} className="scoper-tag">
+                      {answers[s.key]}
+                    </span>
+                  ) : null,
+                )}
+              </div>
+            )}
+            <div className="scoper-fields">
+              <label>
+                <span>Name</span>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(event) => setName(event.target.value)}
+                  placeholder="Your name"
+                  autoComplete="name"
+                />
+              </label>
+              <label>
+                <span>Business email</span>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  placeholder="name@company.com"
+                  autoComplete="email"
+                  required
+                />
+              </label>
+              <label>
+                <span>Anything else? (optional)</span>
+                <textarea
+                  value={note}
+                  onChange={(event) => setNote(event.target.value)}
+                  rows={3}
+                  placeholder="A sentence about the workflow or problem you want to solve."
+                />
+              </label>
+            </div>
+            {status === 'error' && (
+              <p className="scoper-error" role="alert">
+                {errorMsg}
+              </p>
+            )}
+            <div className="scoper-nav">
+              <button type="button" className="scoper-back" onClick={back} disabled={status === 'submitting'}>
+                <ArrowLeft size={16} aria-hidden="true" /> Back
+              </button>
+              <button type="submit" className="primary-button" disabled={status === 'submitting'}>
+                {status === 'submitting' ? (
+                  'Sending...'
+                ) : (
+                  <>
+                    Send my brief <Send size={16} aria-hidden="true" />
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
+        ) : (
+          <div className="scoper-body">
+            <div className="scoper-step-head">
+              <span className="scoper-step-count">Step {step + 1} of {totalSteps}</span>
+              <h3>{current.question}</h3>
+            </div>
+            <div className="scoper-options">
+              {current.options.map((option) => (
+                <button
+                  type="button"
+                  key={option}
+                  className={`scoper-option${answers[current.key] === option ? ' is-selected' : ''}`}
+                  onClick={() => choose(current.key, option)}
+                >
+                  <span>{option}</span>
+                  <ChevronRight size={16} aria-hidden="true" />
+                </button>
+              ))}
+            </div>
+            {step > 0 && (
+              <div className="scoper-nav">
+                <button type="button" className="scoper-back" onClick={back}>
+                  <ArrowLeft size={16} aria-hidden="true" /> Back
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+      </Reveal>
+    </section>
+  )
+}
+
 function ServicesPage({ theme, setTheme }) {
   return (
     <div className="site-shell case-page-shell content-page-shell services-page-shell">
@@ -1287,6 +1555,8 @@ function ServicesPage({ theme, setTheme }) {
             </Reveal>
           ))}
         </section>
+
+        <ProjectScoper />
 
         <section className="services-training">
           <Reveal className="services-training-media">
