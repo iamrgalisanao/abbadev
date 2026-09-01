@@ -2227,7 +2227,7 @@ function CrmShowcase() {
 // action (reserve a seat), and a reserve-then-pay flow. Edit `seminar` to
 // change the offer, and update `paymentMethods` with your real GCash
 // details before running ads against this page.
-const seminar = {
+const flagshipSeminar = {
   eyebrow: 'ABBADev Live Seminar',
   title: 'From Idea to Intelligent System',
   subtitle: 'AI, Software Development & Project Delivery',
@@ -2246,6 +2246,30 @@ const seminar = {
   capacity: 40,
   // Countdown target: Sept 5, 2026 at 2:00 PM Philippine time (UTC+8).
   startsAtIso: '2026-09-05T14:00:00+08:00',
+}
+
+// Map an events-API card (GET /api/events) into the seminar-shaped object the
+// landing page renders. Fields with no API equivalent are left null and
+// null-guarded in the JSX so a non-flagship event shows a lean page.
+function mapEventToSeminar(event) {
+  return {
+    eyebrow: `ABBADev Live ${event.type || 'Event'}`,
+    title: event.title,
+    subtitle: null,
+    tagline: event.level || null,
+    promise: event.blurb || '',
+    date: event.date,
+    dateShort: event.date,
+    time: event.time,
+    duration: event.duration,
+    mode: event.mode === 'In-person' && event.location ? event.location : event.mode,
+    venueNote: '',
+    price: event.price_label,
+    priceNote: null,
+    capacity: null,
+    startsAtIso: event.starts_at,
+    isFree: event.is_free,
+  }
 }
 
 const seminarLearn = [
@@ -2360,7 +2384,7 @@ function formatPhMobile(raw) {
 // Two-step registration against the events API: (1) capture details and create
 // a pending registration, (2) upload the GCash receipt + reference for
 // verification. On success the seat is held pending manual payment review.
-function TwoStepRegister({ seminar }) {
+function TwoStepRegister({ seminar, eventSlug }) {
   const [step, setStep] = useState('details') // details | payment | done
   const [registration, setRegistration] = useState(null)
   const [result, setResult] = useState(null)
@@ -2415,7 +2439,7 @@ function TwoStepRegister({ seminar }) {
         body: JSON.stringify({
           ...payload,
           email,
-          event: SEMINAR_EVENT_SLUG,
+          event: eventSlug || SEMINAR_EVENT_SLUG,
           audience: audienceLabel[audience] || audience,
           source: 'abbadev.com',
           lead_source: 'fb-ad-landing',
@@ -2427,9 +2451,11 @@ function TwoStepRegister({ seminar }) {
         throw new Error(await errorMessageFrom(response, 'Your registration could not be started right now. Please try again.'))
       }
 
-      setRegistration(await response.json())
+      const data = await response.json()
+      setRegistration(data)
       setStatus('idle')
-      setStep('payment')
+      // Free events are confirmed by the API immediately — skip the payment step.
+      setStep(data.requires_payment === false ? 'done' : 'payment')
     } catch (error) {
       console.error(error)
       setStatus('error')
@@ -2466,18 +2492,32 @@ function TwoStepRegister({ seminar }) {
   }
 
   if (step === 'done') {
+    const isFreeConfirmed = registration?.requires_payment === false
     return (
       <div className="lp-pay" role="status">
         <span className="register-success-icon" aria-hidden="true"><CheckCircle2 size={26} /></span>
-        <h3>Payment received — verification pending</h3>
-        <p>
-          Thanks! Your registration <strong>{registration?.registration_number}</strong> is in.
-          {' '}{result?.message || "We'll verify your payment and email you once your seat is confirmed."}
-        </p>
-        <p className="lp-pay-note">
-          <ShieldCheck size={15} aria-hidden="true" />
-          Keep an eye on your inbox — a confirmation with the venue details follows once your GCash payment is verified.
-        </p>
+        {isFreeConfirmed ? (
+          <>
+            <h3>You&apos;re registered.</h3>
+            <p>
+              Your seat for <strong>{registration?.event?.title || seminar.title}</strong> is confirmed
+              (registration <strong>{registration?.registration_number}</strong>). A confirmation has been
+              sent to your email.
+            </p>
+          </>
+        ) : (
+          <>
+            <h3>Payment received, verification pending</h3>
+            <p>
+              Thanks! Your registration <strong>{registration?.registration_number}</strong> is in.
+              {' '}{result?.message || "We'll verify your payment and email you once your seat is confirmed."}
+            </p>
+            <p className="lp-pay-note">
+              <ShieldCheck size={15} aria-hidden="true" />
+              Keep an eye on your inbox. A confirmation with the venue details follows once your GCash payment is verified.
+            </p>
+          </>
+        )}
       </div>
     )
   }
@@ -2580,7 +2620,7 @@ function TwoStepRegister({ seminar }) {
       )}
 
       <button type="submit" className="primary-button register-submit" disabled={status === 'submitting'}>
-        {status === 'submitting' ? 'Starting…' : 'Continue to payment'}
+        {status === 'submitting' ? 'Starting…' : seminar.isFree ? 'Complete registration' : 'Continue to payment'}
         {status !== 'submitting' && <ArrowRight size={18} aria-hidden="true" />}
       </button>
       <p className="lp-form-trust">
@@ -2592,6 +2632,45 @@ function TwoStepRegister({ seminar }) {
 }
 
 function SeminarLandingPage({ theme, setTheme }) {
+  // Which event this page is for. No param (or the flagship slug) = the rich
+  // flagship page; any other slug = a lean page driven by the events API.
+  const eventSlug = useMemo(
+    () => (typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('event')),
+    [],
+  )
+  const isFlagship = !eventSlug || eventSlug === SEMINAR_EVENT_SLUG
+  const [apiEvent, setApiEvent] = useState(null)
+  // loading | ready | error. Resolved synchronously for the flagship and for the
+  // no-API case so the effect never sets state synchronously.
+  const [eventState, setEventState] = useState(
+    isFlagship ? 'ready' : EVENTS_API ? 'loading' : 'error',
+  )
+
+  useEffect(() => {
+    if (isFlagship || !EVENTS_API) return undefined
+    let cancelled = false
+    fetch(`${EVENTS_API}/api/events`)
+      .then((response) => (response.ok ? response.json() : Promise.reject(response.status)))
+      .then((data) => {
+        if (cancelled) return
+        const found = (data.events || []).find((event) => event.slug === eventSlug)
+        if (!found) {
+          setEventState('error')
+          return
+        }
+        setApiEvent(found)
+        setEventState('ready')
+      })
+      .catch(() => {
+        if (!cancelled) setEventState('error')
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [isFlagship, eventSlug])
+
+  const seminar = isFlagship ? flagshipSeminar : apiEvent ? mapEventToSeminar(apiEvent) : flagshipSeminar
+
   const countdown = useCountdown(seminar.startsAtIso)
   const [audience, setAudience] = useState('')
   const [status, setStatus] = useState('idle') // idle | submitting | reserved | error
@@ -2674,6 +2753,43 @@ function SeminarLandingPage({ theme, setTheme }) {
     }
   }
 
+  // Non-flagship event: show a loading or not-found shell until the event resolves.
+  if (!isFlagship && eventState !== 'ready') {
+    return (
+      <div className="site-shell lp-shell" data-theme={theme}>
+        <header className="lp-header">
+          <a className="brand" href="/#top" aria-label="ABBADev Tech Solutions home">
+            <img className="brand-mark" src="/images/abbadev-logo.png" alt="" width="42" height="42" />
+            <span className="brand-wordmark"><strong>ABBADEV</strong><small>Tech Solutions</small></span>
+          </a>
+          <div className="lp-header-right">
+            <button
+              className="icon-button theme-toggle"
+              type="button"
+              aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+              onClick={() => setTheme((current) => (current === 'dark' ? 'light' : 'dark'))}
+            >
+              {theme === 'dark' ? <Sun size={19} aria-hidden="true" /> : <Moon size={19} aria-hidden="true" />}
+            </button>
+          </div>
+        </header>
+        <main className="lp-state-main">
+          {eventState === 'loading' ? (
+            <p className="lp-state-loading">Loading session…</p>
+          ) : (
+            <div className="lp-state-error">
+              <h1>We couldn&apos;t find that session.</h1>
+              <p>It may have ended or been unpublished.</p>
+              <a className="primary-button" href="/register">
+                Browse all sessions <ArrowRight size={17} aria-hidden="true" />
+              </a>
+            </div>
+          )}
+        </main>
+      </div>
+    )
+  }
+
   return (
     <div className="site-shell lp-shell" data-theme={theme}>
       <header className="lp-header">
@@ -2709,41 +2825,53 @@ function SeminarLandingPage({ theme, setTheme }) {
           <div className="lp-hero-copy">
             <span className="lp-pill">
               <Sparkles size={14} aria-hidden="true" />
-              {seminar.eyebrow} · {seminar.tagline}
+              {seminar.eyebrow}{seminar.tagline ? ` · ${seminar.tagline}` : ''}
             </span>
             <h1 className="lp-hero-title">
               {seminar.title}
-              <span>{seminar.subtitle}</span>
+              {seminar.subtitle && <span>{seminar.subtitle}</span>}
             </h1>
             <p className="lp-hero-lede">{seminar.promise}</p>
 
             <div className="lp-hero-highlights">
-              <span><CheckCircle2 size={16} aria-hidden="true" /> For students, developers & professionals</span>
-              <span><CheckCircle2 size={16} aria-hidden="true" /> Beginner-friendly · no prior AI experience</span>
-              <span><CheckCircle2 size={16} aria-hidden="true" /> {seminar.priceNote}</span>
+              {isFlagship ? (
+                <>
+                  <span><CheckCircle2 size={16} aria-hidden="true" /> For students, developers &amp; professionals</span>
+                  <span><CheckCircle2 size={16} aria-hidden="true" /> Beginner-friendly · no prior AI experience</span>
+                  <span><CheckCircle2 size={16} aria-hidden="true" /> {seminar.priceNote}</span>
+                </>
+              ) : (
+                <>
+                  {seminar.tagline && <span><CheckCircle2 size={16} aria-hidden="true" /> {seminar.tagline}</span>}
+                  {seminar.mode && <span><CheckCircle2 size={16} aria-hidden="true" /> {seminar.mode}</span>}
+                  <span><CheckCircle2 size={16} aria-hidden="true" /> {seminar.isFree ? 'Free to attend' : `${seminar.price} per seat`}</span>
+                </>
+              )}
             </div>
 
             <div className="lp-hero-actions">
               <button type="button" className="primary-button lp-cta-lg" onClick={scrollToForm}>
-                Reserve my seat — {seminar.price} <ArrowRight size={18} aria-hidden="true" />
+                Reserve my seat{seminar.isFree ? '' : ` — ${seminar.price}`} <ArrowRight size={18} aria-hidden="true" />
               </button>
-              <span className="lp-seats-inline">
-                <Users size={15} aria-hidden="true" />
-                Limited-capacity seminar · Max <strong>{seminar.capacity}</strong> participants
-              </span>
+              {seminar.capacity && (
+                <span className="lp-seats-inline">
+                  <Users size={15} aria-hidden="true" />
+                  Limited-capacity seminar · Max <strong>{seminar.capacity}</strong> participants
+                </span>
+              )}
             </div>
           </div>
 
           <aside className="lp-hero-card" aria-label="Seminar details">
             <div className="lp-card-head">
               <span className="lp-card-price">{seminar.price}</span>
-              <span className="lp-card-price-note">{seminar.priceNote}</span>
+              {seminar.priceNote && <span className="lp-card-price-note">{seminar.priceNote}</span>}
             </div>
             <ul className="lp-card-meta">
               <li><Calendar size={16} aria-hidden="true" /> <span>{seminar.date}</span></li>
-              <li><Clock size={16} aria-hidden="true" /> <span>{seminar.time} · {seminar.duration}</span></li>
-              <li><MapPin size={16} aria-hidden="true" /> <span>{seminar.mode}</span></li>
-              <li><Users size={16} aria-hidden="true" /> <span>Maximum of {seminar.capacity} participants</span></li>
+              <li><Clock size={16} aria-hidden="true" /> <span>{seminar.time}{seminar.duration ? ` · ${seminar.duration}` : ''}</span></li>
+              {seminar.mode && <li><MapPin size={16} aria-hidden="true" /> <span>{seminar.mode}</span></li>}
+              {seminar.capacity && <li><Users size={16} aria-hidden="true" /> <span>Maximum of {seminar.capacity} participants</span></li>}
             </ul>
             <div className="lp-card-countdown">
               <span className="lp-card-countdown-label">
@@ -2756,23 +2884,28 @@ function SeminarLandingPage({ theme, setTheme }) {
             </button>
             <p className="lp-card-fineprint">
               <ShieldCheck size={14} aria-hidden="true" />
-              Reserve now, pay ₱399 by GCash to confirm.
+              {seminar.isFree ? 'Free to attend. Reserve your seat now.' : `Reserve now, pay ${seminar.price} by GCash to confirm.`}
             </p>
           </aside>
         </section>
 
         {/* Urgency strip -------------------------------------------------- */}
-        <section className="lp-urgency">
-          <span className="lp-urgency-icon" aria-hidden="true"><Users size={22} /></span>
-          <div className="lp-urgency-copy">
-            <span className="kicker">Limited-capacity seminar</span>
-            <strong>Maximum of {seminar.capacity} participants</strong>
-          </div>
-          <button type="button" className="secondary-button lp-urgency-btn" onClick={scrollToForm}>
-            Reserve a seat <ArrowRight size={16} aria-hidden="true" />
-          </button>
-        </section>
+        {seminar.capacity && (
+          <section className="lp-urgency">
+            <span className="lp-urgency-icon" aria-hidden="true"><Users size={22} /></span>
+            <div className="lp-urgency-copy">
+              <span className="kicker">Limited-capacity seminar</span>
+              <strong>Maximum of {seminar.capacity} participants</strong>
+            </div>
+            <button type="button" className="secondary-button lp-urgency-btn" onClick={scrollToForm}>
+              Reserve a seat <ArrowRight size={16} aria-hidden="true" />
+            </button>
+          </section>
+        )}
 
+        {/* Flagship-only marketing sections (learn / audience / outcomes / FAQ) */}
+        {isFlagship && (
+        <>
         {/* What you'll learn --------------------------------------------- */}
         <section className="lp-section">
           <div className="lp-section-head">
@@ -2864,20 +2997,34 @@ function SeminarLandingPage({ theme, setTheme }) {
             ))}
           </div>
         </section>
+        </>
+        )}
 
         {/* Registration (reserve-then-pay) -------------------------------- */}
         <section className="lp-register" ref={formRef} id="reserve">
           <div className="lp-register-intro">
             <span className="kicker">Reserve your seat</span>
-            <h2>Two steps: reserve now, then pay ₱399 to confirm.</h2>
-            <p>
-              Fill in your details to hold a seat. We&apos;ll email you the GCash payment
-              details — your spot is locked in once the ₱399 lands.
-            </p>
+            {seminar.isFree ? (
+              <>
+                <h2>Register in one step.</h2>
+                <p>
+                  Fill in your details to reserve a seat. This session is free, and you&apos;ll get a
+                  confirmation by email.
+                </p>
+              </>
+            ) : (
+              <>
+                <h2>Two steps: reserve now, then pay {seminar.price} to confirm.</h2>
+                <p>
+                  Fill in your details to hold a seat. We&apos;ll email you the GCash payment details,
+                  and your spot is locked in once the {seminar.price} lands.
+                </p>
+              </>
+            )}
             <div className="lp-register-meta">
-              <span><Calendar size={16} aria-hidden="true" /> {seminar.date} · {seminar.time}</span>
-              <span><MapPin size={16} aria-hidden="true" /> {seminar.mode}</span>
-              <span><Users size={16} aria-hidden="true" /> Limited to {seminar.capacity} participants</span>
+              <span><Calendar size={16} aria-hidden="true" /> {seminar.date}{seminar.time ? ` · ${seminar.time}` : ''}</span>
+              {seminar.mode && <span><MapPin size={16} aria-hidden="true" /> {seminar.mode}</span>}
+              {seminar.capacity && <span><Users size={16} aria-hidden="true" /> Limited to {seminar.capacity} participants</span>}
             </div>
             <div className="lp-register-countdown">
               <span className="lp-card-countdown-label">
@@ -2888,7 +3035,7 @@ function SeminarLandingPage({ theme, setTheme }) {
           </div>
 
           {EVENTS_API ? (
-            <TwoStepRegister seminar={seminar} />
+            <TwoStepRegister seminar={seminar} eventSlug={isFlagship ? SEMINAR_EVENT_SLUG : eventSlug} />
           ) : status === 'reserved' ? (
             <div className="lp-pay" role="status">
               <span className="register-success-icon" aria-hidden="true"><CheckCircle2 size={26} /></span>
@@ -3237,6 +3384,97 @@ function LegalPage({ doc, theme, setTheme }) {
         </div>
       </footer>
     </div>
+  )
+}
+
+// Homepage "Featured sessions" band. Fetches the admin-curated featured events
+// from the events API (max 3). Shows a skeleton while loading and hides itself
+// entirely if the API is unreachable or returns nothing, so the static
+// homepage never breaks. Each card routes to the funnel for that session.
+function FeaturedSessions() {
+  const [status, setStatus] = useState(EVENTS_API ? 'loading' : 'hidden') // loading | ready | hidden
+  const [events, setEvents] = useState([])
+
+  useEffect(() => {
+    if (!EVENTS_API) return undefined
+    let cancelled = false
+    fetch(`${EVENTS_API}/api/events?featured=1`)
+      .then((response) => (response.ok ? response.json() : Promise.reject(response.status)))
+      .then((data) => {
+        if (cancelled) return
+        const list = Array.isArray(data.events) ? data.events : []
+        setEvents(list)
+        setStatus(list.length ? 'ready' : 'hidden')
+      })
+      .catch(() => {
+        if (!cancelled) setStatus('hidden')
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  if (status === 'hidden') return null
+
+  return (
+    <section className="section featured-section" id="sessions" aria-label="Upcoming sessions">
+      <Reveal className="featured-lead">
+        <span className="kicker">Learn with ABBADev</span>
+        <h2>Seminars, workshops, and webinars: practical and hands-on.</h2>
+        <p>
+          Live sessions on AI, automation, software, and delivery for students, developers,
+          and SME owners. Reserve a seat, or see everything coming up.
+        </p>
+      </Reveal>
+
+      <div className="featured-grid">
+        {status === 'loading'
+          ? [0, 1, 2].map((index) => (
+              <div className="featured-card featured-card--skeleton" key={index} aria-hidden="true">
+                <span className="fc-skel fc-skel-badge" />
+                <span className="fc-skel fc-skel-title" />
+                <span className="fc-skel fc-skel-line" />
+                <span className="fc-skel fc-skel-line short" />
+              </div>
+            ))
+          : events.map((event) => {
+              const TypeIcon = eventTypeIcon[event.type] || BookOpen
+              const ModeIcon = event.mode === 'Online' ? Video : MapPin
+              return (
+                <Reveal as="article" className="featured-card" key={event.slug}>
+                  <div className="featured-card-top">
+                    <span className="featured-type">
+                      <TypeIcon size={14} aria-hidden="true" />
+                      {event.type}
+                    </span>
+                    <span className="featured-mode">
+                      <ModeIcon size={13} aria-hidden="true" />
+                      {event.mode === 'In-person' && event.location ? event.location : event.mode}
+                    </span>
+                  </div>
+                  <h3>{event.title}</h3>
+                  {event.blurb && <p>{event.blurb}</p>}
+                  <ul className="featured-meta">
+                    <li><Calendar size={14} aria-hidden="true" /> {event.date}</li>
+                    {event.time && <li><Clock size={14} aria-hidden="true" /> {event.time}{event.duration ? ` · ${event.duration}` : ''}</li>}
+                  </ul>
+                  <div className="featured-foot">
+                    <span className={`featured-price${event.is_free ? ' is-free' : ''}`}>{event.price_label}</span>
+                    <a className="featured-cta" href={`/seminar?event=${encodeURIComponent(event.slug)}`}>
+                      Register <ArrowRight size={15} aria-hidden="true" />
+                    </a>
+                  </div>
+                </Reveal>
+              )
+            })}
+      </div>
+
+      <Reveal className="featured-browse">
+        <a href="/register">
+          Browse all sessions <ArrowRight size={16} aria-hidden="true" />
+        </a>
+      </Reveal>
+    </section>
   )
 }
 
@@ -3825,6 +4063,8 @@ function App() {
             <strong>Designed for measurable impact.</strong>
           </p>
         </section>
+
+        <FeaturedSessions />
 
         <section className="section product-section" id="product">
           <div className="product-grid">
