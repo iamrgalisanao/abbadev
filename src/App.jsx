@@ -865,7 +865,7 @@ function CaseStudyPage({ study, theme, setTheme }) {
       <CasePageHeader theme={theme} setTheme={setTheme} />
 
       <main className="case-page-main">
-        <a className="case-page-back" href="/#work">Back to case studies</a>
+        <Breadcrumbs crumbs={[['Home', '/'], ['Case studies', '/cases'], [study.title, null]]} />
         <section className="case-page-hero">
           <span className="kicker">{study.code}</span>
           <h1>{study.title}</h1>
@@ -1074,6 +1074,7 @@ function CasesIndexPage({ theme, setTheme }) {
       <CasePageHeader theme={theme} setTheme={setTheme} />
 
       <main className="cases-index-main">
+        <Breadcrumbs crumbs={[['Home', '/'], ['Case studies', null]]} />
         <section className="cases-index-hero">
           <span className="kicker">Selected work</span>
           <h1>Case studies</h1>
@@ -1975,7 +1976,7 @@ function RegisterPage({ theme, setTheme }) {
       <CasePageHeader theme={theme} setTheme={setTheme} />
 
       <main className="case-page-main register-page-main">
-        <a className="case-page-back" href="/#top">Back to home</a>
+        <Breadcrumbs crumbs={[['Home', '/'], ['Sessions', null]]} />
 
         <Reveal as="section" className="case-page-hero register-hero">
           <span className="content-page-icon" aria-hidden="true">
@@ -2183,7 +2184,7 @@ function AboutPage({ theme, setTheme }) {
       <CasePageHeader theme={theme} setTheme={setTheme} />
 
       <main className="case-page-main about-page-main">
-        <a className="case-page-back" href="/#top">Back to home</a>
+        <Breadcrumbs crumbs={[['Home', '/'], ['About', null]]} />
 
         <section className="case-page-hero about-hero">
           <span className="content-page-icon" aria-hidden="true">
