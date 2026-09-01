@@ -2466,7 +2466,7 @@ function TwoStepRegister({ seminar }) {
   if (step === 'payment') {
     const pay = registration?.payment || {}
     return (
-      <form className="register-form lp-form" onSubmit={submitPayment} noValidate>
+      <form className="register-form lp-form" onSubmit={submitPayment} autoComplete="off" noValidate>
         <div className="lp-step-indicator" aria-hidden="true">Step 2 of 2 · Payment</div>
 
         <div className="lp-gcash-box">
@@ -2485,11 +2485,11 @@ function TwoStepRegister({ seminar }) {
 
         <div className="register-field">
           <label htmlFor="lp-ref">GCash reference number</label>
-          <input id="lp-ref" name="reference_number" type="text" inputMode="numeric" required placeholder="e.g. 1000123456789" />
+          <input id="lp-ref" name="reference_number" type="text" inputMode="numeric" autoComplete="off" data-1p-ignore data-lpignore="true" required placeholder="e.g. 1000123456789" />
         </div>
         <div className="register-field">
           <label htmlFor="lp-amount">Amount you paid (₱)</label>
-          <input id="lp-amount" name="amount_submitted" type="number" step="0.01" min="0" required defaultValue={pay.amount} />
+          <input id="lp-amount" name="amount_submitted" type="number" step="0.01" min="0" autoComplete="off" required defaultValue={pay.amount} />
         </div>
         <div className="register-field register-field-full lp-file-field">
           <label htmlFor="lp-receipt">GCash receipt screenshot</label>
