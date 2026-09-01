@@ -121,9 +121,31 @@ main {
 
 /* Primary nav dropdowns (Services, Insights) --------------------------------- */
 .nav-top-link {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 4px;
+}
+
+/* Current-section indicator */
+.nav-links .nav-top-link.is-active {
+  color: var(--color-accent-text);
+}
+
+.nav-links .nav-top-link.is-active::after {
+  content: '';
+  position: absolute;
+  left: 13px;
+  right: 13px;
+  bottom: 3px;
+  height: 2px;
+  border-radius: var(--radius-pill);
+  background: var(--color-accent);
+}
+
+/* Keep the underline under the label, not the dropdown caret */
+.nav-item.has-dropdown .nav-top-link.is-active::after {
+  right: 25px;
 }
 
 .nav-item {
@@ -1939,6 +1961,10 @@ main {
     color: var(--color-muted);
   }
 
+  .nav-links .nav-top-link.is-active::after {
+    display: none;
+  }
+
   .hero-section,
   .section,
   .contact-section,
@@ -2540,6 +2566,38 @@ main {
 .case-page-back:hover,
 .case-next-link:hover {
   color: var(--color-accent-text);
+}
+
+/* Breadcrumbs (content + services detail pages) */
+.breadcrumbs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.breadcrumbs a {
+  color: rgba(196, 213, 234, 0.62);
+  text-decoration: none;
+}
+
+.breadcrumbs a:hover {
+  color: var(--color-accent-text);
+}
+
+.breadcrumbs span[aria-current='page'] {
+  color: rgba(196, 213, 234, 0.9);
+}
+
+.breadcrumbs a + a::before,
+.breadcrumbs a + span::before {
+  content: '/';
+  margin-right: 8px;
+  color: rgba(196, 213, 234, 0.32);
 }
 
 .case-page-hero {

@@ -541,7 +541,7 @@ const contentPages = {
     ],
     examples: ['Lead intake qualification', 'Document review triage', 'Status update routing', 'Executive summary generation'],
     cta: 'Map an automation opportunity',
-    ctaHref: '/consulting-intake',
+    ctaHref: '/#contact',
   },
   '/services/software-architecture': {
     icon: Network,
@@ -556,7 +556,7 @@ const contentPages = {
     ],
     examples: ['API foundation', 'Multi-tenant workflow platform', 'Reporting data layer', 'Legacy tool modernization'],
     cta: 'Review a system architecture',
-    ctaHref: '/consulting-intake',
+    ctaHref: '/#contact',
   },
   '/services/custom-systems': {
     icon: Code2,
@@ -571,7 +571,7 @@ const contentPages = {
     ],
     examples: ['Client portals', 'Operations dashboards', 'Workflow applications', 'Reporting systems'],
     cta: 'Scope a custom system',
-    ctaHref: '/consulting-intake',
+    ctaHref: '/#contact',
   },
   '/services/technical-advisory': {
     icon: ShieldCheck,
@@ -586,7 +586,7 @@ const contentPages = {
     ],
     examples: ['Architecture second opinion', 'AI adoption review', 'Build versus buy decision', 'Integration planning'],
     cta: 'Request technical advisory',
-    ctaHref: '/consulting-intake',
+    ctaHref: '/#contact',
   },
   '/workflow-demos': {
     icon: Blocks,
@@ -616,7 +616,7 @@ const contentPages = {
     ],
     examples: ['Webhook validation checklist', 'Queue observability pattern', 'AI exception review model'],
     cta: 'Start with a system review',
-    ctaHref: '/consulting-intake',
+    ctaHref: '/#contact',
   },
   '/insights': {
     icon: BookOpen,
@@ -646,7 +646,7 @@ const contentPages = {
     ],
     examples: ['Integration foundation', 'Transaction intake command center', 'Workflow blueprint'],
     cta: 'Review a system design',
-    ctaHref: '/consulting-intake',
+    ctaHref: '/#contact',
   },
   '/insights/ai-operations': {
     icon: Bot,
@@ -661,7 +661,7 @@ const contentPages = {
     ],
     examples: ['Consultation intake routing', 'Document intake assistant', 'AI summary workflow'],
     cta: 'Design an AI operating model',
-    ctaHref: '/consulting-intake',
+    ctaHref: '/#contact',
   },
   '/insights/digital-transformation': {
     icon: Workflow,
@@ -676,7 +676,7 @@ const contentPages = {
     ],
     examples: ['Transaction intake command center', 'Integration foundation', 'AI automation roadmap'],
     cta: 'Plan a transformation roadmap',
-    ctaHref: '/consulting-intake',
+    ctaHref: '/#contact',
   },
   '/contact': {
     icon: MessageSquareText,
@@ -721,7 +721,7 @@ const contentPages = {
     ],
     examples: ['Reduce duplicate entry', 'Improve transaction traceability', 'Automate document review', 'Connect disconnected tools'],
     cta: 'Find the right solution path',
-    ctaHref: '/consulting-intake',
+    ctaHref: '/#contact',
   },
 }
 
@@ -763,6 +763,13 @@ function SiteNav() {
   const [menuOpen, setMenuOpen] = useState(false)
   const close = () => setMenuOpen(false)
 
+  // Nav links are full-page navigations, so reading the path at render time is
+  // accurate for the current page. A top item is active on its own page and any
+  // page nested beneath it (e.g. Services on /services/ai-automation).
+  const currentPath =
+    typeof window !== 'undefined' ? window.location.pathname.replace(/\/$/, '') || '/' : '/'
+  const isActive = (href) => currentPath === href || currentPath.startsWith(`${href}/`)
+
   return (
     <>
       <button
@@ -775,10 +782,16 @@ function SiteNav() {
         {menuOpen ? <X size={20} /> : <Menu size={20} />}
       </button>
       <nav className={menuOpen ? 'nav-links open' : 'nav-links'} aria-label="Primary">
-        {primaryNav.map((item) =>
-          item.children ? (
+        {primaryNav.map((item) => {
+          const active = isActive(item.href)
+          return item.children ? (
             <div className="nav-item has-dropdown" key={item.label}>
-              <a className="nav-top-link" href={item.href} onClick={close}>
+              <a
+                className={`nav-top-link${active ? ' is-active' : ''}`}
+                href={item.href}
+                aria-current={active ? 'page' : undefined}
+                onClick={close}
+              >
                 {item.label}
                 <ChevronDown size={15} aria-hidden="true" />
               </a>
@@ -791,11 +804,17 @@ function SiteNav() {
               </div>
             </div>
           ) : (
-            <a className="nav-top-link" href={item.href} key={item.label} onClick={close}>
+            <a
+              className={`nav-top-link${active ? ' is-active' : ''}`}
+              href={item.href}
+              key={item.label}
+              aria-current={active ? 'page' : undefined}
+              onClick={close}
+            >
               {item.label}
             </a>
-          ),
-        )}
+          )
+        })}
         <a className="nav-cta" href="/#contact" onClick={close}>
           Book a consult
         </a>
@@ -1542,7 +1561,7 @@ function ServicesPage({ theme, setTheme }) {
       <CasePageHeader theme={theme} setTheme={setTheme} />
 
       <main className="case-page-main services-page-main">
-        <a className="case-page-back" href="/#top">Back to home</a>
+        <Breadcrumbs crumbs={[['Home', '/'], ['Services', null]]} />
 
         <section className="services-hero">
           <Reveal className="services-hero-copy">
@@ -1557,8 +1576,8 @@ function ServicesPage({ theme, setTheme }) {
               into practical digital solutions.
             </p>
             <div className="content-page-actions">
-              <a className="primary-button" href="/consulting-intake">
-                Map an engagement <ArrowRight size={18} aria-hidden="true" />
+              <a className="primary-button" href="/#contact">
+                Book a consult <ArrowRight size={18} aria-hidden="true" />
               </a>
               <a className="secondary-button" href="/cases">
                 Review proof <FileText size={17} aria-hidden="true" />
@@ -1656,8 +1675,8 @@ function ServicesPage({ theme, setTheme }) {
               integration path around it.
             </p>
           </div>
-          <a className="primary-button" href="/consulting-intake">
-            Map an engagement <ArrowRight size={18} aria-hidden="true" />
+          <a className="primary-button" href="/#contact">
+            Book a consult <ArrowRight size={18} aria-hidden="true" />
           </a>
         </Reveal>
       </main>
@@ -2352,6 +2371,42 @@ function AboutPage({ theme, setTheme }) {
   )
 }
 
+// Map a deep URL segment to its parent section page, so a content page two
+// levels down (e.g. /services/ai-automation) can show Home / Services / <title>.
+const breadcrumbParents = {
+  services: ['Services', '/services'],
+  insights: ['Insights', '/insights'],
+}
+
+function buildBreadcrumbs(page) {
+  const path = typeof window !== 'undefined' ? window.location.pathname.replace(/\/$/, '') : ''
+  const parts = path.split('/').filter(Boolean)
+  const crumbs = [['Home', '/']]
+  if (parts.length >= 2 && breadcrumbParents[parts[0]]) {
+    crumbs.push(breadcrumbParents[parts[0]])
+  }
+  crumbs.push([page.title, null]) // current page - no link
+  return crumbs
+}
+
+function Breadcrumbs({ crumbs }) {
+  return (
+    <nav className="breadcrumbs" aria-label="Breadcrumb">
+      {crumbs.map(([label, href]) =>
+        href ? (
+          <a key={href} href={href}>
+            {label}
+          </a>
+        ) : (
+          <span key="current" aria-current="page">
+            {label}
+          </span>
+        ),
+      )}
+    </nav>
+  )
+}
+
 function ContentPage({ page, theme, setTheme }) {
   const PageIcon = page.icon
 
@@ -2360,7 +2415,7 @@ function ContentPage({ page, theme, setTheme }) {
       <CasePageHeader theme={theme} setTheme={setTheme} />
 
       <main className="case-page-main content-page-main">
-        <a className="case-page-back" href="/#top">Back to home</a>
+        <Breadcrumbs crumbs={buildBreadcrumbs(page)} />
         <section className="case-page-hero content-page-hero">
           <span className="content-page-icon" aria-hidden="true">
             <PageIcon size={24} />
@@ -4069,7 +4124,7 @@ function App() {
             </p>
             <div className="hero-actions">
               <a className="primary-button" href="#contact">
-                Book a systems consult <ArrowRight size={18} aria-hidden="true" />
+                Book a consult <ArrowRight size={18} aria-hidden="true" />
               </a>
               <a className="secondary-button" href="#platform">
                 <Play size={17} aria-hidden="true" /> See the operating layer
