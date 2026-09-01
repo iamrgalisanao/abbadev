@@ -4665,6 +4665,18 @@ main {
   border-bottom-right-radius: 4px;
 }
 
+.assistant-link {
+  color: var(--color-accent-text);
+  font-weight: 650;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  overflow-wrap: anywhere;
+}
+
+.assistant-link:hover {
+  text-decoration-thickness: 2px;
+}
+
 .assistant-typing {
   display: inline-flex;
   gap: 4px;

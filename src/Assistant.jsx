@@ -141,6 +141,61 @@ function matchIntent(text) {
   return null
 }
 
+// Turn URLs, site-relative paths (/seminar?event=...), and emails inside a reply
+// into real links. Builds React nodes (never raw HTML) and only accepts http(s),
+// leading-slash paths, and mailto - so nothing the model emits can inject markup
+// or a javascript: href. Returns an array of strings + <a> elements for React.
+const LINK_PATTERN =
+  /(https?:\/\/[^\s]+|\/[A-Za-z0-9\-_/#][A-Za-z0-9\-_/#?=&%.+]*|[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,})/g
+
+function renderRichText(text) {
+  if (typeof text !== 'string' || !text) return text
+  const nodes = []
+  let lastIndex = 0
+  let key = 0
+  let match
+  LINK_PATTERN.lastIndex = 0
+  while ((match = LINK_PATTERN.exec(text)) !== null) {
+    if (match.index > lastIndex) nodes.push(text.slice(lastIndex, match.index))
+
+    // Skip a leading-slash path that is really mid-word ("24/7", "and/or") - a
+    // link only when the slash starts a fresh token, not after a letter or digit.
+    if (match[0].startsWith('/') && match.index > 0 && /[A-Za-z0-9]/.test(text[match.index - 1])) {
+      nodes.push(match[0])
+      lastIndex = match.index + match[0].length
+      continue
+    }
+
+    let token = match[0]
+    // Keep trailing sentence punctuation out of the link itself.
+    let trailing = ''
+    const punct = /[.,;:!?)]+$/.exec(token)
+    if (punct) {
+      trailing = punct[0]
+      token = token.slice(0, -trailing.length)
+    }
+
+    const isEmail = token.includes('@') && !token.startsWith('/') && !token.startsWith('http')
+    const isExternal = token.startsWith('http')
+    const href = isEmail ? `mailto:${token}` : token
+
+    nodes.push(
+      <a
+        key={`lnk-${key++}`}
+        className="assistant-link"
+        href={href}
+        {...(isExternal ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+      >
+        {token}
+      </a>,
+    )
+    if (trailing) nodes.push(trailing)
+    lastIndex = match.index + match[0].length
+  }
+  if (lastIndex < text.length) nodes.push(text.slice(lastIndex))
+  return nodes.length ? nodes : text
+}
+
 export default function Assistant() {
   const reducedMotion = useMemo(
     () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches,
@@ -445,7 +500,9 @@ export default function Assistant() {
                     <Sparkles size={13} />
                   </span>
                 )}
-                <div className="assistant-bubble">{message.text}</div>
+                <div className="assistant-bubble">
+                  {message.role === 'bot' ? renderRichText(message.text) : message.text}
+                </div>
               </div>
             ))}
 
