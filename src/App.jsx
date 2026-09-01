@@ -9,6 +9,7 @@ import {
   Calendar,
   Check,
   CheckCircle2,
+  ChevronDown,
   ChevronRight,
   CircleDot,
   Clock,
@@ -726,8 +727,84 @@ const contentPages = {
 
 // Shared nav header for the standalone pages (case study, cases directory,
 // content pages). Owns its own mobile-menu state.
-function CasePageHeader({ theme, setTheme }) {
+// Single source of truth for the primary navigation. Items are real pages (not
+// homepage section anchors); Services and Insights expose their depth via a
+// dropdown on desktop and an indented list on mobile.
+const primaryNav = [
+  {
+    label: 'Services',
+    href: '/services',
+    children: [
+      ['All services', '/services'],
+      ['AI & automation', '/services/ai-automation'],
+      ['Software architecture', '/services/software-architecture'],
+      ['Custom systems', '/services/custom-systems'],
+      ['Technical advisory', '/services/technical-advisory'],
+    ],
+  },
+  { label: 'Work', href: '/cases' },
+  {
+    label: 'Insights',
+    href: '/insights',
+    children: [
+      ['All insights', '/insights'],
+      ['System design', '/insights/system-design'],
+      ['AI operations', '/insights/ai-operations'],
+      ['Digital transformation', '/insights/digital-transformation'],
+    ],
+  },
+  { label: 'Sessions', href: '/register' },
+  { label: 'About', href: '/about' },
+]
+
+// Shared primary navigation used by every header, so the menu can never drift
+// between the homepage and the interior pages.
+function SiteNav() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const close = () => setMenuOpen(false)
+
+  return (
+    <>
+      <button
+        className="icon-button mobile-only"
+        type="button"
+        aria-label="Toggle navigation"
+        aria-expanded={menuOpen}
+        onClick={() => setMenuOpen((open) => !open)}
+      >
+        {menuOpen ? <X size={20} /> : <Menu size={20} />}
+      </button>
+      <nav className={menuOpen ? 'nav-links open' : 'nav-links'} aria-label="Primary">
+        {primaryNav.map((item) =>
+          item.children ? (
+            <div className="nav-item has-dropdown" key={item.label}>
+              <a className="nav-top-link" href={item.href} onClick={close}>
+                {item.label}
+                <ChevronDown size={15} aria-hidden="true" />
+              </a>
+              <div className="nav-dropdown">
+                {item.children.map(([label, href]) => (
+                  <a key={href} href={href} onClick={close}>
+                    {label}
+                  </a>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <a className="nav-top-link" href={item.href} key={item.label} onClick={close}>
+              {item.label}
+            </a>
+          ),
+        )}
+        <a className="nav-cta" href="/#contact" onClick={close}>
+          Book a consult
+        </a>
+      </nav>
+    </>
+  )
+}
+
+function CasePageHeader({ theme, setTheme }) {
   return (
     <header className="nav case-page-header">
       <a className="brand" href="/#top" aria-label="ABBADev Tech Solutions home">
@@ -746,23 +823,7 @@ function CasePageHeader({ theme, setTheme }) {
         >
           {theme === 'dark' ? <Sun size={19} aria-hidden="true" /> : <Moon size={19} aria-hidden="true" />}
         </button>
-        <button
-          className="icon-button mobile-only"
-          type="button"
-          aria-label="Toggle navigation"
-          onClick={() => setMenuOpen((open) => !open)}
-        >
-          {menuOpen ? <X size={20} /> : <Menu size={20} />}
-        </button>
-        <nav className={menuOpen ? 'nav-links open' : 'nav-links'}>
-          <a href="/#platform" onClick={() => setMenuOpen(false)}>Platform</a>
-          <a href="/#workflow" onClick={() => setMenuOpen(false)}>Workflow</a>
-          <a href="/#services" onClick={() => setMenuOpen(false)}>Services</a>
-          <a href="/#resources" onClick={() => setMenuOpen(false)}>Insights</a>
-          <a className="nav-cta" href="/#contact" onClick={() => setMenuOpen(false)}>
-            Book a systems consult
-          </a>
-        </nav>
+        <SiteNav />
       </div>
     </header>
   )
@@ -3758,7 +3819,6 @@ function FeaturedSessions() {
 
 function App() {
   const [activeMode, setActiveMode] = useState(1)
-  const [menuOpen, setMenuOpen] = useState(false)
   const selectedMode = workflowModes[activeMode]
   const [path, setPath] = useState(() => (typeof window === 'undefined' ? '/' : window.location.pathname))
 
@@ -3992,24 +4052,7 @@ function App() {
           >
             {theme === 'dark' ? <Sun size={19} aria-hidden="true" /> : <Moon size={19} aria-hidden="true" />}
           </button>
-          <button
-            className="icon-button mobile-only"
-            type="button"
-            aria-label="Toggle navigation"
-            onClick={() => setMenuOpen((open) => !open)}
-          >
-            {menuOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
-          <nav className={menuOpen ? 'nav-links open' : 'nav-links'}>
-            <a href="#platform" onClick={() => setMenuOpen(false)}>Platform</a>
-            <a href="#workflow" onClick={() => setMenuOpen(false)}>Workflow</a>
-            <a href="#services" onClick={() => setMenuOpen(false)}>Services</a>
-            <a href="#product" onClick={() => setMenuOpen(false)}>Product</a>
-            <a href="#resources" onClick={() => setMenuOpen(false)}>Insights</a>
-            <a className="nav-cta" href="#contact" onClick={() => setMenuOpen(false)}>
-              Book a systems consult
-            </a>
-          </nav>
+          <SiteNav />
         </div>
       </header>
 
@@ -4260,6 +4303,9 @@ function App() {
               )
             })}
           </div>
+          <a className="all-cases-link" href="/services">
+            Explore all services <ArrowRight size={16} aria-hidden="true" />
+          </a>
         </section>
 
         <section className="section work-section" id="work">
@@ -4436,6 +4482,9 @@ function App() {
               )
             })}
           </div>
+          <a className="all-cases-link" href="/insights">
+            Read all insights <ArrowRight size={16} aria-hidden="true" />
+          </a>
         </section>
 
         <section className="founder-section" id="founder" aria-label="About the founder">

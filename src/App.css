@@ -119,6 +119,80 @@ main {
   transform: translateY(-2px);
 }
 
+/* Primary nav dropdowns (Services, Insights) --------------------------------- */
+.nav-top-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.nav-item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.nav-item .nav-top-link svg {
+  color: var(--color-muted);
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.nav-item:hover .nav-top-link svg,
+.nav-item:focus-within .nav-top-link svg {
+  transform: rotate(180deg);
+}
+
+/* Invisible bridge so the pointer can cross the gap into the panel */
+.nav-item::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 8px;
+}
+
+.nav-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 40;
+  min-width: 224px;
+  display: grid;
+  gap: 2px;
+  padding: 6px;
+  border: var(--rule-hairline) solid var(--color-rule);
+  border-radius: var(--radius-md);
+  background: var(--color-card);
+  box-shadow: var(--shadow-stage);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition: opacity var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out),
+    visibility var(--dur-fast) var(--ease-out);
+}
+
+.nav-item:hover .nav-dropdown,
+.nav-item:focus-within .nav-dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.nav-dropdown a {
+  min-height: 36px;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  color: var(--color-body);
+  font-size: var(--text-sm);
+  font-weight: 640;
+}
+
+.nav-dropdown a:hover {
+  color: var(--color-ink);
+  background: var(--color-paper-raised);
+}
+
 .icon-button {
   display: inline-grid;
   width: 44px;
@@ -1833,6 +1907,36 @@ main {
 
   .nav-links a {
     min-height: 42px;
+  }
+
+  /* On mobile the dropdown parents become full-width blocks and their children
+     render as an always-visible indented list (no hover state on touch). */
+  .nav-links .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .nav-item .nav-top-link svg {
+    display: none;
+  }
+
+  .nav-dropdown {
+    position: static;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    min-width: 0;
+    padding: 0 0 4px 12px;
+    border: none;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+  }
+
+  .nav-dropdown a {
+    color: var(--color-muted);
   }
 
   .hero-section,
