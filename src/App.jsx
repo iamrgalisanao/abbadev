@@ -2338,6 +2338,16 @@ const EVENTS_API = (import.meta.env.VITE_EVENTS_API || '').replace(/\/$/, '')
 // The event slug this landing page registers for (must exist in the events API).
 const SEMINAR_EVENT_SLUG = 'idea-to-intelligent-system'
 
+// Format a Philippine mobile number as the user types → "0917 123 4567".
+// Accepts pasted +63/63/9-prefixed forms; the backend normalizes to E.164.
+function formatPhMobile(raw) {
+  let digits = String(raw).replace(/\D/g, '')
+  if (digits.startsWith('63')) digits = '0' + digits.slice(2)
+  else if (digits.startsWith('9')) digits = '0' + digits
+  digits = digits.slice(0, 11)
+  return [digits.slice(0, 4), digits.slice(4, 7), digits.slice(7, 11)].filter(Boolean).join(' ')
+}
+
 // Two-step registration against the events API: (1) capture details and create
 // a pending registration, (2) upload the GCash receipt + reference for
 // verification. On success the seat is held pending manual payment review.
@@ -2540,7 +2550,16 @@ function TwoStepRegister({ seminar }) {
       </fieldset>
       <div className="register-field">
         <label htmlFor="lp-phone">Mobile number</label>
-        <input id="lp-phone" name="phone" type="tel" autoComplete="tel" required placeholder="+63 9XX XXX XXXX" />
+        <input
+          id="lp-phone"
+          name="phone"
+          type="tel"
+          inputMode="numeric"
+          autoComplete="tel"
+          required
+          placeholder="0917 123 4567"
+          onInput={(inputEvent) => { inputEvent.currentTarget.value = formatPhMobile(inputEvent.currentTarget.value) }}
+        />
       </div>
       <div className="register-field register-field-full">
         <label htmlFor="lp-org">School / company <span className="register-optional">(optional)</span></label>
