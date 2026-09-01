@@ -2637,6 +2637,8 @@ const flagshipSeminar = {
   venue: 'Twinniz Cafe, Olongapo City',
   venueNote: 'Held at Twinniz Cafe, Olongapo City. Directions are emailed to you once your seat is confirmed.',
   price: '₱399',
+  originalPrice: '₱500',
+  discountNote: 'Save ₱101',
   priceNote: 'Includes a free snack',
   capacity: 40,
   // Countdown target: Sept 5, 2026 at 2:00 PM Philippine time (UTC+8).
@@ -2660,6 +2662,8 @@ function mapEventToSeminar(event) {
     mode: event.mode === 'In-person' && event.location ? event.location : event.mode,
     venueNote: '',
     price: event.price_label,
+    originalPrice: null,
+    discountNote: null,
     priceNote: null,
     capacity: null,
     startsAtIso: event.starts_at,
@@ -3259,7 +3263,15 @@ function SeminarLandingPage({ theme, setTheme }) {
 
           <aside className="lp-hero-card" aria-label="Seminar details">
             <div className="lp-card-head">
-              <span className="lp-card-price">{seminar.price}</span>
+              <div className="lp-card-price-row">
+                {seminar.originalPrice && (
+                  <span className="lp-card-price-was">{seminar.originalPrice}</span>
+                )}
+                <span className="lp-card-price">{seminar.price}</span>
+                {seminar.discountNote && (
+                  <span className="lp-card-price-save">{seminar.discountNote}</span>
+                )}
+              </div>
               {seminar.priceNote && <span className="lp-card-price-note">{seminar.priceNote}</span>}
             </div>
             <ul className="lp-card-meta">
