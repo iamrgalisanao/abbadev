@@ -123,6 +123,14 @@ const FALLBACK = {
   chips: STARTERS,
 }
 
+// When set (VITE_ASSISTANT_ENDPOINT, e.g. /api/assistant), free-text questions
+// are answered by the grounded AI assistant (Ollama via n8n) through the proxy.
+// When empty, the assistant stays on the deterministic intent matcher below.
+const ASSISTANT_API = (import.meta.env.VITE_ASSISTANT_ENDPOINT || '').trim()
+
+// How many prior turns of context to send with each AI question.
+const HISTORY_TURNS = 10
+
 function matchIntent(text) {
   const normalized = ` ${text.toLowerCase().trim()} `
   for (const intent of INTENTS) {
@@ -286,6 +294,50 @@ export default function Assistant() {
     }
   }
 
+  // Deterministic fallback used whenever the AI endpoint is unset, slow, or errors -
+  // the widget always answers, even offline.
+  const answerDeterministically = (text) => {
+    const intent = matchIntent(text)
+    pushBot(intent ? { text: intent.reply, chips: intent.chips } : FALLBACK)
+  }
+
+  // Ask the grounded AI assistant (Ollama via n8n, behind the proxy). Sends recent
+  // turns for context; on any failure it degrades to the deterministic matcher.
+  const askAssistant = async (text) => {
+    const history = messages
+      .filter((m) => (m.role === 'user' || m.role === 'bot') && m.text)
+      .slice(-HISTORY_TURNS)
+      .map((m) => ({ role: m.role === 'bot' ? 'assistant' : 'user', content: m.text }))
+    history.push({ role: 'user', content: text })
+
+    const pageUrl = typeof window !== 'undefined' ? window.location.href : 'https://abbadev.com/'
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 25000)
+
+    setTyping(true)
+    try {
+      const response = await fetch(ASSISTANT_API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: history, pageUrl, source: 'assistant-chat' }),
+        signal: controller.signal,
+      })
+      if (!response.ok) throw new Error(`Assistant failed with status ${response.status}`)
+      const data = await response.json()
+      const reply = typeof data?.reply === 'string' ? data.reply.trim() : ''
+      if (!reply) throw new Error('Assistant returned an empty reply')
+
+      setTyping(false)
+      pushBot({ text: reply, chips: [CONSULT_CHIP] }, 0)
+    } catch (error) {
+      console.error(error)
+      setTyping(false)
+      answerDeterministically(text)
+    } finally {
+      clearTimeout(timeout)
+    }
+  }
+
   const handleFlowInput = (text) => {
     if (flow === 'challenge') {
       leadRef.current.challenge = text
@@ -338,11 +390,10 @@ export default function Assistant() {
       return
     }
 
-    const intent = matchIntent(text)
-    if (intent) {
-      pushBot({ text: intent.reply, chips: intent.chips })
+    if (ASSISTANT_API) {
+      askAssistant(text)
     } else {
-      pushBot(FALLBACK)
+      answerDeterministically(text)
     }
   }
 
