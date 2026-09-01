@@ -1435,6 +1435,9 @@ const eventOfferings = [
     duration: '3 hours',
     level: 'Beginner',
     price: '₱399',
+    // Paid seminar: register through the dedicated two-step reserve-then-pay
+    // funnel instead of the simple n8n form.
+    externalUrl: '/seminar',
     blurb: 'Transform ideas into intelligent systems using AI, modern software development, and structured project delivery - the practical tools and best practices that turn concepts into real, measurable impact.',
   },
   {
@@ -1675,10 +1678,16 @@ function RegisterPage({ theme, setTheme }) {
                     <span className={`register-price${event.price === 'Free' ? ' is-free' : ''}`}>
                       {event.price}
                     </span>
-                    <button type="button" className="register-select-btn" onClick={() => selectEvent(event)}>
-                      {isSelected ? 'Selected' : 'Register'}
-                      {isSelected ? <Check size={15} aria-hidden="true" /> : <ArrowRight size={15} aria-hidden="true" />}
-                    </button>
+                    {event.externalUrl ? (
+                      <a className="register-select-btn" href={event.externalUrl}>
+                        Register <ArrowRight size={15} aria-hidden="true" />
+                      </a>
+                    ) : (
+                      <button type="button" className="register-select-btn" onClick={() => selectEvent(event)}>
+                        {isSelected ? 'Selected' : 'Register'}
+                        {isSelected ? <Check size={15} aria-hidden="true" /> : <ArrowRight size={15} aria-hidden="true" />}
+                      </button>
+                    )}
                   </div>
                 </article>
               )
@@ -1776,7 +1785,7 @@ function RegisterPage({ theme, setTheme }) {
                   onChange={(changeEvent) => setSelectedEventId(changeEvent.target.value)}
                 >
                   <option value="">Notify me of the next session</option>
-                  {eventOfferings.map((event) => (
+                  {eventOfferings.filter((event) => !event.externalUrl).map((event) => (
                     <option key={event.id} value={event.id}>
                       {event.title} — {event.date}
                     </option>
