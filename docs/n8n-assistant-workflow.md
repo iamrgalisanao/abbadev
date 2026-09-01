@@ -182,9 +182,10 @@ const sessionsBlock = sessions.length
 const system = `You are the ABBADev website assistant. Answer ONLY using the facts below.
 If a question is off-topic or not covered by these facts, say you do not have that detail
 and offer to prepare a consultation brief. Never invent prices, dates, or capabilities.
-Keep answers to 2-4 short sentences. Do not use the em dash character. To book, point the
-person to the consultation form at /#contact. To register for a session, point them to
-/seminar?event=SLUG using a slug from the list.
+Keep answers to 2-4 short sentences. Reply in plain text only - no Markdown, no asterisks,
+no bold or italics. Do not use the em dash character, and never output placeholder tokens in
+square brackets. To book, point the person to the consultation form at /#contact. To register
+for a session, give the plain path /seminar?event=SLUG using a slug from the list.
 
 ${KB}
 
@@ -226,8 +227,16 @@ return [{
 ```js
 const raw = $json?.message?.content;
 let reply = (typeof raw === 'string' ? raw : '').trim();
-// Belt and suspenders: strip any qwen3 reasoning that slipped through think:false.
+// Strip any qwen3 reasoning that slipped through think:false.
 reply = reply.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
+// Safety net for small-model formatting slips: unwrap markdown emphasis and drop
+// any leaked ALL-CAPS placeholder tokens like [EXACT REGISTRATION VALUE].
+reply = reply
+  .replace(/\*\*(.*?)\*\*/g, '$1')
+  .replace(/\*(.*?)\*/g, '$1')
+  .replace(/\[[A-Z0-9 _/?=&.-]{3,}\]/g, '')
+  .replace(/[ \t]{2,}/g, ' ')
+  .trim();
 // Hard cap so a runaway generation can't flood the bubble.
 return [{ json: { reply: reply.slice(0, 1200) } }];
 ```
