@@ -2348,6 +2348,13 @@ function formatPhMobile(raw) {
   return [digits.slice(0, 4), digits.slice(4, 7), digits.slice(7, 11)].filter(Boolean).join(' ')
 }
 
+// Chrome ignores autocomplete="off" and autofills the reference field with the
+// saved email. Rendering it readonly blocks autofill; we unlock it on the first
+// interaction (click/tap/focus) so the user can still type normally.
+function unlockField(event) {
+  event.currentTarget.readOnly = false
+}
+
 // Two-step registration against the events API: (1) capture details and create
 // a pending registration, (2) upload the GCash receipt + reference for
 // verification. On success the seat is held pending manual payment review.
@@ -2495,7 +2502,21 @@ function TwoStepRegister({ seminar }) {
 
         <div className="register-field">
           <label htmlFor="lp-ref">GCash reference number</label>
-          <input id="lp-ref" name="reference_number" type="text" inputMode="numeric" autoComplete="off" data-1p-ignore data-lpignore="true" required placeholder="e.g. 1000123456789" />
+          <input
+            id="lp-ref"
+            name="reference_number"
+            type="text"
+            inputMode="numeric"
+            autoComplete="off"
+            data-1p-ignore
+            data-lpignore="true"
+            readOnly
+            onFocus={unlockField}
+            onMouseDown={unlockField}
+            onTouchStart={unlockField}
+            required
+            placeholder="e.g. 1000123456789"
+          />
         </div>
         <div className="register-field">
           <label htmlFor="lp-amount">Amount you paid (₱)</label>
