@@ -203,10 +203,10 @@ return [{
   json: {
     model: 'qwen3:1.7b',
     stream: false,
-    think: false,        // qwen3 reasons by default; suppress it for a clean, fast reply
-    keep_alive: '30m',   // hold the model in memory so replies don't cold-reload (~9s CPU)
+    think: false,      // qwen3 reasons by default; suppress it for a clean, fast reply
+    keep_alive: -1,    // keep the model resident indefinitely so replies never cold-reload
     messages: [{ role: 'system', content: system }, ...turns],
-    options: { temperature: 0.2, num_ctx: 4096 },
+    options: { temperature: 0.2, num_ctx: 4096, num_predict: 220 },
   },
 }];
 ```
@@ -220,7 +220,7 @@ return [{
   `http://localhost:11434/api/chat` (n8n on the host) — see section 2.
 - **Body Content Type:** JSON
 - **Body:** "Using JSON" →  `={{ $json }}`  (sends the object built in Node 3)
-- **Options → Timeout:** 22000 ms (stay just under the proxy's 24s ceiling)
+- **Options → Timeout:** 28000 ms (see the timeout ladder in section 5)
 
 ### Node 5 — Code: extract + clean the reply
 ```js
@@ -268,9 +268,23 @@ and defer the exact price to a consult, not invent a number).
 - **Small models hallucinate.** The grounding prompt + `temperature: 0.2` keep it
   tight, but spot-check answers. If it invents facts, lower the temperature to 0.1,
   shorten/clarify the KB, or move up to `qwen2.5:7b-instruct`.
-- **Latency = model + hardware.** On CPU, first token can take several seconds. The
-  widget shows a typing indicator and waits up to 25s, then falls back. If replies
-  routinely time out, use a smaller model or add a GPU.
+- **Latency = model + hardware.** Measured on CPU with qwen3:1.7b and the full
+  grounded prompt: **~18s warm, ~23s cold** (model just loaded). The widget shows a
+  typing indicator during this. Two things keep it under the timeout:
+  - `keep_alive: -1` (Node 3) keeps the model resident so every request after the
+    first is warm. After an Ollama restart, pre-warm it once so no visitor eats the
+    cold load:
+    ```bash
+    curl -s http://127.0.0.1:11434/api/chat -d '{"model":"qwen3:1.7b","keep_alive":-1,"messages":[{"role":"user","content":"hi"}],"stream":false,"think":false}' >/dev/null
+    ```
+    (Or set `-e OLLAMA_KEEP_ALIVE=-1` when you `docker run` the container.)
+  - **Timeout ladder** — each layer waits slightly longer than the one it calls, so a
+    stall fails inward first and the widget always falls back cleanly:
+    `Ollama HTTP (Node 4) 28s  <  proxy ASSISTANT_TIMEOUT_MS 30s  <  client 32s`.
+- **~18s is still a long wait for a visitor.** It's acceptable with the typing
+  indicator for launch, but the real fix for snappy replies (1-2s) is a GPU — CPU
+  token generation (~10 tok/s) is the bottleneck, not the workflow. A smaller model
+  (e.g. `llama3.2:1b`) trades quality for speed if you need it sooner.
 - **No streaming.** n8n replies once, so the answer appears all at once (not token by
   token). Fine for short answers; revisit only if you want a typewriter effect.
 - **Keep the KB in sync.** The sessions list is live via the API, but services,

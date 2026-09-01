@@ -19,9 +19,10 @@ const N8N_EVENT_JWT = process.env.N8N_EVENT_JWT || process.env.N8N_JWT
 // its deterministic answers client-side.
 const N8N_ASSISTANT_WEBHOOK_URL = process.env.N8N_ASSISTANT_WEBHOOK_URL
 const N8N_ASSISTANT_JWT = process.env.N8N_ASSISTANT_JWT || process.env.N8N_JWT
-// How long to wait on Ollama before giving up (ms). Small local models on CPU can
-// take a while; the client uses a matching ceiling and falls back on timeout.
-const ASSISTANT_TIMEOUT_MS = Number(process.env.ASSISTANT_TIMEOUT_MS || 24000)
+// How long to wait on the assistant workflow before giving up (ms). A small CPU
+// model with the full grounded prompt answers in ~18s warm; this sits just under
+// the client's ceiling so the proxy returns a clean 504 before the browser aborts.
+const ASSISTANT_TIMEOUT_MS = Number(process.env.ASSISTANT_TIMEOUT_MS || 30000)
 const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || 'https://abbadev.com'
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 

@@ -312,7 +312,10 @@ export default function Assistant() {
 
     const pageUrl = typeof window !== 'undefined' ? window.location.href : 'https://abbadev.com/'
     const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), 25000)
+    // Generous ceiling: a small CPU model with the full grounded prompt answers in
+    // ~18s warm. This sits above the proxy/n8n timeouts so the chain fails inward
+    // first and we still fall back cleanly on a genuine stall.
+    const timeout = setTimeout(() => controller.abort(), 32000)
 
     setTyping(true)
     try {
