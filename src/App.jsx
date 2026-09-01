@@ -1530,22 +1530,38 @@ function RegisterPage({ theme, setTheme }) {
   const [audience, setAudience] = useState('')
   const [status, setStatus] = useState('idle')
   const [message, setMessage] = useState('')
+  const [apiEvents, setApiEvents] = useState(null)
   const formRef = useRef(null)
+
+  // Live sessions from the events API (respects the admin's active/featured
+  // toggles). Falls back to the built-in list if the API is unset or down.
+  useEffect(() => {
+    if (!EVENTS_API) return undefined
+    let cancelled = false
+    fetch(`${EVENTS_API}/api/events`)
+      .then((response) => (response.ok ? response.json() : Promise.reject(response.status)))
+      .then((data) => {
+        if (!cancelled && Array.isArray(data.events)) setApiEvents(data.events)
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  // Normalize both shapes (API `toCard` vs the built-in array) into what the
+  // cards + form expect.
+  const sessions = (apiEvents ?? eventOfferings).map((event) => ({
+    ...event,
+    id: event.slug ?? event.id,
+    price: event.price ?? event.price_label,
+    audience: event.audience ?? [],
+  }))
 
   const visibleEvents =
     filter === 'all'
-      ? eventOfferings
-      : eventOfferings.filter((event) => event.audience.includes(filter))
-
-  const selectEvent = (event) => {
-    setSelectedEventId(event.id)
-    if (event.audience.length === 1) {
-      setAudience(event.audience[0] === 'Students' ? 'student' : 'sme')
-    }
-    if (typeof window !== 'undefined') {
-      formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    }
-  }
+      ? sessions
+      : sessions.filter((event) => event.audience.includes(filter))
 
   const handleRegister = async (formEvent) => {
     formEvent.preventDefault()
@@ -1566,7 +1582,7 @@ function RegisterPage({ theme, setTheme }) {
       return
     }
 
-    const selected = eventOfferings.find((event) => event.id === selectedEventId)
+    const selected = sessions.find((event) => event.id === selectedEventId)
     setStatus('submitting')
     setMessage('')
 
@@ -1654,9 +1670,8 @@ function RegisterPage({ theme, setTheme }) {
             {visibleEvents.map((event) => {
               const TypeIcon = eventTypeIcon[event.type] || BookOpen
               const ModeIcon = event.mode === 'Online' ? Video : MapPin
-              const isSelected = selectedEventId === event.id
               return (
-                <article className={`register-event${isSelected ? ' is-selected' : ''}`} key={event.id}>
+                <article className="register-event" key={event.id}>
                   <div className="register-event-top">
                     <span className="register-type">
                       <TypeIcon size={14} aria-hidden="true" />
@@ -1668,26 +1683,19 @@ function RegisterPage({ theme, setTheme }) {
                     </span>
                   </div>
                   <h3>{event.title}</h3>
-                  <p>{event.blurb}</p>
+                  {event.blurb && <p>{event.blurb}</p>}
                   <ul className="register-event-meta">
                     <li><Calendar size={14} aria-hidden="true" /> {event.date}</li>
-                    <li><Clock size={14} aria-hidden="true" /> {event.time} · {event.duration}</li>
-                    <li><Users size={14} aria-hidden="true" /> {event.audience.join(' & ')}</li>
+                    <li><Clock size={14} aria-hidden="true" /> {event.time}{event.duration ? ` · ${event.duration}` : ''}</li>
+                    {event.audience.length > 0 && <li><Users size={14} aria-hidden="true" /> {event.audience.join(' & ')}</li>}
                   </ul>
                   <div className="register-event-foot">
                     <span className={`register-price${event.price === 'Free' ? ' is-free' : ''}`}>
                       {event.price}
                     </span>
-                    {event.externalUrl ? (
-                      <a className="register-select-btn" href={event.externalUrl}>
-                        Register <ArrowRight size={15} aria-hidden="true" />
-                      </a>
-                    ) : (
-                      <button type="button" className="register-select-btn" onClick={() => selectEvent(event)}>
-                        {isSelected ? 'Selected' : 'Register'}
-                        {isSelected ? <Check size={15} aria-hidden="true" /> : <ArrowRight size={15} aria-hidden="true" />}
-                      </button>
-                    )}
+                    <a className="register-select-btn" href={`/seminar?event=${encodeURIComponent(event.id)}`}>
+                      Register <ArrowRight size={15} aria-hidden="true" />
+                    </a>
                   </div>
                 </article>
               )
@@ -1785,7 +1793,7 @@ function RegisterPage({ theme, setTheme }) {
                   onChange={(changeEvent) => setSelectedEventId(changeEvent.target.value)}
                 >
                   <option value="">Notify me of the next session</option>
-                  {eventOfferings.filter((event) => !event.externalUrl).map((event) => (
+                  {sessions.map((event) => (
                     <option key={event.id} value={event.id}>
                       {event.title} — {event.date}
                     </option>
