@@ -139,7 +139,7 @@ live sessions) and sanitises the incoming turns.
 ```js
 // --- Curated, editable ABBADev knowledge base -----------------------------
 const KB = `
-ABBADev Tech Solutions is a Philippine software + AI consultancy led by Rommel Galisanao.
+ABBADev IT Solutions is a Philippine software + AI consultancy led by Rommel Galisanao.
 The thesis: AI scoped to accountable steps, with deterministic rules and a human owner
 confirming the path. Never "AI does everything on its own."
 

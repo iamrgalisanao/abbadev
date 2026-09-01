@@ -206,14 +206,14 @@ const shell = ({ preview, title, subtitle, badge, body }) => `
     <div style="display:none;max-height:0;overflow:hidden;opacity:0;">${esc(preview)}</div>
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:640px;margin:0 auto;background:#f8fbff;border-radius:18px;overflow:hidden;border:1px solid #dbeafe;">
       <tr><td style="background:#081827;padding:28px 30px;color:#ffffff;">
-        <div style="font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#38bdf8;font-weight:800;">ABBADev Tech Solutions</div>
+        <div style="font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#38bdf8;font-weight:800;">ABBADev IT Solutions</div>
         <h1 style="margin:12px 0 8px;font-size:26px;line-height:1.2;color:#ffffff;">${esc(title)}</h1>
         <p style="margin:0;color:#bfd4ea;font-size:15px;line-height:1.6;">${esc(subtitle)}</p>
         ${badge ? `<div style="display:inline-block;margin-top:18px;padding:8px 12px;border-radius:999px;background:#0b6ee8;color:#ffffff;font-size:13px;font-weight:800;">${esc(badge)}</div>` : ''}
       </td></tr>
       <tr><td style="padding:28px 30px;">${body}</td></tr>
       <tr><td style="padding:20px 30px;background:#eef6ff;color:#475569;font-size:13px;line-height:1.6;">
-        <strong style="color:#0f172a;">Rommel Galisanao</strong><br>ABBADev Tech Solutions<br>
+        <strong style="color:#0f172a;">Rommel Galisanao</strong><br>ABBADev IT Solutions<br>
         <a href="https://abbadev.com" style="color:#0b6ee8;text-decoration:none;">abbadev.com</a>
       </td></tr>
     </table>
@@ -272,7 +272,7 @@ const clientText = (isWaitlist
       normalized.calendarUrl ? `Add to calendar: ${normalized.calendarUrl}` : '',
       '', "We'll send a reminder before the session. Reply to this email for any change.",
     ]
-).concat(['', 'Regards,', 'Rommel Galisanao', 'ABBADev Tech Solutions', 'https://abbadev.com'])
+).concat(['', 'Regards,', 'Rommel Galisanao', 'ABBADev IT Solutions', 'https://abbadev.com'])
   .filter((line) => line !== undefined).join('\n')
 
 return {
@@ -433,7 +433,7 @@ WHERE status IN ('registered', 'confirmed')
   {{ $json.event_when }} · {{ $json.event_mode }}
 
   See you there,
-  Rommel Galisanao — ABBADev Tech Solutions
+  Rommel Galisanao — ABBADev IT Solutions
   ```
 
 **Mark reminded** — a Postgres `Update` (or an `Execute Query`) so no one is

@@ -1,6 +1,6 @@
 # ABBADev Website
 
-Personal brand and business website for Rommel Galisanao / ABBADev Tech Solutions.
+Personal brand and business website for Rommel Galisanao / ABBADev IT Solutions.
 
 The site is built with React, Vite, Tailwind CSS, Framer Motion, and a small Node.js proxy for the consultation form. The proxy forwards submissions to n8n while keeping the JWT on the server.
 

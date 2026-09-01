@@ -325,7 +325,7 @@ const caseStudies = [
       { label: 'Escalation to a human', before: 'Every visitor', after: 'Qualified leads', note: 'Only a completed Book a consult flow - a workflow challenge plus a validated email - is routed to a person.' },
       { label: 'Lead pipeline isolation', before: 'Shared secret', after: 'Dedicated token', note: 'Chat leads run through their own n8n webhook and secret, separate from the website consultation form.' },
     ],
-    client: 'ABBADev Tech Solutions (this website)',
+    client: 'ABBADev IT Solutions (this website)',
     sector: 'Professional services / lead generation',
     duration: 'One focused increment',
     stack: 'React/Vite - Node proxy - n8n - Postgres - Telegram',
@@ -358,7 +358,7 @@ const caseStudies = [
       ['Store and notify', 'n8n normalizes the lead, writes it to a Postgres table, and alerts the founder on Telegram in real time.'],
     ],
     quote: 'The assistant is the argument. It answers within guardrails and only escalates a real lead to a person - the same AI-with-ownership model we build for clients.',
-    quoteBy: 'Rommel Galisanao, ABBADev Tech Solutions',
+    quoteBy: 'Rommel Galisanao, ABBADev IT Solutions',
     disclaimer: 'Live on this site - the assistant in the corner is the system described here.',
     workflow: {
       heading: 'How a lead flows',
@@ -404,7 +404,7 @@ const caseStudies = [
       { label: 'Follow-up discipline', before: 'Memory', after: 'Tasks + reminders', note: 'Activities and due tasks make sure no qualified lead goes quiet by accident.' },
       { label: 'Reporting effort', before: 'Manual rollups', after: 'Live dashboard', note: 'Pipeline value, win rate, and stage movement update as the team works, not at month-end.' },
     ],
-    client: 'ABBADev Tech Solutions (our own product)',
+    client: 'ABBADev IT Solutions (our own product)',
     sector: 'SME sales and operations',
     duration: 'Running in production',
     stack: 'Laravel - React/Vite - MySQL - Sanctum',
@@ -440,7 +440,7 @@ const caseStudies = [
       ['Dashboard and reporting', 'Live pipeline value, win rate, and stage movement for owners, updated as work happens.'],
     ],
     quote: 'We built the CRM we wanted our own clients to have - one place where every lead has an owner and a next step, not a spreadsheet that goes stale by Friday.',
-    quoteBy: 'Rommel Galisanao, ABBADev Tech Solutions',
+    quoteBy: 'Rommel Galisanao, ABBADev IT Solutions',
     workflow: {
       heading: 'How a lead moves through the CRM',
       title: 'Lead-to-deal pipeline',
@@ -503,7 +503,7 @@ const consultationSteps = [
 
 const founderProfile = {
   name: 'Rommel Galisanao',
-  role: 'Founder & Principal Systems Architect — ABBADev Tech Solutions',
+  role: 'Founder & Principal Systems Architect — ABBADev IT Solutions',
   bio: 'I help organizations turn business complexity into practical software systems, bringing together software architecture, AI automation, project leadership, and business process analysis. The work bridges executive clarity and developer-ready implementation, with accountability kept human at every step.',
   points: [
     'Software architecture and enterprise systems',
@@ -826,11 +826,11 @@ function SiteNav() {
 function CasePageHeader({ theme, setTheme }) {
   return (
     <header className="nav case-page-header">
-      <a className="brand" href="/#top" aria-label="ABBADev Tech Solutions home">
+      <a className="brand" href="/#top" aria-label="ABBADev IT Solutions home">
         <img className="brand-mark" src="/images/abbadev-logo.png" alt="" width="42" height="42" />
         <span className="brand-wordmark">
           <strong>ABBADEV</strong>
-          <small>Tech Solutions</small>
+          <small>IT Solutions</small>
         </span>
       </a>
       <div className="nav-right">
@@ -2193,7 +2193,7 @@ function AboutPage({ theme, setTheme }) {
           <span className="kicker">About ABBADev</span>
           <h1>Practical technology that moves the business forward.</h1>
           <p>
-            ABBADev Tech Solutions helps organizations turn business complexity into practical,
+            ABBADev IT Solutions helps organizations turn business complexity into practical,
             scalable systems - combining AI automation, custom software, software architecture,
             and project delivery so technology fits how you actually operate.
           </p>
@@ -2245,7 +2245,7 @@ function AboutPage({ theme, setTheme }) {
           <div className="about-founder-portrait">
             <img
               src="/images/founder.png"
-              alt="Rommel Galisanao, founder of ABBADev Tech Solutions"
+              alt="Rommel Galisanao, founder of ABBADev IT Solutions"
               width="360"
               height="450"
               loading="lazy"
@@ -3157,9 +3157,9 @@ function SeminarLandingPage({ theme, setTheme }) {
     return (
       <div className="site-shell lp-shell" data-theme={theme}>
         <header className="lp-header">
-          <a className="brand" href="/#top" aria-label="ABBADev Tech Solutions home">
+          <a className="brand" href="/#top" aria-label="ABBADev IT Solutions home">
             <img className="brand-mark" src="/images/abbadev-logo.png" alt="" width="42" height="42" />
-            <span className="brand-wordmark"><strong>ABBADEV</strong><small>Tech Solutions</small></span>
+            <span className="brand-wordmark"><strong>ABBADEV</strong><small>IT Solutions</small></span>
           </a>
           <div className="lp-header-right">
             <button
@@ -3192,11 +3192,11 @@ function SeminarLandingPage({ theme, setTheme }) {
   return (
     <div className="site-shell lp-shell" data-theme={theme}>
       <header className="lp-header">
-        <a className="brand" href="/#top" aria-label="ABBADev Tech Solutions home">
+        <a className="brand" href="/#top" aria-label="ABBADev IT Solutions home">
           <img className="brand-mark" src="/images/abbadev-logo.png" alt="" width="42" height="42" />
           <span className="brand-wordmark">
             <strong>ABBADEV</strong>
-            <small>Tech Solutions</small>
+            <small>IT Solutions</small>
           </span>
         </a>
         <div className="lp-header-right">
@@ -3529,15 +3529,15 @@ function SeminarLandingPage({ theme, setTheme }) {
 
       <footer className="lp-footer">
         <div className="lp-footer-inner">
-          <a className="brand" href="/#top" aria-label="ABBADev Tech Solutions home">
+          <a className="brand" href="/#top" aria-label="ABBADev IT Solutions home">
             <img className="brand-mark" src="/images/abbadev-logo.png" alt="" width="36" height="36" />
             <span className="brand-wordmark">
               <strong>ABBADEV</strong>
-              <small>Tech Solutions</small>
+              <small>IT Solutions</small>
             </span>
           </a>
           <p className="lp-footer-legal">
-            © 2026 ABBADev Tech Solutions. This seminar is independent and not affiliated with or
+            © 2026 ABBADev IT Solutions. This seminar is independent and not affiliated with or
             endorsed by Meta. Seats are limited and payment confirms your reservation.
           </p>
           <nav className="lp-footer-links">
@@ -3565,7 +3565,7 @@ const privacyDoc = {
   title: 'Privacy Policy',
   updated: LEGAL_UPDATED,
   intro:
-    'ABBADev Tech Solutions ("ABBADev", "we", "us") respects your privacy. This policy explains what personal information we collect when you reserve a seat at our seminars or use this website, how we use it, and the rights you have under the Philippine Data Privacy Act of 2012 (Republic Act No. 10173).',
+    'ABBADev IT Solutions ("ABBADev", "we", "us") respects your privacy. This policy explains what personal information we collect when you reserve a seat at our seminars or use this website, how we use it, and the rights you have under the Philippine Data Privacy Act of 2012 (Republic Act No. 10173).',
   sections: [
     {
       h: '1. Information we collect',
@@ -3636,7 +3636,7 @@ const privacyDoc = {
     {
       h: '9. Contact us',
       p: [
-        'For any privacy question or request, email ABBADev Tech Solutions at ' + LEGAL_CONTACT + '.',
+        'For any privacy question or request, email ABBADev IT Solutions at ' + LEGAL_CONTACT + '.',
       ],
     },
   ],
@@ -3646,7 +3646,7 @@ const termsDoc = {
   title: 'Terms of Service',
   updated: LEGAL_UPDATED,
   intro:
-    'These Terms of Service govern your registration for and attendance at seminars offered by ABBADev Tech Solutions ("ABBADev", "we", "us"), including "From Idea to Intelligent System", and your use of this website. Please read them before you reserve a seat.',
+    'These Terms of Service govern your registration for and attendance at seminars offered by ABBADev IT Solutions ("ABBADev", "we", "us"), including "From Idea to Intelligent System", and your use of this website. Please read them before you reserve a seat.',
   sections: [
     {
       h: '1. Agreement',
@@ -3709,12 +3709,12 @@ const termsDoc = {
     {
       h: '10. Independence and third parties',
       p: [
-        'ABBADev Tech Solutions is an independent business. This seminar is not affiliated with, endorsed by, or sponsored by Meta (Facebook), Anthropic, GCash, or any other third-party platform mentioned. All trademarks belong to their respective owners.',
+        'ABBADev IT Solutions is an independent business. This seminar is not affiliated with, endorsed by, or sponsored by Meta (Facebook), Anthropic, GCash, or any other third-party platform mentioned. All trademarks belong to their respective owners.',
       ],
     },
     {
       h: '11. Contact us',
-      p: ['Questions about these Terms? Email ABBADev Tech Solutions at ' + LEGAL_CONTACT + '.'],
+      p: ['Questions about these Terms? Email ABBADev IT Solutions at ' + LEGAL_CONTACT + '.'],
     },
   ],
 }
@@ -3723,11 +3723,11 @@ function LegalPage({ doc, theme, setTheme }) {
   return (
     <div className="site-shell lp-shell">
       <header className="lp-header">
-        <a className="brand" href="/#top" aria-label="ABBADev Tech Solutions home">
+        <a className="brand" href="/#top" aria-label="ABBADev IT Solutions home">
           <img className="brand-mark" src="/images/abbadev-logo.png" alt="" width="42" height="42" />
           <span className="brand-wordmark">
             <strong>ABBADEV</strong>
-            <small>Tech Solutions</small>
+            <small>IT Solutions</small>
           </span>
         </a>
         <div className="lp-header-right">
@@ -3746,7 +3746,7 @@ function LegalPage({ doc, theme, setTheme }) {
       <main className="lp-legal">
         <a className="case-page-back" href="/seminar">Back to the seminar</a>
         <header className="lp-legal-head">
-          <span className="kicker">ABBADev Tech Solutions</span>
+          <span className="kicker">ABBADev IT Solutions</span>
           <h1>{doc.title}</h1>
           <p className="lp-legal-updated">Effective date: {doc.updated}</p>
           <p className="lp-legal-intro">{doc.intro}</p>
@@ -3774,14 +3774,14 @@ function LegalPage({ doc, theme, setTheme }) {
 
       <footer className="lp-footer">
         <div className="lp-footer-inner">
-          <a className="brand" href="/#top" aria-label="ABBADev Tech Solutions home">
+          <a className="brand" href="/#top" aria-label="ABBADev IT Solutions home">
             <img className="brand-mark" src="/images/abbadev-logo.png" alt="" width="36" height="36" />
             <span className="brand-wordmark">
               <strong>ABBADEV</strong>
-              <small>Tech Solutions</small>
+              <small>IT Solutions</small>
             </span>
           </a>
-          <p className="lp-footer-legal">© 2026 ABBADev Tech Solutions. All rights reserved.</p>
+          <p className="lp-footer-legal">© 2026 ABBADev IT Solutions. All rights reserved.</p>
           <nav className="lp-footer-links">
             <a href="/seminar">Seminar</a>
             <a href="/privacy">Privacy</a>
@@ -4104,11 +4104,11 @@ function App() {
   return (
     <div className="site-shell">
       <header className="nav">
-        <a className="brand" href="#top" aria-label="ABBADev Tech Solutions home">
+        <a className="brand" href="#top" aria-label="ABBADev IT Solutions home">
           <img className="brand-mark" src="/images/abbadev-logo.png" alt="" width="42" height="42" />
           <span className="brand-wordmark">
             <strong>ABBADEV</strong>
-            <small>Tech Solutions</small>
+            <small>IT Solutions</small>
           </span>
         </a>
         <div className="nav-right">
@@ -4559,7 +4559,7 @@ function App() {
           <div className="founder-portrait">
             <img
               src="/images/founder.png"
-              alt="Rommel Galisanao, founder of ABBADev Tech Solutions"
+              alt="Rommel Galisanao, founder of ABBADev IT Solutions"
               width="360"
               height="450"
               loading="lazy"
@@ -4745,7 +4745,7 @@ function App() {
       <footer className="footer">
         <div className="footer-statement">
           <strong>Built by business context, powered by software architecture.</strong>
-          <span>ABBADev Tech Solutions designs intelligent systems for work that needs clarity, speed, and control.</span>
+          <span>ABBADev IT Solutions designs intelligent systems for work that needs clarity, speed, and control.</span>
         </div>
         <div className="footer-index">
           {footerGroups.map((group) => (

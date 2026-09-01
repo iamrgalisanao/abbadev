@@ -102,7 +102,7 @@ const INTENTS = [
     id: 'about',
     keywords: ['who', 'about', 'founder', 'rommel', 'team', 'you are', 'behind'],
     reply:
-      'ABBADev Tech Solutions is led by Rommel Galisanao - combining software architecture, AI automation, project leadership, and business-process analysis, with accountability kept human at every step.',
+      'ABBADev IT Solutions is led by Rommel Galisanao - combining software architecture, AI automation, project leadership, and business-process analysis, with accountability kept human at every step.',
     chips: [
       { label: 'About ABBADev', href: '/about' },
       CONSULT_CHIP,
