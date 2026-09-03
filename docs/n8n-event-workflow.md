@@ -692,22 +692,13 @@ if (isWaitlist) {
 
   const calendarButton = calendarUrl
     ? `
-      <p style="margin:28px 0;">
-        <a
-          href="${escapeHtml(calendarUrl)}"
-          style="
-            display:inline-block;
-            background:#111827;
-            color:#ffffff;
-            text-decoration:none;
-            padding:12px 18px;
-            border-radius:8px;
-            font-weight:600;
-          "
-        >
-          Add to Google Calendar
-        </a>
-      </p>
+      <table role="presentation" cellpadding="0" cellspacing="0" align="center" style="margin:0 auto;">
+        <tr>
+          <td style="border-radius:10px;background:#0b6ee8;">
+            <a href="${escapeHtml(calendarUrl)}" style="display:inline-block;padding:14px 30px;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:800;color:#ffffff;text-decoration:none;">Add to Google Calendar</a>
+          </td>
+        </tr>
+      </table>
     `
     : ''
 
@@ -719,48 +710,82 @@ if (isWaitlist) {
   clientHtml = `
 <!doctype html>
 <html>
-  <body style="font-family:Arial,sans-serif;line-height:1.6;color:#1f2937;">
-    <div style="max-width:640px;margin:0 auto;padding:24px;">
-      <h2>Registration confirmed</h2>
-
-      <p>Hi ${escapeHtml(name)},</p>
-
-      <p>
-        Your registration for the following ABBADev session has been received:
-      </p>
-
-      <div
-        style="
-          background:#f3f4f6;
-          padding:18px;
-          border-radius:10px;
-          margin:20px 0;
-        "
-      >
-        <strong>${escapeHtml(eventTitle)}</strong><br>
-        ${escapeHtml(eventType)}<br>
-        ${escapeHtml(eventWhen)}<br>
-        ${locationHtml}<br>
-        <strong>Duration:</strong> ${escapeHtml(eventDuration)}<br>
-        <strong>Level:</strong> ${escapeHtml(eventLevel)}<br>
-        <strong>Price:</strong> ${escapeHtml(eventPrice)}
-      </div>
-
-      ${calendarButton}
-
-      <p>
-        We’ll send additional event information and reminders
-        as the session approaches.
-      </p>
-
-      <hr style="border:none;border-top:1px solid #e5e7eb;margin:28px 0;">
-
-      <p style="font-size:14px;color:#6b7280;">
-        ABBADev<br>
-        AI • Automation • Software Development • Project Management<br>
-        <a href="https://abbadev.com">abbadev.com</a>
-      </p>
-    </div>
+  <body style="margin:0;padding:0;background:#0a1526;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#0a1526;background-image:linear-gradient(135deg,#0b1e3a 0%,#0a1526 60%);">
+      <tr>
+        <td align="center" style="padding:28px 16px;">
+          <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:100%;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 24px 60px rgba(3,8,20,0.45);">
+            <!-- Header -->
+            <tr>
+              <td align="center" style="background:#081827;background-image:linear-gradient(120deg,#0b2137 0%,#081827 100%);padding:22px 30px;">
+                <table role="presentation" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td style="padding-right:12px;"><img src="https://abbadev.com/images/abbadev-logo.png" width="40" height="40" alt="ABBADev" style="display:block;border:0;border-radius:8px;"></td>
+                    <td style="font-family:Arial,Helvetica,sans-serif;color:#ffffff;font-weight:800;font-size:20px;letter-spacing:1px;">ABBADEV <span style="color:#38bdf8;font-weight:700;font-size:12px;letter-spacing:2px;text-transform:uppercase;">IT Solutions</span></td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <!-- Hero + headline -->
+            <tr>
+              <td align="center" style="padding:38px 30px 4px;">
+                <table role="presentation" cellpadding="0" cellspacing="0">
+                  <tr><td align="center" valign="middle" style="width:92px;height:92px;border-radius:50%;background-image:linear-gradient(135deg,#16a34a 0%,#22c55e 100%);font-size:44px;line-height:92px;box-shadow:0 12px 26px rgba(22,163,74,0.32);">&#9989;</td></tr>
+                </table>
+                <h1 style="margin:24px 0 8px;font-family:Arial,Helvetica,sans-serif;font-size:26px;line-height:1.2;color:#0f172a;">You&rsquo;re all set!</h1>
+                <p style="margin:0 auto;max-width:430px;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.6;color:#475569;">
+                  Your registration for <strong style="color:#0f172a;">${escapeHtml(eventTitle)}</strong> is confirmed. We can&rsquo;t wait to see you there.
+                </p>
+              </td>
+            </tr>
+            <!-- Details card -->
+            <tr>
+              <td style="padding:22px 30px 0;">
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f4f8ff;border:1px solid #dbeafe;border-radius:12px;">
+                  <tr>
+                    <td style="padding:18px 20px;font-family:Arial,Helvetica,sans-serif;color:#0f172a;font-size:14px;line-height:1.85;">
+                      <strong style="font-size:15px;">${escapeHtml(eventTitle)}</strong><br>
+                      <span style="color:#64748b;">${escapeHtml(eventType)}</span><br>
+                      ${escapeHtml(eventWhen)}<br>
+                      ${locationHtml}<br>
+                      <strong>Duration:</strong> ${escapeHtml(eventDuration)}<br>
+                      <strong>Level:</strong> ${escapeHtml(eventLevel)}<br>
+                      <span style="display:inline-block;margin-top:10px;padding:5px 14px;border-radius:999px;background:#16a34a;color:#ffffff;font-weight:800;font-size:13px;">Paid: ${escapeHtml(eventPrice)}</span>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <!-- CTA + note -->
+            <tr>
+              <td align="center" style="padding:26px 30px 6px;">
+                ${calendarButton}
+                <p style="margin:16px auto 0;max-width:430px;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.6;color:#64748b;">
+                  We&rsquo;ll send additional event information and reminders as the session approaches.
+                </p>
+              </td>
+            </tr>
+            <!-- Footer -->
+            <tr>
+              <td align="center" style="padding:28px 30px 32px;background:#f3f6fb;">
+                <p style="margin:0 0 8px;font-family:Arial,Helvetica,sans-serif;font-size:13px;color:#64748b;">Copyright &copy; 2026 ABBADev IT Solutions</p>
+                <p style="margin:0 0 12px;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.6;color:#94a3b8;">
+                  ABBADev IT Solutions &mdash; AI &bull; Automation &bull; Software Development &bull; Project Management.<br>
+                  Independent business based in the Philippines.
+                </p>
+                <p style="margin:0 0 12px;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.6;color:#94a3b8;">
+                  You&rsquo;re receiving this because you registered at abbadev.com.<br>
+                  To stop these emails, email <a href="mailto:info@abbadev.com" style="color:#0b6ee8;text-decoration:none;">info@abbadev.com</a>.
+                </p>
+                <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#94a3b8;">
+                  Our <a href="https://abbadev.com/privacy" style="color:#0b6ee8;text-decoration:none;">Privacy Policy</a>
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
   </body>
 </html>
 `.trim()
