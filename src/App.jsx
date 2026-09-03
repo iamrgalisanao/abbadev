@@ -2699,6 +2699,10 @@ const seminarFaq = [
     'No. The seminar is beginner-friendly and built for students, developers, and professionals alike. We start from the fundamentals and keep everything practical.',
   ],
   [
+    'Do I need to bring a laptop?',
+    'It is optional — any comfortable gadget will do, so a tablet or phone is fine. A laptop is ideal, though, for following along with the hands-on parts.',
+  ],
+  [
     'What is included in the ₱399?',
     'Your seat at the 3-hour live seminar, all the session walkthroughs, a free snack, and a certificate of participation on request.',
   ],
