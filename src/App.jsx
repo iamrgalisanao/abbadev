@@ -388,6 +388,12 @@ const caseStudies = [
     image: '/images/mockup_crm.png',
     imageWebp: '/images/mockup_crm.webp',
     imageAlt: 'ABBADev CRM dashboard preview',
+    imageWidth: 1672,
+    imageHeight: 941,
+    shotCaption: 'The live ABBADev CRM - contacts, deal pipeline, tasks, and a live dashboard in one system.',
+    liveCtaHeading: 'Explore the CRM running in production',
+    liveCtaText: 'Open the live app to walk the same contacts, pipeline, tasks, and dashboard described here.',
+    liveCtaButton: 'Launch the CRM',
     type: 'Product',
     code: '005 / Product',
     slug: 'abbadev-crm',
@@ -464,20 +470,92 @@ const caseStudies = [
   },
   {
     icon: Database,
+    badge: Sparkles,
     mockup: 'stockora',
     image: '/images/stockora-showcase.svg',
     imageAlt: 'The Stockora warehouse and inventory dashboard',
+    imageWidth: 1600,
+    imageHeight: 1000,
+    shotCaption: 'Stockora - modules and features, from the live product at stockora.abbadev.com.',
     type: 'Full-stack SaaS',
     code: '006 / Full-Stack SaaS',
     slug: 'stockora',
     title: 'Stockora - warehouse intelligence',
-    result: 'Spreadsheets and sticky notes become a production-grade inventory + warehouse system: multi-warehouse stock, FIFO costing, role-based approvals, and an offline scanner app for the floor.',
+    result: 'A shared spreadsheet, a notebook by the loading dock, and someone’s memory become a production-grade inventory + warehouse system: multi-warehouse stock, FIFO costing, role-based approvals, and an offline scanner app for the floor.',
     metric: {
       label: 'Inventory movements',
       before: 'Overwritten',
       after: '100% traceable',
-      note: 'Stock is an append-only ledger of movements - every change is attributable to a user, a time, and a reason; nothing is silently overwritten.',
+      note: 'Stock is an append-only ledger of movements - every change is attributable to a user, a time, and a reason.',
     },
+    metrics: [
+      { label: 'Inventory movements', before: 'Overwritten numbers', after: '100% traceable', note: 'Stock is the sum of an append-only movement history - every change is attributable to a user, a time, and a reason, never silently overwritten.' },
+      { label: 'Warehouse floor', before: 'Stops at dead Wi-Fi', after: 'Offline-capable PWA', note: 'Receive, pick, transfer, count, and return from a phone through dead zones; actions sync exactly-once via idempotency keys when connectivity returns.' },
+      { label: 'Access control', before: 'One shared login', after: '9 role-scoped views', note: 'An Approver, a Warehouse Staffer, and an Auditor each see exactly the surface they need - nothing more.' },
+      { label: 'Release confidence', before: 'Manual checks', after: '406 automated tests', note: 'Unit and end-to-end coverage runs before every merge, over 40+ migrations modeling the real operational domain.' },
+    ],
+    client: 'AbbaDev (our own product)',
+    sector: 'SME inventory and warehouse operations',
+    duration: 'Live in production, 2026',
+    stack: 'NestJS - Prisma - PostgreSQL - Next.js 14 - Turborepo - Docker - PWA',
+    liveUrl: 'https://stockora.abbadev.com/',
+    summaryPdf: false,
+    disclaimer: 'Live product - public demo at stockora.abbadev.com (nine role logins, password123, resets nightly).',
+    liveCtaHeading: 'Walk the whole system in the public demo',
+    liveCtaText: 'Open Stockora running in production - nine role logins, resetting nightly - and see how an append-only ledger holds it all together.',
+    liveCtaButton: 'Explore the live demo',
+    meta: [
+      ['Audience', 'SMEs who have outgrown a spreadsheet and a prayer'],
+      ['System type', 'Inventory + warehouse management system (IWMS)'],
+      ['Primary value', 'Multi-warehouse stock as an audit trail, not a number'],
+      ['Governance', 'Nine roles with a granular permission matrix'],
+    ],
+    problem: 'SMEs run inventory on a shared spreadsheet, a notebook by the loading dock, and memory - so counts drift, nobody can say who changed a quantity or why, and every new warehouse multiplies the chaos.',
+    problems: [
+      'A shared spreadsheet, a notebook by the dock, and someone’s memory - it works until stock counts drift from reality and nobody can say who adjusted a quantity or why.',
+      'Every new warehouse or staff member multiplies the chaos: no multi-warehouse visibility, and everyone sharing one login.',
+      'Off-the-shelf software either assumes an enterprise IT budget, or a single-location shop with none of the controls a growing operation needs.',
+      'Nothing in this price bracket treats inventory as an audit trail instead of a number you overwrite.',
+    ],
+    approach: 'Build the inventory ledger, not the inventory number: stock is the sum of an append-only history of movements, which makes audit trails, FIFO costing, and reliable offline sync all possible at once.',
+    approaches: [
+      'One core decision: stock quantities are never edited directly - they are the sum of an append-only history of movements.',
+      'Every movement - in, out, or between warehouses - follows the same Draft -> Approve -> Post workflow, so nothing posts to the ledger without a paper trail.',
+      'FIFO cost layers per lot and per serial number, including correctly restoring cost basis when a serialized item comes back through returns.',
+      'ABC-driven cycle counting, reorder and supplier intelligence, and a full audit explorer where every change by every user is queryable.',
+    ],
+    automation: 'ABC-driven cycle counting schedules high-velocity SKUs to be counted more often automatically, reorder recommendations come from movement velocity rather than gut feel, and a transactional outbox guarantees webhook and notification events either fully post or are retried, never lost.',
+    governance: 'Role-based approvals with a granular permission matrix across nine roles, and every posted document carries a Draft -> Approve -> Post trail - so who changed what, when, and why is always queryable.',
+    outcome: 'One source of truth for receiving, transfers, releases, adjustments, counts, and returns - audit-ready by default, with a warehouse floor that keeps operating through dead Wi-Fi and a live public demo any prospect can walk today.',
+    phases: [
+      ['Ledger-first data model', 'Stock is an append-only movement history; on-hand and available are derived, never overwritten - the foundation for audit trails and FIFO.'],
+      ['Monorepo and shared contracts', 'Turborepo with apps/api, apps/web, and a shared @iw/contracts package, so the API and web app share one source of truth for types, end to end.'],
+      ['NestJS + Prisma + PostgreSQL API', 'JWT auth with rotating refresh tokens and full session revocation, plus a transactional outbox for reliable webhook and notification delivery.'],
+      ['Next.js 14 web app', 'App Router, React 18, TypeScript with zero any-typed contracts, on a single dark design system - one gold accent, functional colors that mean the same thing everywhere.'],
+      ['Offline-capable scanner PWA', 'Receive, pick, transfer, count, and return from a phone through dead Wi-Fi zones; actions queue locally and sync exactly-once, with explicit CONFLICT vs REJECTED states.'],
+      ['Tested and shipped', '406 automated tests, unit and end-to-end, run before every merge; Dockerized services behind a reverse proxy with TLS, and a nightly-reseedable public demo.'],
+    ],
+    quote: 'The gap was not features - it was that nothing in this price bracket treated inventory as an audit trail instead of a number you overwrite.',
+    quoteBy: 'AbbaDev, Product Engineering',
+    workflow: {
+      heading: 'How a stock movement reaches the ledger',
+      title: 'Draft -> Approve -> Post',
+      caption: 'Every receipt, transfer, and release follows one governed path - nothing posts to the ledger without a paper trail.',
+      completeLabel: 'Posted to ledger',
+      completeDetail: 'FIFO costed + audited',
+      steps: [
+        { icon: Inbox, kind: 'client', label: 'Scan / receive', tag: 'scan-first', idle: 'Goods scanned', active: 'Scanning goods', done: 'Goods scanned' },
+        { icon: FileText, kind: 'store', label: 'Draft document', tag: 'checked vs PO', idle: 'Draft created', active: 'Creating draft', done: 'Draft created' },
+        { icon: ShieldCheck, kind: 'guard', label: 'Approval', tag: 'role-based', idle: 'Approved', active: 'Awaiting approval', done: 'Approved' },
+        { icon: Database, kind: 'n8n', label: 'Post to ledger', tag: 'append-only', idle: 'Movement posted', active: 'Posting movement', done: 'Movement posted' },
+        { icon: History, kind: 'notify', label: 'Audit trail', tag: 'who / what / why', idle: 'Change recorded', active: 'Recording change', done: 'Change recorded' },
+      ],
+    },
+    tags: [
+      { icon: Database, label: 'FIFO stock ledger' },
+      { icon: ListChecks, label: 'ABC cycle counting' },
+      { icon: Radar, label: 'Reorder intelligence' },
+    ],
   },
 ]
 
@@ -915,24 +993,24 @@ function CaseStudyPage({ study, theme, setTheme }) {
           </a>
         )}
 
-        {study.mockup === 'crm' && (
-          <figure className="case-page-shot">
+        {study.mockup && study.image && (
+          <Reveal as="figure" className="case-page-shot">
             <picture>
-              <source srcSet="/images/mockup_crm.webp" type="image/webp" />
+              {study.imageWebp && <source srcSet={study.imageWebp} type="image/webp" />}
               <img
-                src="/images/mockup_crm.png"
-                alt="The ABBADev CRM dashboard running in production"
-                width="1672"
-                height="941"
+                src={study.image}
+                alt={study.imageAlt || `${study.title} running in production`}
+                width={study.imageWidth || 1672}
+                height={study.imageHeight || 941}
                 loading="lazy"
                 decoding="async"
               />
             </picture>
-            <figcaption>The live ABBADev CRM - contacts, deal pipeline, tasks, and a live dashboard in one system.</figcaption>
-          </figure>
+            {study.shotCaption && <figcaption>{study.shotCaption}</figcaption>}
+          </Reveal>
         )}
 
-        <div className="case-page-split">
+        <Reveal as="div" className="case-page-split">
           <section className="case-page-section case-page-list-section">
             <span className="kicker">01 / Problem</span>
             <h2>Problem</h2>
@@ -952,9 +1030,9 @@ function CaseStudyPage({ study, theme, setTheme }) {
               ))}
             </ul>
           </section>
-        </div>
+        </Reveal>
 
-        <section className="case-page-section case-page-list-section case-page-implementation-section">
+        <Reveal as="section" className="case-page-section case-page-list-section case-page-implementation-section">
           <span className="kicker">03 / Implementation</span>
           <h2>Implementation</h2>
           <div className="case-phase-list case-page-phases">
@@ -968,10 +1046,10 @@ function CaseStudyPage({ study, theme, setTheme }) {
               </div>
             ))}
           </div>
-        </section>
+        </Reveal>
 
         {study.workflow && (
-          <section className="case-page-section case-workflow-section">
+          <Reveal as="section" className="case-page-section case-workflow-section">
             <span className="kicker">Live pipeline</span>
             <h2>{study.workflow.heading}</h2>
             <CaseWorkflow
@@ -981,15 +1059,15 @@ function CaseStudyPage({ study, theme, setTheme }) {
               completeDetail={study.workflow.completeDetail}
               steps={study.workflow.steps}
             />
-          </section>
+          </Reveal>
         )}
 
-        <section className="case-page-section case-page-list-section">
+        <Reveal as="section" className="case-page-section case-page-list-section">
           <span className="kicker">04 / Results</span>
           <h2>Results</h2>
-        </section>
+        </Reveal>
 
-        <section className="case-page-results">
+        <Reveal as="section" className="case-page-results">
           {study.metrics.map((metric) => (
             <div
               key={metric.label}
@@ -1009,14 +1087,14 @@ function CaseStudyPage({ study, theme, setTheme }) {
               <p>{metric.note}</p>
             </div>
           ))}
-        </section>
+        </Reveal>
 
-        <blockquote className="case-page-quote">
+        <Reveal as="blockquote" className="case-page-quote">
           <p>{study.quote}</p>
           <cite>{study.quoteBy}</cite>
-        </blockquote>
+        </Reveal>
 
-        <section className="case-page-section case-page-list-section">
+        <Reveal as="section" className="case-page-section case-page-list-section">
           <span className="kicker">05 / Governance</span>
           <h2>Governance</h2>
           <ul>
@@ -1024,14 +1102,14 @@ function CaseStudyPage({ study, theme, setTheme }) {
             <li>{study.automation}</li>
             <li>{study.outcome}</li>
           </ul>
-        </section>
+        </Reveal>
 
         {study.liveUrl ? (
-          <section className="case-page-cta">
+          <Reveal as="section" className="case-page-cta">
             <div>
               <span className="kicker">See it live</span>
-              <h2>Explore the CRM running in production</h2>
-              <p>Open the live app to walk the same contacts, pipeline, tasks, and dashboard described here.</p>
+              <h2>{study.liveCtaHeading || 'Explore it running in production'}</h2>
+              <p>{study.liveCtaText || 'Open the live app to walk the same flows described here.'}</p>
             </div>
             <a
               className="primary-button"
@@ -1039,11 +1117,11 @@ function CaseStudyPage({ study, theme, setTheme }) {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Launch the CRM <ArrowRight size={18} aria-hidden="true" />
+              {study.liveCtaButton || 'Launch the live app'} <ArrowRight size={18} aria-hidden="true" />
             </a>
-          </section>
+          </Reveal>
         ) : study.summaryPdf !== false ? (
-          <section className="case-page-cta">
+          <Reveal as="section" className="case-page-cta">
             <div>
               <span className="kicker">Take this with you</span>
               <h2>Summary PDF - 1 page, print-ready</h2>
@@ -1052,9 +1130,9 @@ function CaseStudyPage({ study, theme, setTheme }) {
             <a className="primary-button" href={summaryPdfHref} download>
               Download PDF <ArrowRight size={18} aria-hidden="true" />
             </a>
-          </section>
+          </Reveal>
         ) : (
-          <section className="case-page-cta">
+          <Reveal as="section" className="case-page-cta">
             <div>
               <span className="kicker">See it live</span>
               <h2>The assistant is in the corner of this site</h2>
@@ -1063,317 +1141,8 @@ function CaseStudyPage({ study, theme, setTheme }) {
             <a className="primary-button" href="/#contact">
               Book a systems consult <ArrowRight size={18} aria-hidden="true" />
             </a>
-          </section>
+          </Reveal>
         )}
-
-        <nav className="case-page-pagination" aria-label="Case study navigation">
-          <a className="case-next-link" href={`/cases/${previousStudy.slug}`}>
-            <span>Previous</span>
-            <strong>{previousStudy.title}</strong>
-          </a>
-          <a className="case-next-link" href={`/cases/${nextStudy.slug}`}>
-            <span>Next</span>
-            <strong>{nextStudy.title}</strong>
-          </a>
-        </nav>
-      </main>
-    </div>
-  )
-}
-
-const stockoraStats = [
-  ['9', 'System roles, each with a granular permission matrix'],
-  ['40+', 'Database migrations modeling a real operational domain'],
-  ['406', 'Automated tests, including full end-to-end coverage'],
-  ['100%', 'Of inventory movements traceable - nothing is ever overwritten'],
-]
-
-const stockoraFeatures = [
-  [LayoutDashboard, 'Live operations dashboard', 'Stock composition, pending documents, and reorder alerts in one view - the state of the warehouse at a glance, not buried in a spreadsheet tab.'],
-  [Workflow, 'Receiving, releases & transfers', 'Every stock movement - in, out, or between warehouses - follows the same Draft -> Approve -> Post workflow, so nothing posts to the ledger without a paper trail.'],
-  [Database, 'FIFO costing engine', 'Real cost layers per lot and per serial number - including correctly restoring cost basis when a serialized item comes back through returns.'],
-  [ListChecks, 'ABC-driven cycle counting', 'High-velocity SKUs get counted more often, automatically. Every posted count reconciles into the audit trail, not a side spreadsheet.'],
-  [Radar, 'Reorder & supplier intelligence', 'Reorder recommendations and supplier performance analytics, so purchasing decisions are based on movement velocity, not gut feel.'],
-  [History, 'Full audit explorer', 'Every change, by every user, is queryable - who adjusted what, when, and why. The natural result of an append-only ledger.'],
-]
-
-const stockoraOffline = [
-  ['Sync model', 'Exactly-once via idempotency keys · first-valid-commit wins'],
-  ['Conflict handling', 'Explicit CONFLICT vs REJECTED states, never a silent overwrite'],
-  ['Auth offline', 'Bounded offline authentication window'],
-  ['Sync ownership', 'Web Locks-based single-tab-owner sync, no duplicate posting'],
-  ['Coverage', 'Receive · Pick · Transfer · Count · Return - the full floor workflow'],
-]
-
-const stockoraStack = [
-  ['Architecture', 'Turborepo monorepo - apps/api, apps/web, and a shared @iw/contracts package so the API and web app share one source of truth for types, end to end.'],
-  ['API', 'NestJS 10 + Prisma + PostgreSQL, JWT auth with rotating refresh tokens and full session revocation.'],
-  ['Web', 'Next.js 14 (App Router), React 18, TypeScript throughout - zero any-typed API contracts.'],
-  ['Reliability', 'Transactional outbox pattern for webhook & notification delivery - an event either fully posts or is retried, never lost.'],
-  ['Testing', '406 automated tests, unit and end-to-end, run before every merge.'],
-  ['Deployment', 'Dockerized services behind a reverse proxy, TLS via Let’s Encrypt, nightly-reseedable public demo environment.'],
-]
-
-const stockoraTech = ['TypeScript', 'NestJS', 'Prisma', 'PostgreSQL', 'Next.js 14', 'React 18', 'Turborepo', 'Docker', 'JWT', 'PWA / Service Worker']
-
-const stockoraSwatches = [
-  ['#05060f', 'Canvas'],
-  ['#f5a623', 'Primary accent'],
-  ['#3fbfa3', 'Success'],
-  ['#4ea8f5', 'Info'],
-  ['#c084fc', 'Highlight'],
-  ['#e2b24d', 'Warning'],
-]
-
-const stockoraLogins = [
-  ['Administrator', 'admin@demo.test'],
-  ['Inventory Manager', 'inventory_manager@demo.test'],
-  ['Warehouse Manager', 'warehouse_manager@demo.test'],
-  ['Warehouse Staff', 'warehouse_staff@demo.test'],
-  ['Purchasing', 'purchasing@demo.test'],
-  ['Finance', 'finance@demo.test'],
-  ['Approver', 'approver@demo.test'],
-  ['Auditor', 'auditor@demo.test'],
-  ['Viewer', 'viewer@demo.test'],
-]
-
-const stockoraShipped = [
-  'A single source of truth for receiving, transfers, releases, adjustments, counts, and returns - no more reconciling three spreadsheets to know what is actually on a shelf.',
-  'Every inventory movement traceable to a user, a timestamp, and a reason - audit-ready by default, not by year-end scramble.',
-  'A warehouse floor that keeps operating through dead Wi-Fi zones, and reconciles cleanly the moment it reconnects.',
-  'Nine distinct roles, so an Approver, a Warehouse Staffer, and an Auditor each see exactly the surface they need - nothing more.',
-  'A live, explorable public demo any prospect can walk through today - no sales call required to see if it fits.',
-]
-
-const STOCKORA_DEMO = 'https://stockora.abbadev.com/'
-const STOCKORA_REPO = 'https://github.com/iamrgalisanao/stockora'
-
-function StockoraCasePage({ theme, setTheme }) {
-  const index = caseStudies.findIndex((item) => item.slug === 'stockora')
-  const previousStudy = caseStudies[(index - 1 + caseStudies.length) % caseStudies.length]
-  const nextStudy = caseStudies[(index + 1) % caseStudies.length]
-
-  const meta = [
-    ['Client', 'AbbaDev (our own product)'],
-    ['Sector', 'SME inventory & warehouse operations'],
-    ['Timeline', 'Live in production, 2026'],
-    ['Stack', 'NestJS · Prisma · PostgreSQL · Next.js 14 · Turborepo · PWA'],
-  ]
-
-  return (
-    <div className="site-shell case-page-shell stk-shell">
-      <CasePageHeader theme={theme} setTheme={setTheme} />
-
-      <main className="case-page-main">
-        <Breadcrumbs crumbs={[['Home', '/'], ['Case studies', '/cases'], ['Stockora', null]]} />
-
-        <section className="case-page-hero stk-hero">
-          <span className="kicker">Case study · Full-Stack SaaS · 2026</span>
-          <h1>Replacing spreadsheets with a real warehouse operating system.</h1>
-          <p>
-            Stockora is a production-grade Inventory + Warehouse Management System built from the
-            ground up for SMEs who have outgrown a spreadsheet and a prayer - multi-warehouse stock,
-            FIFO costing, role-based approvals, and an offline-capable scanner app for the warehouse
-            floor, all under one roof.
-          </p>
-          <div className="case-page-meta">
-            {meta.map(([label, value]) => (
-              <div className="case-meta-item" key={label}>
-                <span>{label}</span>
-                <strong>{value}</strong>
-              </div>
-            ))}
-          </div>
-          <div className="stk-hero-actions">
-            <a className="primary-button" href={STOCKORA_DEMO} target="_blank" rel="noopener noreferrer">
-              Open the live demo <ArrowRight size={18} aria-hidden="true" />
-            </a>
-            <a className="secondary-button" href={STOCKORA_REPO} target="_blank" rel="noopener noreferrer">
-              <Code2 size={17} aria-hidden="true" /> View the repository
-            </a>
-          </div>
-        </section>
-
-        <figure className="case-page-shot stk-shot">
-          <img
-            src="/images/stockora-showcase.svg"
-            alt="The Stockora warehouse dashboard - live stock, goods receipt, transfers, FIFO inventory, cycle counts, and valuation analytics"
-            width="1600"
-            height="1000"
-            loading="lazy"
-            decoding="async"
-          />
-          <figcaption>Stockora - modules and features, from the live product at stockora.abbadev.com.</figcaption>
-        </figure>
-
-        <section className="stk-stats" aria-label="By the numbers">
-          {stockoraStats.map(([value, label]) => (
-            <div className="stk-stat" key={label}>
-              <strong>{value}</strong>
-              <span>{label}</span>
-            </div>
-          ))}
-        </section>
-
-        <section className="case-page-section stk-block">
-          <span className="kicker">The challenge</span>
-          <h2>Growing past the spreadsheet, without an enterprise budget.</h2>
-          <p>
-            Most SMEs run inventory the same way for years: a shared spreadsheet, a notebook by the
-            loading dock, and someone&rsquo;s memory of what shipped where. It works - until it does
-            not. Stock counts drift from reality, nobody can say who adjusted a quantity or why, and
-            every new warehouse or staff member multiplies the chaos.
-          </p>
-          <p>
-            Off-the-shelf inventory software either assumes an enterprise IT budget, or a
-            single-location shop with none of the controls a growing operation actually needs:
-            multi-warehouse visibility, real costing discipline, and staff who should not all share
-            one login.
-          </p>
-          <blockquote className="case-page-quote stk-quote">
-            <p>
-              The gap was not features - it was that nothing in this price bracket treated inventory
-              as an audit trail instead of a number you overwrite.
-            </p>
-          </blockquote>
-        </section>
-
-        <section className="case-page-section stk-block">
-          <span className="kicker">The solution</span>
-          <h2>An inventory ledger, not an inventory number.</h2>
-          <p>
-            Every module in Stockora is built on one core decision: stock quantities are never edited
-            directly - they are the sum of an append-only history of movements. That single choice is
-            what makes audit trails, FIFO costing, and reliable offline sync all possible at once.
-          </p>
-          <div className="stk-features">
-            {stockoraFeatures.map(([Icon, title, copy]) => (
-              <article className="stk-feature" key={title}>
-                <span className="stk-feature-icon" aria-hidden="true"><Icon size={20} /></span>
-                <h3>{title}</h3>
-                <p>{copy}</p>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="stk-panel stk-offline">
-          <div className="stk-panel-head">
-            <span className="kicker">Built for the warehouse floor</span>
-            <h2>A scanner app that keeps working when the Wi-Fi does not.</h2>
-            <p>
-              Warehouse staff do not work at a desk. Stockora&rsquo;s mobile scanner PWA lets them
-              receive, pick, transfer, count, and process returns straight from a phone - including in
-              the dead zones every warehouse has. Actions taken offline queue locally and sync the
-              moment connectivity returns, with an idempotency-keyed command journal so nothing posts
-              twice. If two people genuinely conflict, Stockora surfaces it explicitly instead of
-              silently picking a winner.
-            </p>
-          </div>
-          <dl className="stk-specs">
-            {stockoraOffline.map(([term, desc]) => (
-              <div className="stk-spec" key={term}>
-                <dt>{term}</dt>
-                <dd>{desc}</dd>
-              </div>
-            ))}
-          </dl>
-        </section>
-
-        <section className="case-page-section stk-block">
-          <span className="kicker">Design & craft</span>
-          <h2>A dark, deliberate interface - one accent, not fifteen.</h2>
-          <p>
-            Stockora runs on a single custom design system: a near-black canvas, one gold accent for
-            every primary action, and a small set of functional colors that carry meaning
-            consistently across the whole app - never decoration for its own sake. Every color-coded
-            state reads the same way everywhere, and it respects <code>prefers-reduced-motion</code>{' '}
-            throughout, not as an afterthought.
-          </p>
-          <div className="stk-swatches">
-            {stockoraSwatches.map(([hex, role]) => (
-              <div className="stk-swatch" key={hex}>
-                <span className="stk-swatch-chip" style={{ background: hex }} aria-hidden="true" />
-                <strong>{hex}</strong>
-                <span>{role}</span>
-              </div>
-            ))}
-          </div>
-          <dl className="stk-specs stk-specs--type">
-            <div className="stk-spec"><dt>Display face</dt><dd>Space Grotesk</dd></div>
-            <div className="stk-spec"><dt>Body face</dt><dd>Inter</dd></div>
-            <div className="stk-spec"><dt>Mono / labels</dt><dd>JetBrains Mono</dd></div>
-            <div className="stk-spec"><dt>Motion</dt><dd>Custom cubic-bezier curves, sub-300ms UI transitions</dd></div>
-          </dl>
-        </section>
-
-        <section className="stk-panel stk-under">
-          <div className="stk-panel-head">
-            <span className="kicker">Under the hood</span>
-            <h2>A monorepo built to stay honest as it grows.</h2>
-          </div>
-          <dl className="stk-specs">
-            {stockoraStack.map(([term, desc]) => (
-              <div className="stk-spec" key={term}>
-                <dt>{term}</dt>
-                <dd>{desc}</dd>
-              </div>
-            ))}
-          </dl>
-          <div className="stk-tags">
-            {stockoraTech.map((tag) => (
-              <span key={tag}>{tag}</span>
-            ))}
-          </div>
-        </section>
-
-        <section className="stk-panel stk-demo">
-          <div className="stk-panel-head">
-            <span className="kicker">Try it yourself</span>
-            <h2>A public demo, not a locked-down slide deck.</h2>
-            <p>
-              Rather than describe the permission system, we let you drive it. Nine pre-seeded logins
-              - one per role - with account and security settings safely disabled, and the whole demo
-              dataset resetting every night.
-            </p>
-            <p className="stk-demo-cred">
-              <span>{STOCKORA_DEMO.replace('https://', '').replace(/\/$/, '')}</span>
-              <span>Password: <code>password123</code></span>
-            </p>
-          </div>
-          <div className="stk-logins">
-            {stockoraLogins.map(([role, email]) => (
-              <div className="stk-login" key={email}>
-                <strong>{role}</strong>
-                <span>{email}</span>
-              </div>
-            ))}
-          </div>
-          <a className="primary-button stk-demo-cta" href={STOCKORA_DEMO} target="_blank" rel="noopener noreferrer">
-            Launch the demo <ArrowRight size={18} aria-hidden="true" />
-          </a>
-        </section>
-
-        <section className="case-page-section case-page-list-section stk-block">
-          <span className="kicker">What shipped</span>
-          <h2>One system, replacing the spreadsheet-and-sticky-notes status quo.</h2>
-          <ul>
-            {stockoraShipped.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-        </section>
-
-        <section className="case-page-cta">
-          <div>
-            <span className="kicker">See it live</span>
-            <h2>Walk the whole system in the public demo.</h2>
-            <p>Open Stockora running in production - or read the code - and see how an append-only ledger holds it all together.</p>
-          </div>
-          <a className="primary-button" href={STOCKORA_DEMO} target="_blank" rel="noopener noreferrer">
-            Explore the live demo <ArrowRight size={18} aria-hidden="true" />
-          </a>
-        </section>
 
         <nav className="case-page-pagination" aria-label="Case study navigation">
           <a className="case-next-link" href={`/cases/${previousStudy.slug}`}>
@@ -4258,8 +4027,7 @@ function App() {
   const routePrivacy = normalizedPath === '/privacy'
   const routeTerms = normalizedPath === '/terms'
   const routeContent = contentPages[normalizedPath] || null
-  const routeStockora = normalizedPath === '/cases/stockora'
-  const routeCase = !routeStockora && path.startsWith('/cases/')
+  const routeCase = path.startsWith('/cases/')
     ? caseStudies.find((study) => study.slug === path.replace('/cases/', '').replace(/\/$/, ''))
     : null
 
@@ -4375,15 +4143,6 @@ function App() {
     return (
       <>
         <CasesIndexPage theme={theme} setTheme={setTheme} />
-        <Assistant />
-      </>
-    )
-  }
-
-  if (routeStockora) {
-    return (
-      <>
-        <StockoraCasePage theme={theme} setTheme={setTheme} />
         <Assistant />
       </>
     )
