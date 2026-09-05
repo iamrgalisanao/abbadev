@@ -4563,7 +4563,7 @@ function App() {
               <div className="product-actions">
                 <a
                   className="primary-button"
-                  href="https://www.stockora.abbadev.com"
+                  href="https://stockora.abbadev.com/login"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
