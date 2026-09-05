@@ -2566,7 +2566,9 @@ const HOLD_MS = 1500
 // Live-product screenshot with a subtle cursor-magnet and an idle float. The
 // frame catches the pointer and nudges the image toward it (scaled slightly so
 // the shift never reveals an edge); both effects are off under reduced motion.
-function CrmShowcase() {
+// Live-product screenshot with an idle float and a subtle cursor-magnet tilt.
+// Shared by every product in the showcase; `webp` is optional (SVG sources skip it).
+function ProductShot({ webp, src, alt, width, height }) {
   const frameRef = useRef(null)
   const imgRef = useRef(null)
 
@@ -2597,14 +2599,14 @@ function CrmShowcase() {
         onMouseLeave={handleLeave}
       >
         <picture>
-          <source srcSet="/images/mockup_crm.webp" type="image/webp" />
+          {webp && <source srcSet={webp} type="image/webp" />}
           <img
             ref={imgRef}
             className="crm-shot-img"
-            src="/images/mockup_crm.png"
-            alt="The ABBADev CRM dashboard running in production"
-            width="1672"
-            height="941"
+            src={src}
+            alt={alt}
+            width={width}
+            height={height}
             loading="lazy"
             decoding="async"
           />
@@ -4463,12 +4465,22 @@ function App() {
         <FeaturedSessions />
 
         <section className="section product-section" id="product">
+          <div className="section-heading products-intro">
+            <span className="kicker">
+              <Sparkles size={15} aria-hidden="true" /> Live products
+            </span>
+            <h2>Software we build - and run ourselves.</h2>
+            <p>
+              These are not demos. They are our own products, running in
+              production every day, built on the same guardrailed-systems
+              approach we bring to client work.
+            </p>
+          </div>
+
           <div className="product-grid">
             <div className="product-copy">
-              <span className="kicker">
-                <Sparkles size={15} aria-hidden="true" /> Live product
-              </span>
-              <h2>ABBADev CRM - the system we run ourselves.</h2>
+              <span className="kicker">ABBADev CRM</span>
+              <h2>Every lead owned, every follow-up tracked.</h2>
               <p>
                 A right-sized CRM for SMEs: every contact, deal, and follow-up
                 in one governed pipeline with a clear owner and a next action -
@@ -4509,7 +4521,64 @@ function App() {
             </div>
 
             <div className="product-preview">
-              <CrmShowcase />
+              <ProductShot
+                webp="/images/mockup_crm.webp"
+                src="/images/mockup_crm.png"
+                alt="The ABBADev CRM dashboard running in production"
+                width="1672"
+                height="941"
+              />
+            </div>
+          </div>
+
+          <div className="product-grid product-grid--reverse">
+            <div className="product-copy">
+              <span className="kicker">Stockora</span>
+              <h2>Warehouse intelligence for real inventory.</h2>
+              <p>
+                A stock and warehouse system for SMEs: scan-first receiving, a
+                FIFO-costed stock ledger, ABC cycle counting, and live valuation
+                - so on-hand, available, and inventory value are always
+                trustworthy. It runs in production at{' '}
+                <span className="product-url">stockora.abbadev.com</span>.
+              </p>
+              <ul className="product-features">
+                <li>
+                  <Inbox size={17} aria-hidden="true" />
+                  <span><strong>Scan-first receiving.</strong> Goods receipts checked against the PO, line by line.</span>
+                </li>
+                <li>
+                  <Database size={17} aria-hidden="true" />
+                  <span><strong>FIFO stock ledger.</strong> Every movement costed and fully traceable.</span>
+                </li>
+                <li>
+                  <ListChecks size={17} aria-hidden="true" />
+                  <span><strong>ABC cycle counting.</strong> An accuracy program that is always in progress.</span>
+                </li>
+                <li>
+                  <Radar size={17} aria-hidden="true" />
+                  <span><strong>Valuation &amp; reorder.</strong> Live inventory value and reorder intelligence.</span>
+                </li>
+              </ul>
+              <div className="product-actions">
+                <a
+                  className="primary-button"
+                  href="https://www.stockora.abbadev.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Launch Stockora <ArrowRight size={18} aria-hidden="true" />
+                </a>
+              </div>
+            </div>
+
+            <div className="product-preview">
+              <ProductShot
+                src="/images/stockora-showcase.svg"
+                alt="The Stockora warehouse and inventory dashboard, showing stock levels, goods receiving, and valuation analytics"
+                width="1600"
+                height="1000"
+              />
             </div>
           </div>
         </section>

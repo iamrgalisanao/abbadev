@@ -5923,6 +5923,17 @@ main {
   overflow: clip;
 }
 
+.products-intro {
+  max-width: 760px;
+  margin: 0 auto clamp(var(--space-xl), 5vw, var(--space-2xl));
+}
+
+.products-intro .kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+}
+
 .product-grid {
   display: grid;
   grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
@@ -5930,6 +5941,19 @@ main {
   align-items: center;
   max-width: var(--layout-max);
   margin: 0 auto;
+}
+
+/* Second product onward: alternate the image to the opposite side. */
+.product-grid + .product-grid {
+  margin-top: clamp(var(--space-2xl), 6vw, var(--space-3xl));
+}
+
+.product-grid--reverse {
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+}
+
+.product-grid--reverse .product-preview {
+  order: -1;
 }
 
 .product-copy {
@@ -6419,9 +6443,14 @@ main {
 }
 
 @media (max-width: 960px) {
-  .product-grid {
+  .product-grid,
+  .product-grid--reverse {
     grid-template-columns: 1fr;
     gap: var(--space-lg);
+  }
+  /* Keep copy above the screenshot on every stacked product row. */
+  .product-grid--reverse .product-preview {
+    order: 0;
   }
   .product-copy { max-width: 640px; }
   .product-preview { max-width: 620px; }
