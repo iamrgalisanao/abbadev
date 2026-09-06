@@ -43,6 +43,7 @@ import {
 import Assistant from './Assistant'
 import CaseWorkflow from './CaseWorkflow'
 import { EMAIL_PATTERN } from './lib/patterns'
+import V2Home from './v2/V2Home.jsx'
 import './App.css'
 
 const platformSurfaces = [
@@ -4027,6 +4028,8 @@ function App() {
   const routePrivacy = normalizedPath === '/privacy'
   const routeTerms = normalizedPath === '/terms'
   const routeContent = contentPages[normalizedPath] || null
+  const routeV2 = normalizedPath === '/v2'
+  const routeV1 = normalizedPath === '/v1'
   const routeCase = path.startsWith('/cases/')
     ? caseStudies.find((study) => study.slug === path.replace('/cases/', '').replace(/\/$/, ''))
     : null
@@ -4139,6 +4142,12 @@ function App() {
   const sequenceComplete = activeIndex >= SEQUENCE_STEPS
   const currentStage = sequenceStages[Math.min(activeIndex, SEQUENCE_STEPS - 1)]
 
+  // v2 preview — self-contained dark, scroll-driven homepage. Renders its own
+  // chrome (nav, assistant) and takes over the shell; v1 is otherwise untouched.
+  if (routeV2) {
+    return <V2Home />
+  }
+
   if (routeCasesIndex) {
     return (
       <>
@@ -4204,6 +4213,11 @@ function App() {
         <Assistant />
       </>
     )
+  }
+
+  // v2 is the homepage ("/"); the classic v1 homepage is preserved at /v1.
+  if (!routeV1) {
+    return <V2Home />
   }
 
   return (
