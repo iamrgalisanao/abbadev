@@ -491,7 +491,9 @@ html.v2-active.lenis { scroll-behavior: auto; }
   display: flex;
   align-items: center;
   overflow: hidden;
-  padding: clamp(3rem, 7vh, 6rem) var(--v2-pad);
+  /* Small padding only — the card nearly fills the viewport so the next card
+     overlaps at its edge (no black gap) as it scrolls up. */
+  padding: clamp(0.75rem, 2vh, 1.6rem) var(--v2-pad);
   background: var(--v2-bg);
 }
 /* Case card — full-bleed image (left) + text (right), inside the pinned panel. */
@@ -503,7 +505,7 @@ html.v2-active.lenis { scroll-behavior: auto; }
   margin: 0 auto;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  min-height: clamp(360px, 60vh, 600px);
+  min-height: min(90vh, 920px);
   border: 1px solid var(--v2-border);
   border-radius: var(--v2-radius-lg);
   overflow: hidden;
@@ -539,7 +541,7 @@ html.v2-active.lenis { scroll-behavior: auto; }
   position: relative;
   z-index: 2;
   display: block;
-  width: min(74%, 320px);
+  width: min(76%, 360px);
   aspect-ratio: 4 / 5;
   border-radius: var(--v2-radius);
   overflow: hidden;
