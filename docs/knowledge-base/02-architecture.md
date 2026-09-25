@@ -104,13 +104,15 @@ LinkedIn still show the `index.html` defaults.
 
 ### Navigation
 
-- **Interior pages** use `CasePageHeader` and `SiteNav` with `primaryNav` (`App.jsx:829`). The top-level items are:
-  - Services ▾ (all services plus the four `/services/*` pages)
-  - Work
-  - Sessions
-  - About
-  - "Book a consult" → `/#contact`
-- **The v2 homepage** has its own header with the anchors What we do, Work, Products and About, plus "Book a consultation".
+- **One header for the whole site:** `src/v2/SiteHeader.jsx`, in the v2 design. The links live in `nav` in `src/v2/content.js`:
+  What we do, Work, Products, Sessions, About, and a "Book a consultation" button.
+  - **On the homepage** (`<SiteHeader onHome />`) each link scrolls to its section (`anchor`); Sessions opens `/register`.
+  - **On interior pages** (`CasePageHeader` renders `<SiteHeader theme setTheme />`) each link opens its page (`href`), the
+    current section is underlined (`match` prefixes), and a light/dark toggle appears.
+  - **At 900px and below** the links move into a drop-down opened by a menu button (Escape closes it). At 560px and below the
+    consultation button moves into that menu too.
+- **Not using it:** `/seminar`, `/privacy` and `/terms` keep their distraction-free `lp-header`; the legacy `/v1` homepage keeps
+  its original `SiteNav` (`primaryNav` in `src/App.jsx`).
 - **Breadcrumbs:** `Breadcrumbs` / `buildBreadcrumbs` (`App.jsx:2477`).
 
 ## Theming

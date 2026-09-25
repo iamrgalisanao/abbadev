@@ -9,6 +9,7 @@ The v2 page is self-contained: it never imports from `App.jsx`, so there's no ci
 | `src/v2/content.js` | All copy, as plain exported objects: `nav, hero, position, pillars, services, work, products, founder, plate, finalCta, footer` |
 | `src/v2/motion.jsx` | `Reveal`, `TextReveal`, `TypewriterHeading` (unused), `ScrollProgress`, `TiltCard`, `Parallax` |
 | `src/v2/motion-utils.js` | `prefersReduced()`, `useLenis()` (kept out of motion.jsx to satisfy react-refresh) |
+| `src/v2/SiteHeader.jsx` | The site-wide header, used by the homepage and every interior page |
 | `src/v2/ConsultForm.jsx` | Consultation brief form; posts to `/api/consultation` |
 | `src/v2/CtaGradient.jsx` | WebGL simplex-noise gradient behind the final CTA card |
 | `src/v2/v2.css` | All styles, scoped under `.v2-shell` |
@@ -19,11 +20,10 @@ href, which are hard-coded in `V2Home.jsx`.
 ## Sections, in order
 
 1. **Scroll progress bar:** a fixed 2 px accent gradient across the top.
-2. **Header:**
-   - Sticky and blurred.
-   - Logo and "ABBADEV / IT Solutions".
-   - Anchor links: What we do `#capability`, Work `#work`, Products `#products`, About `#founder`.
-   - A "Book a consultation" pill that jumps to `#contact`.
+2. **Header:** the shared `SiteHeader` (see [02-architecture.md](02-architecture.md#navigation)).
+   - Sticky and blurred, with the logo and "ABBADEV / IT Solutions".
+   - Anchor links: What we do `#capability`, Work `#work`, Products `#products`, About `#founder`, plus Sessions → `/register`.
+   - A "Book a consultation" pill that jumps to `#contact`, and a menu button at 900px and below.
    - The "Classic site" link was removed from the header and footer on 2026-09-25. `/v1` still works if you know the URL.
 3. **Hero:**
    - Full-screen night-city scene built from parallax layers, back to front: `v2/hero-sky.png`, `cloud.png`, a glow, then
@@ -99,7 +99,7 @@ On mount, V2Home adds the `v2-active` class to `<html>` and removes it on unmoun
 ## Responsive behaviour
 
 - **≤ 900 px:**
-  - The nav links are hidden; the brand and CTA stay.
+  - The nav links move into a menu opened by a menu button.
   - All grids collapse to one column.
   - **Case pinning is turned off.** The cards stack normally, with the image on top.
 - **≤ 560 px:** the ticker gap is tighter.

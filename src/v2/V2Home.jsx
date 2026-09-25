@@ -3,9 +3,10 @@ import { ArrowUpRight, ArrowRight } from 'lucide-react'
 import Assistant from '../Assistant'
 import ConsultForm from './ConsultForm.jsx'
 import CtaGradient from './CtaGradient.jsx'
+import SiteHeader from './SiteHeader.jsx'
 import { Reveal, ScrollProgress, TextReveal, Parallax, TiltCard } from './motion.jsx'
 import { useLenis, prefersReduced } from './motion-utils.js'
-import { nav, hero, position, pillars, services, work, products, founder, plate, finalCta, consult, footer } from './content.js'
+import { hero, position, pillars, services, work, products, founder, plate, finalCta, consult, footer } from './content.js'
 import './v2.css'
 
 function ProductShot({ shot, shotWebp, alt }) {
@@ -81,22 +82,7 @@ export default function V2Home() {
     <div className="v2-shell">
       <ScrollProgress />
 
-      <header className="v2-nav">
-        <div className="v2-nav-inner">
-          <a className="v2-brand" href="/" aria-label="ABBADev IT Solutions home">
-            <img className="v2-brand-mark" src="/images/abbadev-logo.png" alt="" width="38" height="38" />
-            <span className="v2-brand-word"><strong>ABBADEV</strong><small>IT Solutions</small></span>
-          </a>
-          <nav className="v2-nav-links">
-            {nav.links.map((link) => (
-              <a key={link.href} href={link.href}>{link.label}</a>
-            ))}
-          </nav>
-          <div className="v2-nav-actions">
-            <a className="v2-pill v2-pill--solid" href={nav.cta.href}>{nav.cta.label}</a>
-          </div>
-        </div>
-      </header>
+      <SiteHeader onHome />
 
       <main className="v2-main">
         {/* Hero */}

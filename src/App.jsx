@@ -43,6 +43,7 @@ import {
 import Assistant from './Assistant'
 import CaseWorkflow from './CaseWorkflow'
 import { EMAIL_PATTERN } from './lib/patterns'
+import SiteHeader from './v2/SiteHeader.jsx'
 import V2Home from './v2/V2Home.jsx'
 import './App.css'
 
@@ -943,29 +944,9 @@ function SiteNav() {
   )
 }
 
+// Interior pages share the v2 site header, with the light/dark toggle.
 function CasePageHeader({ theme, setTheme }) {
-  return (
-    <header className="nav case-page-header">
-      <a className="brand" href="/#top" aria-label="ABBADev IT Solutions home">
-        <img className="brand-mark" src="/images/abbadev-logo.png" alt="" width="42" height="42" />
-        <span className="brand-wordmark">
-          <strong>ABBADEV</strong>
-          <small>IT Solutions</small>
-        </span>
-      </a>
-      <div className="nav-right">
-        <button
-          className="icon-button theme-toggle"
-          type="button"
-          aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-          onClick={() => setTheme((current) => (current === 'dark' ? 'light' : 'dark'))}
-        >
-          {theme === 'dark' ? <Sun size={19} aria-hidden="true" /> : <Moon size={19} aria-hidden="true" />}
-        </button>
-        <SiteNav />
-      </div>
-    </header>
-  )
+  return <SiteHeader theme={theme} setTheme={setTheme} />
 }
 
 function CaseStudyPage({ study, theme, setTheme }) {

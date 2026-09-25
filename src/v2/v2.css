@@ -19,7 +19,10 @@ html.v2-active body {
 html.v2-active.lenis { scroll-behavior: auto; }
 
 /* --------------------------------- Tokens ---------------------------------- */
-.v2-shell {
+/* Shared with .v2-nav so the site header renders the same on interior pages,
+   which don't sit inside .v2-shell. */
+.v2-shell,
+.v2-nav {
   --v2-bg: #05060a;
   --v2-surface: rgba(255, 255, 255, 0.028);
   --v2-surface-2: rgba(255, 255, 255, 0.05);
@@ -49,7 +52,9 @@ html.v2-active.lenis { scroll-behavior: auto; }
   --v2-ease: cubic-bezier(0.16, 1, 0.3, 1);
   --v2-pad: clamp(1.25rem, 5vw, 3rem);
   --v2-max: 1180px;
+}
 
+.v2-shell {
   position: relative;
   min-height: 100dvh;
   color: var(--v2-ink);
@@ -205,7 +210,17 @@ html.v2-active.lenis { scroll-behavior: auto; }
   backdrop-filter: blur(14px);
   background: rgba(5, 6, 10, 0.62);
   border-bottom: 1px solid var(--v2-border);
+  color: var(--v2-ink);
+  font-family: var(--v2-font);
+  line-height: 1.55;
+  letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased;
 }
+.v2-nav *,
+.v2-nav *::before,
+.v2-nav *::after { box-sizing: border-box; }
+.v2-nav :where(a:not(.v2-pill)) { color: inherit; }
+.v2-nav :where(a) { text-decoration: none; }
 .v2-nav-inner {
   display: flex;
   align-items: center;
@@ -225,8 +240,31 @@ html.v2-active.lenis { scroll-behavior: auto; }
   color: var(--v2-ink-soft);
   transition: color 0.3s var(--v2-ease);
 }
-.v2-nav-links a:hover { color: var(--v2-ink); }
-.v2-nav-actions { display: flex; align-items: center; gap: 1rem; }
+.v2-nav-links a:hover,
+.v2-nav-links a.is-active { color: var(--v2-ink); }
+.v2-nav-links a.is-active { text-decoration: underline; text-decoration-color: var(--v2-accent); text-underline-offset: 8px; text-decoration-thickness: 2px; }
+.v2-nav-actions { display: flex; align-items: center; gap: 0.75rem; }
+.v2-nav-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 1px solid var(--v2-border-strong);
+  border-radius: 50%;
+  background: var(--v2-surface);
+  color: var(--v2-ink-soft);
+  cursor: pointer;
+  transition: color 0.3s var(--v2-ease), border-color 0.3s var(--v2-ease);
+}
+.v2-nav-icon:hover { color: var(--v2-ink); border-color: var(--v2-accent); }
+.v2-nav-icon:focus-visible,
+.v2-nav-links a:focus-visible,
+.v2-nav .v2-pill:focus-visible { outline: 2px solid var(--v2-accent); outline-offset: 3px; }
+.v2-nav-toggle,
+.v2-nav-links .v2-nav-menu-cta { display: none; }
+.v2-nav-links a.v2-nav-menu-cta,
+.v2-nav-links a.v2-nav-menu-cta:hover { color: #05060a; }
 
 /* --------------------------------- Hero ------------------------------------ */
 .v2-hero {
@@ -924,7 +962,26 @@ html.v2-active.lenis { scroll-behavior: auto; }
 
 /* ------------------------------ Responsive --------------------------------- */
 @media (max-width: 900px) {
-  .v2-nav-links { display: none; }
+  /* Links move into a drop-down panel opened by the menu button. */
+  .v2-nav-toggle { display: inline-grid; }
+  .v2-nav-actions { margin-left: auto; }
+  .v2-nav-links {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    gap: 0;
+    margin: 0;
+    padding: 0.5rem var(--v2-pad) 1.25rem;
+    background: var(--v2-bg);
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.5);
+    border-bottom: 1px solid var(--v2-border);
+  }
+  .v2-nav.is-open .v2-nav-links { display: flex; }
+  .v2-nav-links a { padding: 0.85rem 0; font-size: 1rem; border-bottom: 1px solid var(--v2-border); }
+  .v2-nav-links a.is-active { text-decoration: none; color: var(--v2-accent); }
   .v2-position-grid,
   .v2-mode-board,
   .v2-service-grid,
@@ -952,6 +1009,9 @@ html.v2-active.lenis { scroll-behavior: auto; }
 }
 @media (max-width: 560px) {
   .v2-hero-ticker { gap: 0.5rem 1rem; }
+  /* The bar keeps brand + icons; the CTA moves into the menu panel. */
+  .v2-nav-cta { display: none; }
+  .v2-nav-links .v2-nav-menu-cta { display: inline-flex; justify-content: center; margin-top: 1rem; border-bottom: 0; padding: 0.9em 1.4em; }
   .v2-form-grid { grid-template-columns: 1fr; }
 }
 

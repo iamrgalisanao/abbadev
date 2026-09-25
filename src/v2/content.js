@@ -3,15 +3,18 @@
 // self-contained leaf module so the v2 build never imports from the v1 App.jsx
 // (no circular dependency) and v1 stays untouched.
 
+// Site-wide header (SiteHeader.jsx). On the homepage each link scrolls to its
+// section (`anchor`); on every other page it opens the page (`href`). `match`
+// lists the path prefixes that mark the link active on interior pages.
 export const nav = {
-  brand: 'ABBADev',
   links: [
-    { label: 'What we do', href: '#capability' },
-    { label: 'Work', href: '#work' },
-    { label: 'Products', href: '#products' },
-    { label: 'About', href: '#founder' },
+    { label: 'What we do', href: '/services', anchor: '#capability', match: ['/services', '/business-solutions'] },
+    { label: 'Work', href: '/cases', anchor: '#work', match: ['/cases'] },
+    { label: 'Products', href: '/#products', anchor: '#products', match: [] },
+    { label: 'Sessions', href: '/register', anchor: '/register', match: ['/register', '/community'] },
+    { label: 'About', href: '/about', anchor: '#founder', match: ['/about'] },
   ],
-  cta: { label: 'Book a consultation', href: '#contact' },
+  cta: { label: 'Book a consultation', href: '/#contact', anchor: '#contact' },
 }
 
 export const hero = {
