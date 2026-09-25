@@ -45,7 +45,7 @@ src/
   App.css                 ~7,600 lines: all v1 page styles
   index.css               fonts (Plus Jakarta Sans, IBM Plex Mono), tokens import, grid background
   Assistant.jsx           floating chat assistant (deterministic + optional AI)
-  CaseWorkflow.jsx        animated n8n-style pipeline diagram used on case pages
+  CaseWorkflow.jsx        animated pipeline diagram on case pages (label set per case via workflow.kicker)
   lib/patterns.js         EMAIL_PATTERN (the proxy keeps its own copy)
   v2/                     current homepage (see 03-v2-homepage.md)
 server/consultation-proxy.mjs

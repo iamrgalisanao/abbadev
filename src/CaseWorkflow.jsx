@@ -10,6 +10,8 @@ const STEP_MS = 1150
 const HOLD_MS = 1900
 
 export default function CaseWorkflow({
+  // Small label above the title, naming the system that runs this flow.
+  kicker = 'Live pipeline',
   title = 'Workflow',
   caption,
   completeLabel = 'Complete',
@@ -78,7 +80,7 @@ export default function CaseWorkflow({
     >
       <div className="cw-head">
         <div className="cw-head-title">
-          <span className="cw-kicker">n8n pipeline</span>
+          <span className="cw-kicker">{kicker}</span>
           <strong>{title}</strong>
           {caption && <p>{caption}</p>}
         </div>

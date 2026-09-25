@@ -170,6 +170,7 @@ const caseStudies = [
     quoteBy: 'Anonymized operations/support lead',
     workflow: {
       heading: 'How a transaction flows',
+      kicker: 'Laravel + Horizon pipeline',
       title: 'Transaction intake pipeline',
       caption: 'From a POS submission to a traceable status - intake stays separate from processing, with an exception safety net.',
       completeLabel: 'Transaction traced',
@@ -364,6 +365,7 @@ const caseStudies = [
     disclaimer: 'Live on this site - the assistant in the corner is the system described here.',
     workflow: {
       heading: 'How a lead flows',
+      kicker: 'n8n pipeline',
       title: 'Chat lead pipeline',
       caption: 'From the site assistant to a Telegram alert - the exact n8n path a qualified lead travels.',
       completeLabel: 'Lead routed',
@@ -451,6 +453,7 @@ const caseStudies = [
     quoteBy: 'Rommel Galisanao, ABBADev IT Solutions',
     workflow: {
       heading: 'How a lead moves through the CRM',
+      kicker: 'CRM workflow',
       title: 'Lead-to-deal pipeline',
       caption: 'From a captured contact to a tracked deal - every stage owned, logged, and reflected on the dashboard.',
       completeLabel: 'Deal tracked',
@@ -541,6 +544,7 @@ const caseStudies = [
     quoteBy: 'AbbaDev, Product Engineering',
     workflow: {
       heading: 'How a stock movement reaches the ledger',
+      kicker: 'Ledger workflow',
       title: 'Draft -> Approve -> Post',
       caption: 'Every receipt, transfer, and release follows one governed path - nothing posts to the ledger without a paper trail.',
       completeLabel: 'Posted to ledger',
@@ -1059,6 +1063,7 @@ function CaseStudyPage({ study, theme, setTheme }) {
             <span className="kicker">Live pipeline</span>
             <h2>{study.workflow.heading}</h2>
             <CaseWorkflow
+              kicker={study.workflow.kicker}
               title={study.workflow.title}
               caption={study.workflow.caption}
               completeLabel={study.workflow.completeLabel}
