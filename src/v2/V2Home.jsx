@@ -92,7 +92,6 @@ export default function V2Home() {
             ))}
           </nav>
           <div className="v2-nav-actions">
-            <a className="v2-nav-ghost" href={nav.v1.href}>{nav.v1.label}</a>
             <a className="v2-pill v2-pill--solid" href={nav.cta.href}>{nav.cta.label}</a>
           </div>
         </div>

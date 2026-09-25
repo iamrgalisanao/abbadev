@@ -68,7 +68,7 @@ const INTENTS = [
     id: 'proof',
     keywords: ['proof', 'case', 'example', 'portfolio', 'work', 'result', 'reference'],
     reply:
-      'Three representative case studies: a transaction intake command center, a document intake assistant, and an integration foundation - each shows the problem, approach, implementation path, governance, and measurable before/after.',
+      'Six case studies: a transaction intake command center, a document intake assistant, an integration foundation, this site\'s guardrailed assistant, and two products we run in production - ABBADev CRM and Stockora. Each shows the problem, approach, implementation path, governance, and measurable before/after.',
     chips: [
       { label: 'Open case studies', href: '/cases' },
       CONSULT_CHIP,

@@ -2568,6 +2568,104 @@ function ContentPage({ page, theme, setTheme }) {
   )
 }
 
+const SITE_ORIGIN = 'https://abbadev.com'
+const SITE_NAME = 'ABBADev IT Solutions'
+const DEFAULT_TITLE = 'ABBADev IT Solutions | AI Automation and Software Architecture'
+const DEFAULT_DESCRIPTION =
+  'ABBADev IT Solutions helps businesses design software architecture, AI automation, and intelligent workflow systems that improve operations.'
+
+// Per-route <title> and description. Case studies and contentPages derive theirs
+// from their own data; anything not listed here keeps the index.html defaults.
+const routeMeta = {
+  '/cases': {
+    title: 'Case studies',
+    description: 'Real systems in production: transaction intake, document AI, integration foundations, a guardrailed assistant, ABBADev CRM, and Stockora.',
+  },
+  '/about': {
+    title: 'About',
+    description: 'ABBADev IT Solutions, founded by Rommel Galisanao, builds practical systems where people, software, automation, and AI work together.',
+  },
+  '/services': {
+    title: 'Services',
+    description: 'AI and automation, custom software, business systems, systems integration, software architecture, and digital transformation for growing organizations.',
+  },
+  '/register': {
+    title: 'Seminars and workshops',
+    description: 'Hands-on sessions on AI, automation, software, and project management for students and SME owners. Reserve your seat.',
+  },
+  '/seminar': {
+    title: 'Seminar registration',
+    description: 'Reserve your seat at an ABBADev live seminar on AI, software development, and project delivery.',
+  },
+  '/privacy': {
+    title: 'Privacy Policy',
+    description: 'How ABBADev IT Solutions collects, uses, and protects personal information under the Philippine Data Privacy Act of 2012.',
+  },
+  '/terms': {
+    title: 'Terms of Service',
+    description: 'Terms for registering for and attending ABBADev IT Solutions seminars, and for using abbadev.com.',
+  },
+}
+
+function setHeadTag(selector, create, attr, value) {
+  let el = document.head.querySelector(selector)
+  if (!el) {
+    el = create()
+    document.head.appendChild(el)
+  }
+  el.setAttribute(attr, value)
+}
+
+function applyPageMeta({ title, description, noindex, path }) {
+  if (typeof document === 'undefined') return
+  const fullTitle = title ? `${title} | ${SITE_NAME}` : DEFAULT_TITLE
+  const desc = description || DEFAULT_DESCRIPTION
+  const url = `${SITE_ORIGIN}${path === '/' ? '/' : path}`
+  const meta = (key, keyAttr = 'name') => () => {
+    const el = document.createElement('meta')
+    el.setAttribute(keyAttr, key)
+    return el
+  }
+
+  document.title = fullTitle
+  setHeadTag('meta[name="description"]', meta('description'), 'content', desc)
+  setHeadTag('meta[property="og:title"]', meta('og:title', 'property'), 'content', fullTitle)
+  setHeadTag('meta[property="og:description"]', meta('og:description', 'property'), 'content', desc)
+  setHeadTag('meta[property="og:url"]', meta('og:url', 'property'), 'content', url)
+  setHeadTag('meta[name="twitter:title"]', meta('twitter:title'), 'content', fullTitle)
+  setHeadTag('meta[name="twitter:description"]', meta('twitter:description'), 'content', desc)
+  setHeadTag('link[rel="canonical"]', () => {
+    const el = document.createElement('link')
+    el.setAttribute('rel', 'canonical')
+    return el
+  }, 'href', url)
+  setHeadTag('meta[name="robots"]', meta('robots'), 'content', noindex ? 'noindex, follow' : 'index, follow')
+}
+
+function NotFoundPage({ theme, setTheme }) {
+  return (
+    <div className="site-shell case-page-shell content-page-shell">
+      <CasePageHeader theme={theme} setTheme={setTheme} />
+
+      <main className="case-page-main content-page-main">
+        <section className="case-page-hero content-page-hero">
+          <span className="kicker">404 - Page not found</span>
+          <h1>That page does not exist.</h1>
+          <p>The link may be out of date, or the page may have moved. Start from the homepage, or go straight to the work.</p>
+          <div className="content-page-actions">
+            <a className="primary-button" href="/">
+              Go to the homepage <ArrowRight size={18} aria-hidden="true" />
+            </a>
+            <a className="secondary-button" href="/cases">
+              Review proof <FileText size={17} aria-hidden="true" />
+            </a>
+          </div>
+        </section>
+      </main>
+    </div>
+  )
+}
+
 const footerGroups = [
   {
     title: 'Services',
@@ -4017,7 +4115,7 @@ function App() {
     return () => window.removeEventListener('popstate', handleRouteChange)
   }, [])
 
-  const rawPath = path.replace(/\/$/, '') || '/'
+  const rawPath = path.replace(/\/(index\.html)?$/, '') || '/'
   // /work is a legacy alias for the canonical case-studies directory at /cases.
   const normalizedPath = rawPath === '/work' ? '/cases' : rawPath
   const routeCasesIndex = normalizedPath === '/cases'
@@ -4033,6 +4131,9 @@ function App() {
   const routeCase = path.startsWith('/cases/')
     ? caseStudies.find((study) => study.slug === path.replace('/cases/', '').replace(/\/$/, ''))
     : null
+  const routeHome = normalizedPath === '/'
+  const routeNotFound = !(routeHome || routeV1 || routeV2 || routeCasesIndex || routeCase || routeAbout
+    || routeServices || routeRegister || routeSeminar || routePrivacy || routeTerms || routeContent)
 
   useEffect(() => {
     // Canonicalize the legacy /work URL to /cases without a full navigation;
@@ -4041,6 +4142,21 @@ function App() {
       window.history.replaceState(null, '', '/cases')
     }
   }, [rawPath])
+
+  const pageMeta = routeNotFound
+    ? { title: 'Page not found', description: 'This page does not exist on abbadev.com.', noindex: true }
+    : routeCase
+      ? { title: `${routeCase.title} | Case study`, description: routeCase.result }
+      : routeContent
+        ? { title: routeContent.title, description: routeContent.intro }
+        : routeMeta[normalizedPath] || {}
+  const { title: metaTitle, description: metaDescription, noindex: metaNoindex = false } = pageMeta
+  // /v1 and /v2 duplicate the homepage, so they point search engines at "/".
+  const canonicalPath = routeV1 || routeV2 ? '/' : normalizedPath
+
+  useEffect(() => {
+    applyPageMeta({ title: metaTitle, description: metaDescription, noindex: metaNoindex, path: canonicalPath })
+  }, [metaTitle, metaDescription, metaNoindex, canonicalPath])
 
   const [leadStatus, setLeadStatus] = useState('idle')
   const [leadMessage, setLeadMessage] = useState('')
@@ -4216,8 +4332,12 @@ function App() {
   }
 
   // v2 is the homepage ("/"); the classic v1 homepage is preserved at /v1.
-  if (!routeV1) {
+  if (routeHome) {
     return <V2Home />
+  }
+
+  if (routeNotFound) {
+    return <NotFoundPage theme={theme} setTheme={setTheme} />
   }
 
   return (

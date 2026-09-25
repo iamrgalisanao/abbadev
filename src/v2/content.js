@@ -12,7 +12,6 @@ export const nav = {
     { label: 'About', href: '#founder' },
   ],
   cta: { label: 'Book a consultation', href: '#contact' },
-  v1: { label: 'Classic site', href: '/v1' },
 }
 
 export const hero = {
@@ -235,7 +234,7 @@ export const footer = {
   groups: [
     { title: 'Company', links: [ { label: 'About', href: '/about' }, { label: 'Services', href: '/services' }, { label: 'Case studies', href: '/cases' } ] },
     { title: 'Products', links: [ { label: 'ABBADev CRM', href: 'https://crm.abbadev.com/' }, { label: 'Stockora', href: 'https://stockora.abbadev.com/' } ] },
-    { title: 'Connect', links: [ { label: 'Book a consultation', href: '#contact' }, { label: 'Classic site', href: '/v1' } ] },
+    { title: 'Connect', links: [ { label: 'Book a consultation', href: '#contact' } ] },
   ],
   copyright: '© 2026 ABBADev IT Solutions. Founded by Rommel Galisanao.',
 }

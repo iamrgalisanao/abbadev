@@ -152,8 +152,10 @@ SERVICES (four):
    shaped around how the business actually operates. Discovery, prototype, build, handoff.
 4. Governance and review — keep accountability human at every step.
 
-PROOF (case studies at /cases): a transaction intake command center, a document intake
-assistant, and an integration foundation. Each shows problem, approach, implementation,
+PROOF (six case studies at /cases): a transaction intake command center, a document intake
+assistant, an integration foundation, this site's guardrailed assistant, and two products
+ABBADev runs in production: ABBADev CRM (crm.abbadev.com) and Stockora warehouse
+intelligence (stockora.abbadev.com). Each shows problem, approach, implementation,
 governance, and measurable before/after.
 
 PROCESS: a first conversation clarifies the workflow and outcome, identifies the systems,
