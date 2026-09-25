@@ -3,12 +3,13 @@
 Reference for the `abbadev` repository: the marketing site, lead pipeline and event
 registration system behind **https://abbadev.com**, run by ABBADev IT Solutions.
 
-Compiled on 2026-09-25 from three sources:
+Compiled on 2026-09-25 and kept current through `main` commit `dd6951f` (the same day), from three sources:
 
-- the source code on `main` (commit `389cda2`), plus the uncommitted removal of the header "Classic site" link
+- the source code on `main`, updated with each fix listed in [10-known-issues.md](10-known-issues.md)
 - a crawl of the live site at abbadev.com: every linked route, and every image and PDF it serves
 - the untracked local files in the repo root (`AI_Software_Delivery.html`, `images/`)
 
+The live-site crawl ([09-live-site-audit.md](09-live-site-audit.md)) is a snapshot from before those fixes were deployed.
 Every image, PDF and icon served by abbadev.com was byte-compared (SHA-256) with the copy in
 `public/`, and all 29 matched. The live site is running the current `main`.
 

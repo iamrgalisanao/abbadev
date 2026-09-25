@@ -42,17 +42,15 @@ Grouped by impact. Each item names the file to change. Items marked **Fixed** we
 
 - **v2 fields and helpers that are never used:**
   - `hero.sub`
-  - `nav.brand`
   - `work.cases[].metric.label`
   - `work.cases[].screenshot`
-  - `finalCta.button.href`
   - `TypewriterHeading`
   - the `.v2-hero-sub` and `.v2-type*` CSS
 - **Unused dependency:** `framer-motion`. Tailwind is only wired into Vite.
 - **Unused assets:**
   - the WebP versions of `hero`, `project-delivery`, `software-architecture` and `training`
   - `favicon.svg`, `icons.svg`
-  - `src/assets/react.svg`, `src/assets/vite.svg`
+  - `src/assets/react.svg`, `src/assets/vite.svg`, `src/assets/hero.png`
 - **Missing font:** IBM Plex Mono is used as the v2 mono font, but `v2.css` doesn't import it. It only renders because `index.css` imports it.
 - **Stale branch:** `origin/feat/chat-assistant-and-branding` is fully merged and could be deleted.
 

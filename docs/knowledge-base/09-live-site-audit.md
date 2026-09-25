@@ -1,5 +1,8 @@
 # Live site audit: abbadev.com (2026-09-25)
 
+> **Snapshot.** This describes abbadev.com as it was on 2026-09-25, **before** the fixes in
+> [10-known-issues.md](10-known-issues.md) were deployed. It is kept as the baseline those fixes were made against.
+
 ## Method
 
 - **Pages:** crawled every route linked from the site in the built-in browser (30 paths, plus one made-up URL), and recorded

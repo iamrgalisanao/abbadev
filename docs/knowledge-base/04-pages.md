@@ -1,7 +1,8 @@
 # Pages (everything except the v2 homepage)
 
-All of these pages live in `src/App.jsx` and are styled by `src/App.css`. Interior pages share the `CasePageHeader`
-header, which has the logo, theme toggle and `primaryNav`, and most of them show breadcrumbs.
+All of these pages live in `src/App.jsx` and are styled by `src/App.css`. Interior pages use the shared v2 site header
+(`src/v2/SiteHeader.jsx`, rendered through `CasePageHeader`) with the light/dark toggle, and most of them show breadcrumbs.
+`/v1` keeps its original header; `/seminar`, `/privacy` and `/terms` use the simple `lp-header`.
 
 ## `/v1`: classic homepage
 
@@ -31,7 +32,7 @@ This is the homepage from before v2. It is preserved as a snapshot on the `v1-le
 **`CasesIndexPage`**
 - Filter pills built from each case `type`, each with a count.
 - The cards show the badge image or product mockup, category, result and metric.
-- A CTA to `/consulting-intake`.
+- A CTA to the homepage consultation form (`/#contact`).
 
 **`CaseStudyPage`** sections, in order:
 1. Breadcrumbs.
@@ -69,7 +70,7 @@ The default disclaimer reads "Details anonymized to protect the client operating
 - Six values.
 - Five audience segments.
 - A link to `/community`.
-- CTAs to `/consulting-intake`.
+- CTAs to the homepage consultation form (`/#contact`).
 
 ## `/register`
 
@@ -109,8 +110,8 @@ A conversion page for Facebook ads, with no site nav and no chat widget. It has 
    - A paid event goes to step 2. The API returns the GCash amount, number, name and QR code. The user uploads the reference number, the amount and a
      receipt (image or PDF, up to 5 MB) as multipart to `/api/registrations/{id}/payment`.
    - Laravel 422 errors are shown next to the relevant fields. The reference field is protected from password-manager autofill.
-2. **Otherwise, it uses reserve-then-pay:** the form POSTs `flow: 'reserve-then-pay'` to `/api/event-registration`, then shows the hard-coded
-   GCash details (`paymentMethods`).
+2. **Otherwise (a build without `VITE_EVENTS_API`), it uses reserve-then-pay:** the form POSTs `flow: 'reserve-then-pay'` to
+   `/api/event-registration`, and the confirmation says payment instructions follow by email. The site keeps no GCash details.
 
 ## Service and community pages
 

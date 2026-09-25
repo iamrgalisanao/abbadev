@@ -6,7 +6,7 @@ The v2 page is self-contained: it never imports from `App.jsx`, so there's no ci
 | File | Role |
 |---|---|
 | `src/v2/V2Home.jsx` | Page component, including a local `ProductShot` |
-| `src/v2/content.js` | All copy, as plain exported objects: `nav, hero, position, pillars, services, work, products, founder, plate, finalCta, footer` |
+| `src/v2/content.js` | All copy, as plain exported objects: `nav, hero, position, pillars, services, work, products, founder, plate, finalCta, consult, footer` |
 | `src/v2/motion.jsx` | `Reveal`, `TextReveal`, `TypewriterHeading` (unused), `ScrollProgress`, `TiltCard`, `Parallax` |
 | `src/v2/motion-utils.js` | `prefersReduced()`, `useLenis()` (kept out of motion.jsx to satisfy react-refresh) |
 | `src/v2/SiteHeader.jsx` | The site-wide header, used by the homepage and every interior page |
@@ -110,7 +110,6 @@ On mount, V2Home adds the `v2-active` class to `<html>` and removes it on unmoun
 These fields exist in `content.js` or `motion.jsx` but nothing on the page uses them:
 
 - `hero.sub`
-- `nav.brand`
 - `work.cases[].metric.label`
 - `work.cases[].screenshot`
 - `TypewriterHeading`

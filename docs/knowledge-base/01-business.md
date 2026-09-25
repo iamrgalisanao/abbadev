@@ -56,7 +56,7 @@
 | 1 | AI & Automation | `/services/ai-automation` |
 | 2 | Custom Software Development | `/services/custom-systems` |
 | 3 | Business Systems & Internal Tools | `/business-solutions` |
-| 4 | Systems Integration | `/consulting-intake` |
+| 4 | Systems Integration | `/services/software-architecture` |
 | 5 | Software Architecture & Technology Consulting | `/services/software-architecture` |
 | 6 | Project Management & Digital Transformation | `/services/technical-advisory` |
 
