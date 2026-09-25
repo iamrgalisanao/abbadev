@@ -1,6 +1,9 @@
 import http from 'node:http'
 
 const PORT = Number(process.env.PORT || 8787)
+// Only the local web server (Apache/Nginx) should reach the proxy, so listen on
+// loopback by default. Set HOST=0.0.0.0 only if the web server runs elsewhere.
+const HOST = process.env.HOST || '127.0.0.1'
 const N8N_WEBHOOK_URL = process.env.N8N_WEBHOOK_URL
 // Optional: route chat-assistant leads to their own n8n workflow.
 // Falls back to the main consultation webhook when unset.
@@ -25,6 +28,111 @@ const N8N_ASSISTANT_JWT = process.env.N8N_ASSISTANT_JWT || process.env.N8N_JWT
 const ASSISTANT_TIMEOUT_MS = Number(process.env.ASSISTANT_TIMEOUT_MS || 30000)
 const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || 'https://abbadev.com'
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+
+// Fields each lead pipeline accepts. Anything else in the browser payload is
+// dropped before it reaches n8n. Keep these in sync with the forms that post to
+// each endpoint (see docs/knowledge-base/05-forms-assistant-proxy.md).
+const LEAD_FIELDS = {
+  // v2 homepage form, v1 #contact form, and the /services ProjectScoper quiz
+  form: [
+    'name', 'email', 'company', 'preferredContact', 'workFocus', 'companyStage', 'currentTools', 'urgency',
+    'challenge', 'engagement', 'budget', 'message', 'formType', 'orgType', 'focus', 'timeline',
+    'recommendedService', 'source', 'pageUrl', 'submittedAt',
+  ],
+  // assistant "Book a consult" flow
+  chat: ['name', 'email', 'challenge', 'workFocus', 'engagement', 'source', 'pageUrl', 'submittedAt'],
+  // /register form and the /seminar reserve-then-pay fallback
+  event: [
+    'name', 'email', 'phone', 'organization', 'message', 'audience', 'eventId', 'eventTitle', 'eventDate',
+    'price', 'flow', 'leadSource', 'utm', 'source', 'pageUrl', 'submittedAt',
+  ],
+}
+const LONG_TEXT_FIELDS = new Set(['challenge', 'message', 'currentTools'])
+const fieldLimit = (key) => (LONG_TEXT_FIELDS.has(key) ? 5000 : key === 'pageUrl' ? 1000 : 300)
+
+// Ad attribution params (utm_source, fbclid, ...): a small flat map of strings.
+const cleanUtm = (utm) => {
+  if (!utm || typeof utm !== 'object' || Array.isArray(utm)) return undefined
+  const entries = Object.entries(utm)
+    .filter(([key, value]) => /^[\w.-]{1,64}$/.test(key) && typeof value === 'string')
+    .slice(0, 20)
+    .map(([key, value]) => [key, value.slice(0, 500)])
+  return entries.length ? Object.fromEntries(entries) : undefined
+}
+
+const pickLeadFields = (payload, channel) => {
+  const lead = {}
+  for (const key of LEAD_FIELDS[channel]) {
+    const value = payload[key]
+    if (key === 'utm') {
+      const utm = cleanUtm(value)
+      if (utm) lead.utm = utm
+    } else if (typeof value === 'string') {
+      lead[key] = value.trim().slice(0, fieldLimit(key))
+    } else if (typeof value === 'number' && Number.isFinite(value)) {
+      lead[key] = String(value)
+    }
+  }
+  return lead
+}
+
+// Per-client rate limits, counted separately for each endpoint. In-memory, so
+// they reset when the proxy restarts - enough to blunt scripted form spam and
+// protect the CPU-bound assistant model, without a datastore.
+const RATE_LIMITS = {
+  form: { max: 5, windowMs: 10 * 60 * 1000 },
+  chat: { max: 5, windowMs: 10 * 60 * 1000 },
+  event: { max: 10, windowMs: 10 * 60 * 1000 },
+  assistant: { max: 20, windowMs: 10 * 60 * 1000 },
+}
+const MAX_TRACKED_CLIENTS = 50000
+const hits = new Map()
+
+// Behind Apache/Nginx every request arrives from loopback, so the real client is
+// the last X-Forwarded-For entry (the one the local web server appended).
+const clientIp = (request) => {
+  const remote = request.socket.remoteAddress || ''
+  const isLoopback = remote === '127.0.0.1' || remote === '::1' || remote === '::ffff:127.0.0.1'
+  const forwarded = request.headers['x-forwarded-for']
+  if (isLoopback && typeof forwarded === 'string' && forwarded.trim()) {
+    return forwarded.split(',').pop().trim()
+  }
+  return remote
+}
+
+// Returns 0 when the request may proceed, otherwise the seconds to wait.
+const rateLimit = (bucket, ip) => {
+  const { max, windowMs } = RATE_LIMITS[bucket]
+  const key = `${bucket}:${ip}`
+  const now = Date.now()
+  const recent = (hits.get(key) || []).filter((time) => now - time < windowMs)
+
+  if (recent.length >= max) {
+    hits.set(key, recent)
+    return Math.max(1, Math.ceil((recent[0] + windowMs - now) / 1000))
+  }
+
+  if (!hits.has(key) && hits.size >= MAX_TRACKED_CLIENTS) hits.clear()
+  recent.push(now)
+  hits.set(key, recent)
+  return 0
+}
+
+const longestWindow = Math.max(...Object.values(RATE_LIMITS).map((limit) => limit.windowMs))
+setInterval(() => {
+  const now = Date.now()
+  for (const [key, times] of hits) {
+    if (now - times[times.length - 1] >= longestWindow) hits.delete(key)
+  }
+}, 5 * 60 * 1000).unref()
+
+const rejectIfLimited = (request, response, responseOrigin, bucket) => {
+  const retryAfter = rateLimit(bucket, clientIp(request))
+  if (!retryAfter) return false
+  response.setHeader('Retry-After', String(retryAfter))
+  jsonResponse(response, 429, { error: 'Too many requests. Please try again later.' }, responseOrigin)
+  return true
+}
 
 const jsonResponse = (response, statusCode, body, origin = ALLOWED_ORIGIN) => {
   response.writeHead(statusCode, {
@@ -69,6 +177,15 @@ const forwardLead = async (request, response, responseOrigin, { webhookUrl, toke
 
   try {
     const payload = await readJsonBody(request)
+
+    // Honeypot: the forms hide a "website" field that only bots fill in. Report
+    // success so they don't retry, but never forward the submission.
+    if (typeof payload.website === 'string' && payload.website.trim()) {
+      console.warn(`Dropped honeypot submission (${channel})`)
+      jsonResponse(response, 200, { ok: true }, responseOrigin)
+      return
+    }
+
     const email = String(payload.email || '').trim()
 
     if (!EMAIL_PATTERN.test(email)) {
@@ -82,7 +199,7 @@ const forwardLead = async (request, response, responseOrigin, { webhookUrl, toke
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ ...payload, email, channel }),
+      body: JSON.stringify({ ...pickLeadFields(payload, channel), email, channel }),
     })
 
     if (!n8nResponse.ok) {
@@ -180,21 +297,25 @@ const server = http.createServer(async (request, response) => {
   }
 
   if (request.method === 'POST' && request.url === '/api/consultation') {
+    if (rejectIfLimited(request, response, responseOrigin, 'form')) return
     await forwardLead(request, response, responseOrigin, { webhookUrl: N8N_WEBHOOK_URL, token: N8N_JWT, channel: 'form' })
     return
   }
 
   if (request.method === 'POST' && request.url === '/api/chat-lead') {
+    if (rejectIfLimited(request, response, responseOrigin, 'chat')) return
     await forwardLead(request, response, responseOrigin, { webhookUrl: N8N_CHAT_WEBHOOK_URL, token: N8N_CHAT_JWT, channel: 'chat' })
     return
   }
 
   if (request.method === 'POST' && request.url === '/api/event-registration') {
+    if (rejectIfLimited(request, response, responseOrigin, 'event')) return
     await forwardLead(request, response, responseOrigin, { webhookUrl: N8N_EVENT_WEBHOOK_URL, token: N8N_EVENT_JWT, channel: 'event' })
     return
   }
 
   if (request.method === 'POST' && request.url === '/api/assistant') {
+    if (rejectIfLimited(request, response, responseOrigin, 'assistant')) return
     await forwardAssistant(request, response, responseOrigin)
     return
   }
@@ -202,6 +323,6 @@ const server = http.createServer(async (request, response) => {
   jsonResponse(response, 404, { error: 'Not found' }, responseOrigin)
 })
 
-server.listen(PORT, () => {
-  console.log(`ABBADev consultation proxy listening on port ${PORT}`)
+server.listen(PORT, HOST, () => {
+  console.log(`ABBADev consultation proxy listening on ${HOST}:${PORT}`)
 })

@@ -10,8 +10,8 @@ Grouped by impact. Each item names the file to change. Items marked **Fixed** we
 | 2 | **Fixed 2026-09-25.** Same `<title>` and description on every page | `index.html`; needs per-route `document.title` / meta |
 | 3 | **Fixed 2026-09-25.** No 404 page: unknown paths render the homepage | `src/App.jsx` routing (the fallthrough at ~4218) |
 | 4 | **Fixed 2026-09-25** (homepage now has a consultation brief form at `#contact`). The v2 homepage has no working consultation form. Its CTAs go to `#contact` (a CTA card) or `/consulting-intake` (a template page with no form) | `src/v2/V2Home.jsx:364`, `contentPages['/consulting-intake']` |
-| 5 | The proxy has no rate limiting or bot protection, and forwards the whole payload to n8n | `server/consultation-proxy.mjs` |
-| 6 | The proxy binds all interfaces, so port 8787 must be firewalled | same |
+| 5 | **Fixed 2026-09-25** (per-client rate limits, field allow-lists, server honeypot check). The proxy has no rate limiting or bot protection, and forwards the whole payload to n8n | `server/consultation-proxy.mjs` |
+| 6 | **Fixed 2026-09-25** (listens on `127.0.0.1` by default; `HOST` overrides). The proxy binds all interfaces, so port 8787 must be firewalled | same |
 
 ## Content drift
 

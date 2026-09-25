@@ -88,6 +88,8 @@ ASSISTANT_TIMEOUT_MS=30000
 
 ALLOWED_ORIGIN=https://abbadev.com
 PORT=8787
+# Loopback only: Apache/Nginx on the same VPS proxy /api/ to it.
+HOST=127.0.0.1
 ```
 
 > `N8N_CHAT_WEBHOOK_URL` falls back to `N8N_WEBHOOK_URL` and `N8N_CHAT_JWT` falls

@@ -54,4 +54,4 @@ sudo systemctl reload nginx   # or apache2
   `public/.htaccess` (Apache) and `deploy/abbadev.nginx.conf` (Nginx).
 
 - `DEPLOYMENT.md` and `deploy/abbadev.env.example` were updated on 2026-09-25 to cover the assistant variables and the build-time `VITE_*` variables.
-- The proxy doesn't specify a host, so it listens on every network interface. Make sure the firewall blocks public access to port 8787.
+- The proxy listens on `127.0.0.1` only (set `HOST` to change it), so port 8787 isn't reachable from outside the VPS.

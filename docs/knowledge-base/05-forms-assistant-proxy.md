@@ -70,7 +70,7 @@ A floating launcher that opens a dialog panel. It appears on every page except `
 
 ## API proxy (`server/consultation-proxy.mjs`)
 
-A plain `node:http` server on `PORT` (default 8787). Its job is to keep the n8n webhook URLs and JWTs server-side.
+A plain `node:http` server on `HOST:PORT` (default `127.0.0.1:8787`, so only the local web server can reach it). Its job is to keep the n8n webhook URLs and JWTs server-side.
 
 | Route | Behaviour |
 |---|---|
@@ -82,10 +82,25 @@ A plain `node:http` server on `PORT` (default 8787). Its job is to keep the n8n 
 | `POST /api/assistant` | Forward chat, return `{ reply }` |
 | anything else | 404 |
 
+**Rate limits** (per client, per endpoint, in memory, so they reset on restart):
+
+| Endpoint | Limit |
+|---|---|
+| `/api/consultation`, `/api/chat-lead` | 5 per 10 minutes |
+| `/api/event-registration` | 10 per 10 minutes |
+| `/api/assistant` | 20 per 10 minutes |
+
+Over the limit returns 429 with a `Retry-After` header. The client is the last `X-Forwarded-For` entry when the request comes
+from loopback (Apache and Nginx append the real IP there), otherwise the socket address.
+
 **Forwarding leads**
 - Returns 500 if the pipeline isn't configured.
+- A filled-in `website` honeypot field returns `{ ok: true }` without forwarding.
 - Rejects JSON over 64 KB, or invalid JSON, with a 400.
 - Re-checks the email and returns 422 if it's invalid.
+- Forwards only the fields on that pipeline's allow-list (`LEAD_FIELDS`), as trimmed strings: 5,000 characters for
+  `challenge`, `message` and `currentTools`, 1,000 for `pageUrl`, 300 for everything else. `utm` is kept as a flat map of up to
+  20 string values. **A new form field must be added to `LEAD_FIELDS` or it never reaches n8n.**
 - Adds `channel` on the server, overriding whatever the client sent.
 - Sends `Authorization: Bearer <JWT>` to n8n.
 - If n8n fails, returns 502. On success, returns `{ ok: true }`.
@@ -100,10 +115,8 @@ A plain `node:http` server on `PORT` (default 8787). Its job is to keep the n8n 
 - `Cache-Control: no-store`.
 - Each pipeline has its own token.
 
-**Not implemented:**
-- rate limiting
-- CAPTCHA or bot protection
-- a whitelist of payload fields (the proxy forwards the entire body)
+**Not implemented:** CAPTCHA. The rate limits and honeypot stop casual and scripted spam, but not a determined attacker
+rotating IP addresses.
 
 ## Environment variables
 
@@ -114,6 +127,7 @@ Names only. Never commit the values. The templates are `.env.example` and `deplo
 | Variable | Purpose | Fallback |
 |---|---|---|
 | `PORT` | Listen port | 8787 |
+| `HOST` | Listen interface | `127.0.0.1` |
 | `ALLOWED_ORIGIN` | CORS origin | `https://abbadev.com` |
 | `N8N_WEBHOOK_URL`, `N8N_JWT` | Consultation pipeline | — |
 | `N8N_CHAT_WEBHOOK_URL`, `N8N_CHAT_JWT` | Chat leads | the consultation pair |
