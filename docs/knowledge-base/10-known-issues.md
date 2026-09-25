@@ -35,7 +35,7 @@ Grouped by impact. Each item names the file to change. Items marked **Fixed** we
 | 17 | **Fixed 2026-09-25.** `.env.example` says `ASSISTANT_TIMEOUT_MS` defaults to 24000; the code default is 30000 | `.env.example` vs `consultation-proxy.mjs:25` |
 | 18 | **Fixed 2026-09-25.** DEPLOYMENT.md leaves out the assistant env vars and the build-time `VITE_*` vars | `DEPLOYMENT.md`, `deploy/abbadev.env.example` |
 | 19 | **Fixed 2026-09-25.** AGENTS.md says the repo "has no existing commit history" | `AGENTS.md` |
-| 20 | Event schema docs mention `lead_source`, `flow` and `utm_campaign` columns that aren't in the SQL | `docs/n8n-event-workflow.md` vs `event-registrations-schema.sql` |
+| 20 | **Fixed 2026-09-25** (schema now has `lead_source`, `flow`, `utm_source`, `utm_campaign`, `fbclid`, with an idempotent upgrade block). Event schema docs mention `lead_source`, `flow` and `utm_campaign` columns that aren't in the SQL | `docs/n8n-event-workflow.md` vs `event-registrations-schema.sql` |
 | 21 | `CaseWorkflow` kicker is hard-coded to "n8n pipeline", even on the CRM, Stockora and transaction cases | `src/CaseWorkflow.jsx` |
 
 ## Dead code and assets

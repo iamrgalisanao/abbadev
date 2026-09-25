@@ -75,9 +75,11 @@ hasn't had a reminder yet (`reminded_at IS NULL`), then sets `reminded_at`.
   - which event: `event_id`, `event_title`, `event_start` (timestamptz), `event_when`, `event_mode`
   - submission: `message`, `source`, `channel`, `page_url`, `submitted_at`, `created_at`
   - tracking: `reminded_at`, `status`
-- **Status values:** registered / confirmed / attended / no_show / cancelled / waitlist. New rows default to `registered`.
+  - ad attribution: `lead_source`, `flow`, `utm_source`, `utm_campaign`, `fbclid`
+- **Status values:** registered / reserved (paid, awaiting payment) / confirmed / attended / no_show / cancelled / waitlist.
+  New rows default to `registered`.
 - **Duplicate protection:** a partial unique index on `(email, event_id) WHERE event_id <> 'notify-next'`, so each email can register once per event.
-- The docs also mention optional `lead_source`, `flow` and `utm_campaign` columns, but they aren't in the SQL.
+- **Upgrading:** the schema file is safe to re-run. It adds any missing columns to an existing table with `ALTER TABLE … ADD COLUMN IF NOT EXISTS`.
 
 GCash details live only in the events API admin; neither the site nor n8n keeps a copy.
 

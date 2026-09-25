@@ -1,12 +1,18 @@
 -- ABBADev seminar/webinar registrations (Postgres)
--- Rows are sign-ups from the /register page, forwarded by the consultation
--- proxy with channel = 'event'. One row per registration.
+-- Rows written by the n8n "Normalize Registration" workflow for sign-ups the
+-- consultation proxy forwards with channel = 'event': mainly "Notify me"
+-- (event_id = 'notify-next') from /register, plus any paid or free booking that
+-- still arrives here. Session bookings made through /seminar?event=<slug> live in
+-- the events API instead. One row per registration.
+--
+-- Safe to re-run: it creates the table on a fresh database and adds any missing
+-- columns to an existing one (see the ALTER TABLE block below).
 
 CREATE TABLE IF NOT EXISTS event_registrations (
   id             BIGSERIAL PRIMARY KEY,
   name           TEXT        NOT NULL,
   email          TEXT        NOT NULL,
-  audience       TEXT,         -- 'Student' | 'SME owner'
+  audience       TEXT,         -- 'Student' | 'SME owner' | 'Developer' | 'Professional & owner'
   organization   TEXT,         -- school or company
   phone          TEXT,
   event_id       TEXT,         -- session slug, or 'notify-next' for the waitlist
@@ -21,9 +27,23 @@ CREATE TABLE IF NOT EXISTS event_registrations (
   submitted_at   TIMESTAMPTZ,  -- client-reported submission time
   created_at     TIMESTAMPTZ NOT NULL DEFAULT now(),
   status         TEXT        NOT NULL DEFAULT 'registered',
-  -- registered | confirmed | attended | no_show | cancelled | waitlist
-  reminded_at    TIMESTAMPTZ   -- set by the reminder workflow once a reminder is sent
+  -- registered | reserved (paid, awaiting payment) | confirmed | attended | no_show | cancelled | waitlist
+  reminded_at    TIMESTAMPTZ,  -- set by the reminder workflow once a reminder is sent
+  -- Attribution for ad-funnel sign-ups (Normalize Registration outputs these)
+  lead_source    TEXT,         -- e.g. 'fb-ad-landing'  <- {{ $json.leadSource }}
+  flow           TEXT,         -- e.g. 'reserve-then-pay' <- {{ $json.flow }}
+  utm_source     TEXT,         -- <- {{ $json.utmSource }}
+  utm_campaign   TEXT,         -- <- {{ $json.utmCampaign }}
+  fbclid         TEXT          -- Facebook click id <- {{ $json.fbclid }}
 );
+
+-- Upgrade a table created before the attribution columns existed. No-ops on a
+-- fresh database; existing rows keep their data and get NULLs here.
+ALTER TABLE event_registrations ADD COLUMN IF NOT EXISTS lead_source  TEXT;
+ALTER TABLE event_registrations ADD COLUMN IF NOT EXISTS flow         TEXT;
+ALTER TABLE event_registrations ADD COLUMN IF NOT EXISTS utm_source   TEXT;
+ALTER TABLE event_registrations ADD COLUMN IF NOT EXISTS utm_campaign TEXT;
+ALTER TABLE event_registrations ADD COLUMN IF NOT EXISTS fbclid       TEXT;
 
 -- Fast "newest first" review, per-session rosters, and de-dup lookups by email.
 CREATE INDEX IF NOT EXISTS event_registrations_created_at_idx ON event_registrations (created_at DESC);

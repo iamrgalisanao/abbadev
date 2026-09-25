@@ -97,7 +97,10 @@ The `Normalize Registration` Code node outputs everything the rest of the chain
 needs, so those nodes stay simple:
 
 - **Insert rows (Postgres)** — directly after Normalize, so use `{{ $json.<field> }}`.
-  Optional attribution columns: `lead_source`, `flow`, `utm_campaign`.
+  Attribution columns (in `automation/n8n/event-registrations-schema.sql`; re-run that file
+  to add them to an existing table): `lead_source` ← `{{ $json.leadSource }}`,
+  `flow` ← `{{ $json.flow }}`, `utm_source` ← `{{ $json.utmSource }}`,
+  `utm_campaign` ← `{{ $json.utmCampaign }}`, `fbclid` ← `{{ $json.fbclid }}`.
 - **Send an Email** — after Postgres, so `$json` is the DB row. Reference Normalize:
   - Subject: `{{ $('Normalize Registration').item.json.clientSubject }}`
   - HTML: `{{ $('Normalize Registration').item.json.clientHtml }}`
