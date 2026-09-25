@@ -2,7 +2,7 @@
 
 Personal brand and business website for Rommel Galisanao / ABBADev IT Solutions.
 
-The site is built with React, Vite, Tailwind CSS, Framer Motion, and a small Node.js proxy for the consultation form. The proxy forwards submissions to n8n while keeping the JWT on the server.
+The site is built with React and Vite, styled with plain CSS on shared design tokens (`tokens.css`), and uses Lenis for smooth scrolling on the homepage. A small Node.js proxy forwards the consultation, chat, event, and assistant requests to n8n while keeping the webhook tokens on the server.
 
 ## Local Development
 
@@ -27,3 +27,5 @@ npm run build
 Deployment instructions are in [DEPLOYMENT.md](DEPLOYMENT.md).
 
 The n8n lead-handling workflow is documented in [automation/n8n/consultation-lead-workflow.md](automation/n8n/consultation-lead-workflow.md).
+
+A full project knowledge base (business content, architecture, pages, automation, deployment, assets, and known issues) is in [docs/knowledge-base/](docs/knowledge-base/README.md).

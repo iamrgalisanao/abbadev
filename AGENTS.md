@@ -24,7 +24,7 @@ No test framework is configured yet. Before adding tests, choose a Vite-friendly
 
 ## Commit & Pull Request Guidelines
 
-This repository has no existing commit history, so use clear imperative commit messages such as `Add hero assets` or `Update Vite config`. Keep commits focused on one logical change. Pull requests should include a short summary, verification steps, linked issues when applicable, and screenshots or screen recordings for visible UI changes.
+Use clear imperative commit messages such as `Add hero assets` or `Update Vite config`. Keep commits focused on one logical change. Pull requests should include a short summary, verification steps, linked issues when applicable, and screenshots or screen recordings for visible UI changes.
 
 ## Security & Configuration Tips
 

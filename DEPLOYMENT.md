@@ -29,6 +29,20 @@ git pull origin main
 
 ## 3. Install And Build
 
+The frontend reads its `VITE_*` settings at build time, so they must be present
+when you run `npm run build` (put them in `/var/www/abbadev/.env`, which is
+gitignored). Changing one later means rebuilding.
+
+```env
+VITE_CONSULTATION_ENDPOINT=/api/consultation
+VITE_CHAT_LEAD_ENDPOINT=/api/chat-lead
+VITE_EVENT_ENDPOINT=/api/event-registration
+# Empty keeps the chat assistant on deterministic answers; /api/assistant enables AI replies.
+VITE_ASSISTANT_ENDPOINT=/api/assistant
+# Empty makes /register use the built-in session list and /seminar use reserve-then-pay.
+VITE_EVENTS_API=https://api.abbadev.com
+```
+
 ```bash
 npm ci
 npm run lint
@@ -64,6 +78,13 @@ N8N_CHAT_JWT=replace-with-your-chat-token
 # Seminar/webinar registration (separate pipeline + secret)
 N8N_EVENT_WEBHOOK_URL=https://n8nautomation.abbadev.com/webhook/abbadev-event-registration
 N8N_EVENT_JWT=replace-with-your-event-token
+
+# Grounded AI assistant (n8n -> Ollama). No fallback webhook: unset means the
+# widget stays on its deterministic answers.
+N8N_ASSISTANT_WEBHOOK_URL=https://n8nautomation.abbadev.com/webhook/abbadev-assistant
+N8N_ASSISTANT_JWT=replace-with-your-assistant-token
+# Optional, ms. Default 30000; keep it between the n8n Ollama timeout (28s) and the browser's (32s).
+ASSISTANT_TIMEOUT_MS=30000
 
 ALLOWED_ORIGIN=https://abbadev.com
 PORT=8787
