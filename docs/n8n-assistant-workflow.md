@@ -112,7 +112,13 @@ Keep Ollama bound to localhost / the private Docker network. Do **not** publish
 
 ## 3. The n8n workflow
 
-Six nodes. Import the shape below or build it by hand.
+Seven nodes, in this order:
+
+```
+Webhook → Fetch Sessions → Fetch Facts → Build request (Code) → Ollama (HTTP) → Clean reply (Code) → Respond
+```
+
+Build them by hand as below.
 
 ### Node 1 — Webhook (trigger)
 - **HTTP Method:** POST
@@ -122,125 +128,169 @@ Six nodes. Import the shape below or build it by hand.
   `N8N_ASSISTANT_JWT` (see [.env.example](../.env.example)).
 - **Respond:** "Using 'Respond to Webhook' node".
 
-### Node 2 — HTTP Request: fetch live sessions (grounding)
+### Node 2 — HTTP Request: **Fetch Sessions**
+Name the node exactly **Fetch Sessions** (Node 3 reads it by name).
 - **Method:** GET
 - **URL:** `https://api.abbadev.com/api/events`
 - **Options → Timeout:** 5000 ms
-- **On error:** "Continue" (so a slow sessions API never blocks a reply — the
-  prompt just omits the live list).
+- **Settings → On Error:** "Continue" (a slow sessions API never blocks a reply;
+  the prompt just says no sessions are listed).
 
-This is what keeps the assistant current: it always answers with the *actual*
-active sessions, not a hardcoded list.
+The API returns `{ "events": [ ... ] }`. It is the same source the website uses, so
+the assistant always quotes the live sessions.
+
+### Node 2b — HTTP Request: **Fetch Facts**
+Name the node exactly **Fetch Facts**. Place it after Fetch Sessions.
+- **Method:** GET
+- **URL:** `https://abbadev.com/assistant-facts.md`
+- **Options → Response → Response Format:** Text (the text lands in the `data` field)
+- **Options → Timeout:** 5000 ms
+- **Settings → On Error:** "Continue"
+
+`public/assistant-facts.md` in the repo is **the single place to edit what the
+assistant knows**: company, founder, services, the six case studies, products,
+pricing, how to start, contact and privacy. It ships with every site deploy, so the
+assistant picks up changes without touching n8n. It is condensed from
+`docs/knowledge-base/`; keep it short, because on CPU every prompt word adds latency.
 
 ### Node 3 — Code: build the Ollama request
-Language: JavaScript. This assembles the grounded system prompt (curated KB +
-live sessions) and sanitises the incoming turns.
+Language: JavaScript, mode **Run Once for All Items**. It assembles the grounded
+system prompt (facts file + live sessions) and sanitises the incoming turns.
 
 ```js
-// --- Curated, editable ABBADev knowledge base -----------------------------
-const KB = `
-ABBADev IT Solutions is a Philippine software + AI consultancy led by Rommel Galisanao.
-The thesis: AI scoped to accountable steps, with deterministic rules and a human owner
-confirming the path. Never "AI does everything on its own."
+// --- Facts: fetched from abbadev.com/assistant-facts.md (Node 2b) ----------
+// A tiny fallback keeps the assistant honest if the site can't be reached.
+const FALLBACK_FACTS = `ABBADev IT Solutions designs systems architecture, AI automation and custom software.
+Founder: Rommel Galisanao, Founder & Principal Systems Architect.
+Book a consultation at /#contact (reply within one business day) or email info@abbadev.com.
+Case studies: /cases. Services: /services. Sessions: /register.`
 
-SERVICES (four):
-1. AI automation strategy — scope AI to intake, analysis, drafting, routing, and review,
-   each with a human approval point. Often built on n8n workflows.
-2. Enterprise architecture — define system boundaries, data flow, source-of-truth rules,
-   and a governance model before implementation cost compounds.
-3. Custom software builds — internal tools, portals, dashboards, APIs, workflow apps,
-   shaped around how the business actually operates. Discovery, prototype, build, handoff.
-4. Governance and review — keep accountability human at every step.
-
-PROOF (six case studies at /cases): a transaction intake command center, a document intake
-assistant, an integration foundation, this site's guardrailed assistant, and two products
-ABBADev runs in production: ABBADev CRM (crm.abbadev.com) and Stockora warehouse
-intelligence (stockora.abbadev.com). Each shows problem, approach, implementation,
-governance, and measurable before/after.
-
-PROCESS: a first conversation clarifies the workflow and outcome, identifies the systems,
-people, and approval points, then returns a practical path. Book via /#contact.
-
-PRICING: scoped per workflow, not a fixed package. Ranges from a small advisory scope up
-to $50k+ for full builds. Exact numbers come from a short consultation brief. Do NOT invent
-a specific quote.
-
-CONTACT: info@abbadev.com, or the consultation form at /#contact.
-`.trim();
-
-// --- Live sessions from Node 2 --------------------------------------------
-let sessions = [];
+let facts = ''
 try {
-  sessions = $('HTTP Request').first().json ?? [];
-  if (!Array.isArray(sessions)) sessions = [];
-} catch { sessions = []; }
+  const fetched = $('Fetch Facts').first().json
+  facts = typeof fetched.data === 'string' ? fetched.data : ''
+} catch { facts = '' }
+// Drop the file's own header note (everything before the first "## " section).
+const firstSection = facts.indexOf('\n## ')
+if (firstSection > -1) facts = facts.slice(firstSection + 1)
+if (facts.trim().length < 200) facts = FALLBACK_FACTS
+
+// --- Live sessions from Node 2, soonest first ------------------------------
+let sessions = []
+try {
+  const body = $('Fetch Sessions').first().json
+  sessions = Array.isArray(body.events) ? body.events : Array.isArray(body) ? body : []
+} catch { sessions = [] }
+sessions = sessions
+  .filter((s) => s && s.slug && s.title)
+  .sort((a, b) => (Date.parse(a.starts_at) || Infinity) - (Date.parse(b.starts_at) || Infinity))
 
 const sessionsBlock = sessions.length
-  ? 'CURRENT SESSIONS (register at /seminar?event=SLUG):\n' + sessions.map((s) =>
-      `- ${s.title} (${s.type}${s.mode ? ', ' + s.mode : ''}) — ${s.date || 'TBA'} ${s.time || ''}, `
-      + `${s.price_label || (s.is_free ? 'Free' : '')}. slug: ${s.slug}`).join('\n')
-  : 'CURRENT SESSIONS: none listed right now.';
+  ? 'CURRENT SESSIONS (soonest first; each line ends with that session\'s registration link):\n' + sessions.map((s) =>
+      `- ${s.title}: ${s.type || 'Session'}, ${s.mode === 'In-person' && s.location ? s.location : s.mode || 'Online'}, `
+      + `${s.date || 'TBA'} ${s.time || ''}, ${s.is_free ? 'Free' : s.price_label || ''}. /seminar?event=${s.slug}`).join('\n')
+  : 'CURRENT SESSIONS: none listed right now. Point people to /register for updates.'
 
-const system = `You are the ABBADev website assistant. Answer ONLY using the facts below.
-If a question is off-topic or not covered by these facts, say you do not have that detail
-and offer to prepare a consultation brief. Never invent prices, dates, or capabilities.
-Keep answers to 2-4 short sentences. Reply in plain text only - no Markdown, no asterisks,
-no bold or italics. Do not use the em dash character, and never output placeholder tokens in
-square brackets. To book, point the person to the consultation form at /#contact. To register
-for a session, give the plain path /seminar?event=SLUG using a slug from the list.
+const system = `You are the website assistant for ABBADev IT Solutions.
 
-${KB}
+RULES
+1. Answer ONLY with information in FACTS and CURRENT SESSIONS below. Never guess.
+2. If the facts do not answer the question, reply: "I don't have that detail here." Then suggest the consultation form at /#contact or info@abbadev.com. Do NOT say ABBADev does or doesn't do something unless the facts say so.
+3. Never invent case studies, products, clients, people, prices, dates or numbers. Mention only the six case studies and two products listed.
+4. Never write placeholders or square brackets. Always call the company ABBADev IT Solutions.
+5. Plain text only: no Markdown, no bold, no headings. For lists, put each item on its own line starting with "- ".
+6. Keep answers short: 2 to 4 sentences, or a list of at most 6 short items.
+7. When a fact has a link or path, include it exactly as written, like /cases, /#contact or https://crm.abbadev.com.
+8. Do not add descriptions, benefits or claims that are not in the facts.
 
-${sessionsBlock}`;
+FACTS
+${facts.trim()}
 
-// --- Sanitise incoming turns ----------------------------------------------
-const incoming = Array.isArray($json.messages) ? $json.messages : [];
+${sessionsBlock}`
+
+// --- Sanitise incoming turns (keep the prompt inside the context window) ---
+// Read the visitor's messages from the Webhook node: after the two HTTP nodes,
+// the current item is the facts file, not the request.
+let incoming = []
+try {
+  const hook = $('Webhook').first().json
+  const body = hook.body ?? hook
+  incoming = Array.isArray(body.messages) ? body.messages : []
+} catch { incoming = [] }
 const turns = incoming
-  .filter((m) => m && (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string')
-  .slice(-10)
-  .map((m) => ({ role: m.role, content: m.content.slice(0, 2000) }));
+  .filter((m) => m && (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string' && m.content.trim())
+  .slice(-6)
+  .map((m) => ({ role: m.role, content: m.content.trim().slice(0, 800) }))
 
-if (turns.length === 0) turns.push({ role: 'user', content: 'Hello' });
+if (turns.length === 0) turns.push({ role: 'user', content: 'Hello' })
+
+// Two worked examples: small models follow examples far better than rules. One shows
+// the reply for anything the facts don't cover; the other keeps price questions answered.
+const example = [
+  { role: 'user', content: 'Do you offer 24/7 on-site support?' },
+  { role: 'assistant', content: "I don't have that detail here. You can ask ABBADev IT Solutions directly through the consultation form at /#contact or email info@abbadev.com." },
+  { role: 'user', content: 'How much would a customer portal cost?' },
+  { role: 'assistant', content: 'Every engagement is scoped per workflow, from a small advisory scope up to $50k+ for a full build. An exact figure comes after a short consultation, which you can book at /#contact.' },
+]
 
 return [{
   json: {
     model: 'qwen3:1.7b',
     stream: false,
     think: false,      // qwen3 reasons by default; suppress it for a clean, fast reply
-    keep_alive: -1,    // keep the model resident indefinitely so replies never cold-reload
-    messages: [{ role: 'system', content: system }, ...turns],
-    options: { temperature: 0.2, num_ctx: 4096, num_predict: 220 },
+    keep_alive: -1,    // keep the model resident so replies never cold-reload
+    messages: [{ role: 'system', content: system }, ...example, ...turns],
+    options: { temperature: 0.1, num_ctx: 6144, num_predict: 400 },
   },
-}];
+}]
 ```
 
-> If you switch to a non-thinking model (e.g. `llama3.2:3b`), the `think: false`
-> field is simply ignored — safe to leave in.
+> Node 3 reads its inputs by node name: **Webhook**, **Fetch Sessions** and **Fetch Facts**.
+> If you rename any of those nodes, update the names in the code.
+>
+> If you switch to a non-thinking model (e.g. `llama3.2:3b`), `think: false` is
+> ignored, so it's safe to leave in.
 
 ### Node 4 — HTTP Request: call Ollama
 - **Method:** POST
 - **URL:** `http://ollama:11434/api/chat` (shared Docker network) or
-  `http://localhost:11434/api/chat` (n8n on the host) — see section 2.
+  `http://localhost:11434/api/chat` (n8n on the host). See section 2.
 - **Body Content Type:** JSON
 - **Body:** "Using JSON" →  `={{ $json }}`  (sends the object built in Node 3)
 - **Options → Timeout:** 28000 ms (see the timeout ladder in section 5)
 
 ### Node 5 — Code: extract + clean the reply
 ```js
-const raw = $json?.message?.content;
-let reply = (typeof raw === 'string' ? raw : '').trim();
+const SAFE_REPLY = "I don't have that detail here. You can ask ABBADev IT Solutions directly through the consultation form at /#contact or email info@abbadev.com."
+
+const res = $input.first().json
+const raw = res?.message?.content
+let reply = (typeof raw === 'string' ? raw : '').trim()
 // Strip any qwen3 reasoning that slipped through think:false.
-reply = reply.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
-// Safety net for small-model formatting slips: unwrap markdown emphasis and drop
-// any leaked ALL-CAPS placeholder tokens like [EXACT REGISTRATION VALUE].
+reply = reply.replace(/<think>[\s\S]*?<\/think>/gi, '').trim()
+// Unwrap Markdown emphasis and headings a small model sometimes adds.
 reply = reply
   .replace(/\*\*(.*?)\*\*/g, '$1')
   .replace(/\*(.*?)\*/g, '$1')
-  .replace(/\[[A-Z0-9 _/?=&.-]{3,}\]/g, '')
+  .replace(/^#{1,6}\s*/gm, '')
+  // Drop prompt section headers the model sometimes echoes (CURRENT SESSIONS, FACTS, RULES).
+  .replace(/^(CURRENT SESSIONS|FACTS|RULES)\b.*$\n?/gim, '')
   .replace(/[ \t]{2,}/g, ' ')
-  .trim();
-// Hard cap so a runaway generation can't flood the bubble.
-return [{ json: { reply: reply.slice(0, 1200) } }];
+  .trim()
+
+// A placeholder like [Name] or [Title] means the model made something up.
+// Send the safe reply instead of a half-invented answer.
+if (/\[[^\]\n]{1,40}\]/.test(reply)) reply = SAFE_REPLY
+
+// If generation hit the token limit, cut back to the last complete line or sentence.
+if (res?.done_reason === 'length') {
+  const cut = Math.max(reply.lastIndexOf('\n'), reply.lastIndexOf('. '))
+  if (cut > 80) reply = reply.slice(0, cut + 1).trim()
+}
+
+if (!reply) reply = SAFE_REPLY
+// Hard cap so a runaway generation can't flood the chat bubble.
+return [{ json: { reply: reply.slice(0, 1500) } }]
 ```
 
 ### Node 6 — Respond to Webhook
@@ -276,9 +326,9 @@ and defer the exact price to a consult, not invent a number).
 
 ## 5. Tuning + caveats
 
-- **Small models hallucinate.** The grounding prompt + `temperature: 0.2` keep it
-  tight, but spot-check answers. If it invents facts, lower the temperature to 0.1,
-  shorten/clarify the KB, or move up to `qwen2.5:7b-instruct`.
+- **Small models hallucinate.** The numbered rules, `temperature: 0.1` and Node 5's
+  placeholder guard keep it tight, but spot-check answers. If it still invents facts,
+  move up to `qwen3:4b` (or `qwen2.5:7b-instruct` with more RAM).
 - **Latency = model + hardware.** Measured on CPU with qwen3:1.7b and the full
   grounded prompt: **~18s warm, ~23s cold** (model just loaded). The widget shows a
   typing indicator during this. Two things keep it under the timeout:
@@ -298,10 +348,53 @@ and defer the exact price to a consult, not invent a number).
   (e.g. `llama3.2:1b`) trades quality for speed if you need it sooner.
 - **No streaming.** n8n replies once, so the answer appears all at once (not token by
   token). Fine for short answers; revisit only if you want a typewriter effect.
-- **Keep the KB in sync.** The sessions list is live via the API, but services,
-  pricing ranges, and case-study facts are the `KB` string in Node 3 — update it when
-  the offering changes. It is the single place to edit what the assistant "knows".
+- **Keep the facts current.** Sessions are live from the events API. Everything else
+  the assistant knows comes from `public/assistant-facts.md`, fetched on every question.
+  Edit that file (not n8n) when the offering changes, then deploy the site.
+- **Test after any change** with the ten questions in section 6.
 - **Optional lead capture.** To also drop a lead when someone asks to book, add an IF
   node after Node 5 that branches on the reply/question and posts to the existing
   `abbadev-chat-lead` workflow. Start with Q&A only; add this once the basics are solid.
 ```
+
+---
+
+## 6. Accuracy check
+
+Run these ten questions after any change to the facts file, the prompt or the model.
+The expected answers come from `public/assistant-facts.md` and the events API.
+
+```bash
+for q in "What services does ABBADev offer?" \
+  "How many case studies do you have, and what are they?" \
+  "What is Stockora?" \
+  "Who founded ABBADev and what is his title?" \
+  "How much does a project cost?" \
+  "What upcoming seminars or workshops do you have?" \
+  "How do I book a consultation and how fast do you reply?" \
+  "Tell me about the ABBADev CRM." \
+  "Does your website use cookies or tracking pixels?" \
+  "What is your contact email?"; do
+  printf '\n### %s\n' "$q"
+  curl -s -m 60 https://abbadev.com/api/assistant -H 'Content-Type: application/json' \
+    -d "{\"messages\":[{\"role\":\"user\",\"content\":\"$q\"}]}"
+  echo
+done
+```
+
+| Question | A correct answer includes |
+|---|---|
+| Services | AI automation strategy, enterprise architecture, custom software builds, governance and review |
+| Case studies | Six: transaction intake, document intake, integration foundation, guardrailed assistant, ABBADev CRM, Stockora |
+| Stockora | ABBADev's own warehouse product; demo at stockora.abbadev.com |
+| Founder | Rommel Galisanao, Founder & Principal Systems Architect |
+| Pricing | Scoped per workflow, small advisory scope up to $50k+, no specific quote |
+| Sessions | The events API list, soonest first, with /seminar?event= links |
+| Booking | /#contact; reply within one business day |
+| CRM | Contacts, pipeline, tasks, dashboard; crm.abbadev.com |
+| Cookies | No cookies, pixels or analytics; /privacy |
+| Email | info@abbadev.com |
+
+Wrong answers to watch for: invented case studies, "ABBADev Tech Solutions" (the old
+name), placeholders such as [Name], and replies cut off mid-sentence.
+

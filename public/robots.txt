@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+# Source text for the chat assistant, not a page for search results.
+Disallow: /assistant-facts.md
 
 Sitemap: https://abbadev.com/sitemap.xml

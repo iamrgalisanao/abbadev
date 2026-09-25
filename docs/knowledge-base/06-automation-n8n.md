@@ -86,20 +86,30 @@ GCash details live only in the events API admin; neither the site nor n8n keeps 
 ## AI assistant workflow (`docs/n8n-assistant-workflow.md`)
 
 **Model.** Ollama runs in Docker on the VPS and listens only on `127.0.0.1:11434`. n8n reaches it at `http://ollama:11434` over a shared Docker
-network. The model is **`qwen3:1.7b`**; `llama3.2:3b` and `qwen3:4b` are the documented alternatives.
+network. The model is **`qwen3:1.7b`**; `qwen3:4b` and `qwen2.5:7b-instruct` are the documented step-ups.
 
-**Nodes:**
-1. Webhook `abbadev-assistant`, which responds through a Respond node.
-2. HTTP GET `https://api.abbadev.com/api/events` to fetch live sessions (5 s timeout, continues on error).
-3. Code node that builds a grounded system prompt from a hard-coded knowledge-base string plus the live sessions, linked as `/seminar?event=SLUG`.
-   - Prompt rules: answer only from these facts, in 2–4 sentences of plain text, with no em dashes and no placeholders.
-   - Ollama options: `think: false`, `keep_alive: -1`, `temperature: 0.2`, `num_ctx: 4096`, `num_predict: 220`.
-4. HTTP POST to Ollama `/api/chat`, with a 28 s timeout.
-5. Code node that cleans up the reply: strips `<think>` blocks, Markdown and `[PLACEHOLDER]` tokens, and caps it at 1,200 characters.
-6. Respond with `{ reply }`.
+**Nodes:** Webhook `abbadev-assistant` → **Fetch Sessions** (`GET https://api.abbadev.com/api/events`) → **Fetch Facts**
+(`GET https://abbadev.com/assistant-facts.md`) → Code: build the request → HTTP: Ollama `/api/chat` (28 s timeout) → Code: clean the
+reply → Respond `{ reply }`.
 
-**Timeouts.** They are nested so each outer layer outlasts the inner one: Ollama 28 s < proxy 30 s < browser 32 s.
+**What it knows.** Everything except the live session list comes from **`public/assistant-facts.md`**, a one-page, visitor-facing fact
+sheet condensed from this knowledge base. It ships with every site deploy, so edit that file (not n8n) when the offering changes.
+It ends with a "Topics without details" list so the model says it doesn't know rather than guessing.
 
-**Speed.** On CPU a reply takes about 18 s when the model is warm and about 23 s from cold. A GPU is recommended.
+**Prompt.** Eight numbered rules (answer only from the facts; say "I don't have that detail here" otherwise; never invent case
+studies, clients, prices or placeholders; plain text; include links) plus two worked examples: one unknown question and one price
+question. Settings: `temperature 0.1`, `num_ctx 6144`, `num_predict 400`, `think: false`, `keep_alive: -1`. History is capped at
+6 turns of 800 characters.
 
-**Maintenance.** The knowledge-base string in node 3 is static and still describes **three** case studies; the site has six.
+**Clean-up (node 5).** Strips `<think>` blocks, Markdown and echoed prompt headers; replaces any reply containing a `[placeholder]`
+with a safe "I don't have that detail here" reply; trims a reply that hit the token limit back to its last complete line.
+
+**Accuracy.** Tested 2026-09-25 on `qwen3:1.7b` with the section 6 question set: the old live prompt got 4 of 10 right (it invented
+case studies, denied Stockora, returned "[Name]" for the founder and said there was no email). The new prompt answered all 10 core
+questions correctly and gave the safe reply to five questions the facts don't cover. Remaining quirk: it pads the CRM description
+with generic wording.
+
+**Timeouts.** Nested so each outer layer outlasts the inner one: Ollama 28 s < proxy 30 s < browser 32 s.
+
+**Auth.** The webhook uses its own Header Auth credential with the `N8N_ASSISTANT_JWT` token (`Bearer <token>`). A shared credential
+holding `N8N_JWT` caused every request to fail with 403 until 2026-09-25.

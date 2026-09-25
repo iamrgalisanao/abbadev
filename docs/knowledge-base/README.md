@@ -22,7 +22,7 @@ Every image, PDF and icon served by abbadev.com was byte-compared (SHA-256) with
 | [03-v2-homepage.md](03-v2-homepage.md) | The current homepage (`/`): sections, content model, motion system, design tokens |
 | [04-pages.md](04-pages.md) | Every other route: v1 homepage, cases, services, about, register, seminar, content and legal pages |
 | [05-forms-assistant-proxy.md](05-forms-assistant-proxy.md) | Forms, the chat assistant, the Node API proxy, environment variables |
-| [06-automation-n8n.md](06-automation-n8n.md) | n8n workflows, lead scoring, Postgres and Notion schemas, the Ollama assistant |
+| [06-automation-n8n.md](06-automation-n8n.md) | n8n workflows, lead scoring, Postgres and Notion schemas, the Ollama assistant and its facts file |
 | [07-deployment.md](07-deployment.md) | VPS layout, systemd, Nginx/Apache, HTTPS, the update procedure |
 | [08-assets-and-images.md](08-assets-and-images.md) | Every image and download: dimensions, what it shows, where it's used |
 | [09-live-site-audit.md](09-live-site-audit.md) | Findings from crawling abbadev.com |

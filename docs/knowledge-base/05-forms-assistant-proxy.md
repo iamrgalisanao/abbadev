@@ -50,6 +50,7 @@ A floating launcher that opens a dialog panel. It appears on every page except `
 
 **AI mode (when `VITE_ASSISTANT_ENDPOINT` is set)**
 - Free text is sent with the last 10 turns and `pageUrl`. The client timeout is 32 s.
+- The n8n workflow answers from `public/assistant-facts.md` plus the live sessions; see [06-automation-n8n.md](06-automation-n8n.md#ai-assistant-workflow-docsn8n-assistant-workflowmd).
 - On any error, empty reply or timeout, it quietly falls back to the deterministic answer.
 
 **Lead capture**
