@@ -42,3 +42,6 @@ public/images/case-studies/digital-transformation-2.png
 
 # Local Claude Code tooling (agents, session cache)
 .claude/
+
+# Local installers
+*.dmg
