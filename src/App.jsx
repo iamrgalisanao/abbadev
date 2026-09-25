@@ -1879,97 +1879,9 @@ const aboutSegments = [
   },
 ]
 
-// Placeholder sessions - replace `date`, `time`, `location`, and `price` with
-// real events. `audience` drives the filter and the registration form: use
-// 'Students', 'SME owners', or both. `type` is Webinar | Seminar | Workshop;
-// `mode` is Online | In-person (add `location` for in-person sessions).
-const eventOfferings = [
-  {
-    id: 'idea-to-intelligent-system',
-    title: 'From Idea to Intelligent System',
-    type: 'Seminar',
-    mode: 'In-person',
-    location: 'Twinniz Cafe, Olongapo',
-    audience: ['Students', 'SME owners'],
-    date: 'Sep 5, 2026',
-    time: '2:00 PM PHT',
-    duration: '3 hours',
-    level: 'Beginner',
-    price: '₱399',
-    // Paid seminar: register through the dedicated two-step reserve-then-pay
-    // funnel instead of the simple n8n form.
-    externalUrl: '/seminar',
-    blurb: 'Transform ideas into intelligent systems using AI, modern software development, and structured project delivery - the practical tools and best practices that turn concepts into real, measurable impact.',
-  },
-  {
-    id: 'first-chatbot',
-    title: 'Build Your First AI Chatbot',
-    type: 'Workshop',
-    mode: 'Online',
-    audience: ['Students', 'SME owners'],
-    date: 'Oct 8, 2026',
-    time: '10:00 AM PHT',
-    duration: '3 hours',
-    level: 'Hands-on',
-    price: '₱750',
-    blurb: 'A hands-on session building and deploying a working chatbot from scratch - no prior AI experience required.',
-  },
-  {
-    id: 'intro-software-dev',
-    title: 'Intro to Software Development',
-    type: 'Seminar',
-    mode: 'In-person',
-    location: 'Metro Manila',
-    audience: ['Students'],
-    date: 'Oct 18, 2026',
-    time: '9:00 AM PHT',
-    duration: 'Half day',
-    level: 'Beginner',
-    price: 'Free',
-    blurb: 'How real software gets built - languages, tools, and the path from idea to shipped app - for students exploring a tech career.',
-  },
-  {
-    id: 'digital-transformation-smes',
-    title: 'Digital Transformation for SMEs',
-    type: 'Seminar',
-    mode: 'In-person',
-    location: 'Metro Manila',
-    audience: ['SME owners'],
-    date: 'Nov 5, 2026',
-    time: '1:00 PM PHT',
-    duration: 'Half day',
-    level: 'Intermediate',
-    price: '₱1,200',
-    blurb: 'Move from spreadsheets and manual steps to connected systems - a practical roadmap you can adopt in phases.',
-  },
-  {
-    id: 'no-code-automation',
-    title: 'No-Code Automation with n8n',
-    type: 'Workshop',
-    mode: 'Online',
-    audience: ['Students', 'SME owners'],
-    date: 'Nov 19, 2026',
-    time: '2:00 PM PHT',
-    duration: '3 hours',
-    level: 'Hands-on',
-    price: '₱750',
-    blurb: 'Connect apps and automate approvals, notifications, and data entry visually - build a real working workflow live.',
-  },
-  {
-    id: 'project-management',
-    title: 'Project Management Fundamentals',
-    type: 'Webinar',
-    mode: 'Online',
-    audience: ['Students', 'SME owners'],
-    date: 'Dec 3, 2026',
-    time: '3:00 PM PHT',
-    duration: '2 hours',
-    level: 'Beginner',
-    price: 'Free',
-    blurb: 'Scope, planning, and delivery basics that keep technology projects on track - for aspiring PMs and owners alike.',
-  },
-]
-
+// Session data comes from the events API (useEvents). Its `audience` drives the
+// filter ('Students', 'SME owners'), `type` picks the icon, and `mode` is
+// Online | In-person.
 const eventTypeIcon = { Webinar: BookOpen, Seminar: Users, Workshop: Wand2 }
 
 const registerFilters = [
@@ -1991,33 +1903,10 @@ function RegisterPage({ theme, setTheme }) {
   const [audience, setAudience] = useState('')
   const [status, setStatus] = useState('idle')
   const [message, setMessage] = useState('')
-  const [apiEvents, setApiEvents] = useState(null)
   const formRef = useRef(null)
 
-  // Live sessions from the events API (respects the admin's active/featured
-  // toggles). Falls back to the built-in list if the API is unset or down.
-  useEffect(() => {
-    if (!EVENTS_API) return undefined
-    let cancelled = false
-    fetch(`${EVENTS_API}/api/events`)
-      .then((response) => (response.ok ? response.json() : Promise.reject(response.status)))
-      .then((data) => {
-        if (!cancelled && Array.isArray(data.events)) setApiEvents(data.events)
-      })
-      .catch(() => {})
-    return () => {
-      cancelled = true
-    }
-  }, [])
-
-  // Normalize both shapes (API `toCard` vs the built-in array) into what the
-  // cards + form expect.
-  const sessions = (apiEvents ?? eventOfferings).map((event) => ({
-    ...event,
-    id: event.slug ?? event.id,
-    price: event.price ?? event.price_label,
-    audience: event.audience ?? [],
-  }))
+  // Live sessions from the events API (respects the admin's active/featured toggles).
+  const { status: eventsStatus, events: sessions } = useEvents()
 
   const visibleEvents =
     filter === 'all'
@@ -2126,6 +2015,16 @@ function RegisterPage({ theme, setTheme }) {
               ))}
             </div>
           </div>
+
+          {eventsStatus !== 'ready' || sessions.length === 0 ? (
+            <p className="register-events-status" role="status">
+              {eventsStatus === 'loading'
+                ? 'Loading upcoming sessions…'
+                : eventsStatus === 'ready'
+                  ? 'No sessions are scheduled right now. Choose "Notify me of the next session" below and we will keep you posted.'
+                  : 'Upcoming sessions could not be loaded right now. Choose "Notify me of the next session" below, or check back soon.'}
+            </p>
+          ) : null}
 
           <div className="register-grid">
             {visibleEvents.map((event) => {
@@ -2523,7 +2422,8 @@ function ContentPage({ page, theme, setTheme }) {
   const proof = (page.proof || []).map((slug) => caseStudies.find((study) => study.slug === slug)).filter(Boolean)
   const today = new Date()
   today.setHours(0, 0, 0, 0)
-  const upcoming = page.sessions ? eventOfferings.filter((event) => new Date(event.date) >= today) : []
+  const { events } = useEvents()
+  const upcoming = page.sessions ? events.filter((event) => new Date(event.starts_at || event.date) >= today) : []
 
   return (
     <div className="site-shell case-page-shell content-page-shell">
@@ -3046,6 +2946,51 @@ function CountdownUnits({ countdown }) {
 // the switchover happen by setting one env var and rebuilding.
 const EVENTS_API = (import.meta.env.VITE_EVENTS_API || '').replace(/\/$/, '')
 
+// The events API is the single source for session data (titles, dates, prices).
+// One request per page load, shared by every component that lists sessions.
+let eventsRequest = null
+function loadEvents() {
+  eventsRequest ??= fetch(`${EVENTS_API}/api/events`)
+    .then((response) => (response.ok ? response.json() : Promise.reject(response.status)))
+    .then((data) =>
+      (Array.isArray(data.events) ? data.events : []).map((event) => ({
+        ...event,
+        id: event.slug,
+        price: event.price_label,
+        audience: event.audience ?? [],
+      }))
+        // Soonest first; events without a start date go last.
+        .sort((a, b) => (Date.parse(a.starts_at) || Infinity) - (Date.parse(b.starts_at) || Infinity)),
+    )
+    .catch((error) => {
+      eventsRequest = null // let a later mount retry
+      throw error
+    })
+  return eventsRequest
+}
+
+// status: loading | ready | error | disabled (no VITE_EVENTS_API in this build)
+function useEvents() {
+  const [state, setState] = useState(() => ({ status: EVENTS_API ? 'loading' : 'disabled', events: [] }))
+
+  useEffect(() => {
+    if (!EVENTS_API) return undefined
+    let cancelled = false
+    loadEvents()
+      .then((events) => {
+        if (!cancelled) setState({ status: 'ready', events })
+      })
+      .catch(() => {
+        if (!cancelled) setState({ status: 'error', events: [] })
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  return state
+}
+
 // The event slug this landing page registers for (must exist in the events API).
 const SEMINAR_EVENT_SLUG = 'idea-to-intelligent-system'
 
@@ -3317,35 +3262,16 @@ function SeminarLandingPage({ theme, setTheme }) {
     [],
   )
   const isFlagship = !eventSlug || eventSlug === SEMINAR_EVENT_SLUG
-  const [apiEvent, setApiEvent] = useState(null)
-  // loading | ready | error. Resolved synchronously for the flagship and for the
-  // no-API case so the effect never sets state synchronously.
-  const [eventState, setEventState] = useState(
-    isFlagship ? 'ready' : EVENTS_API ? 'loading' : 'error',
-  )
-
-  useEffect(() => {
-    if (isFlagship || !EVENTS_API) return undefined
-    let cancelled = false
-    fetch(`${EVENTS_API}/api/events`)
-      .then((response) => (response.ok ? response.json() : Promise.reject(response.status)))
-      .then((data) => {
-        if (cancelled) return
-        const found = (data.events || []).find((event) => event.slug === eventSlug)
-        if (!found) {
-          setEventState('error')
-          return
-        }
-        setApiEvent(found)
-        setEventState('ready')
-      })
-      .catch(() => {
-        if (!cancelled) setEventState('error')
-      })
-    return () => {
-      cancelled = true
-    }
-  }, [isFlagship, eventSlug])
+  const { status: eventsStatus, events } = useEvents()
+  const apiEvent = isFlagship ? null : events.find((event) => event.slug === eventSlug) || null
+  // loading | ready | error
+  const eventState = isFlagship
+    ? 'ready'
+    : eventsStatus === 'loading'
+      ? 'loading'
+      : apiEvent
+        ? 'ready'
+        : 'error'
 
   const seminar = isFlagship ? flagshipSeminar : apiEvent ? mapEventToSeminar(apiEvent) : flagshipSeminar
 
@@ -4078,27 +4004,10 @@ function LegalPage({ doc, theme, setTheme }) {
 // entirely if the API is unreachable or returns nothing, so the static
 // homepage never breaks. Each card routes to the funnel for that session.
 function FeaturedSessions() {
-  const [status, setStatus] = useState(EVENTS_API ? 'loading' : 'hidden') // loading | ready | hidden
-  const [events, setEvents] = useState([])
-
-  useEffect(() => {
-    if (!EVENTS_API) return undefined
-    let cancelled = false
-    fetch(`${EVENTS_API}/api/events?featured=1`)
-      .then((response) => (response.ok ? response.json() : Promise.reject(response.status)))
-      .then((data) => {
-        if (cancelled) return
-        const list = Array.isArray(data.events) ? data.events : []
-        setEvents(list)
-        setStatus(list.length ? 'ready' : 'hidden')
-      })
-      .catch(() => {
-        if (!cancelled) setStatus('hidden')
-      })
-    return () => {
-      cancelled = true
-    }
-  }, [])
+  const { status: eventsStatus, events: allEvents } = useEvents()
+  const events = allEvents.filter((event) => event.is_featured)
+  // loading | ready | hidden
+  const status = eventsStatus === 'loading' ? 'loading' : eventsStatus === 'ready' && events.length ? 'ready' : 'hidden'
 
   if (status === 'hidden') return null
 

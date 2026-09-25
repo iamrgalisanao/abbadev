@@ -77,7 +77,8 @@ The default disclaimer reads "Details anonymized to protect the client operating
 - Four benefits, including a certificate on request.
 - Filters: All / For students / For SME owners.
 - Event cards. Each card's **Register** button links to `/seminar?event=<id>`.
-- Events come from `GET {VITE_EVENTS_API}/api/events`. If that fails, the page uses the static `eventOfferings`.
+- Events come from `GET {VITE_EVENTS_API}/api/events` (shared `useEvents` loader, sorted soonest first). While loading or if
+  the API fails, a status line says so and the form still offers "Notify me of the next session".
 - An inline form at the bottom:
   - Fields: name, email, Student/SME, organization, session (default "Notify me of the next session" = `notify-next`), phone and message.
   - It POSTs to `/api/event-registration`.
@@ -124,7 +125,7 @@ A conversion page for Facebook ads, with no site nav and no chat widget. It has 
 2. Four "what's included" blocks (`blocks`).
 3. Two lists side by side: "Good fit when" (`fit`) and "Typical requests" (`examples`).
 4. **Proof:** the listed case studies as cards (`proof`, rendered with the shared `CaseCard`, which the `/cases` directory also uses).
-5. **Upcoming sessions** (`sessions: true`, community only): future events from `eventOfferings`, each linking to `/seminar?event=<id>`.
+5. **Upcoming sessions** (`sessions: true`, community only): upcoming events from the events API (`useEvents`), each linking to `/seminar?event=<id>`.
    Past events drop off automatically.
 6. **How it starts:** the three `consultationSteps` (service pages only).
 7. CTA. `ctaHeading` and `ctaCopy` override the default "Bring one real workflow into the conversation."

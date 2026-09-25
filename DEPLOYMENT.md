@@ -39,7 +39,7 @@ VITE_CHAT_LEAD_ENDPOINT=/api/chat-lead
 VITE_EVENT_ENDPOINT=/api/event-registration
 # Empty keeps the chat assistant on deterministic answers; /api/assistant enables AI replies.
 VITE_ASSISTANT_ENDPOINT=/api/assistant
-# Empty makes /register use the built-in session list and /seminar use reserve-then-pay.
+# The single source for sessions. Empty means no sessions are listed and /seminar uses reserve-then-pay.
 VITE_EVENTS_API=https://api.abbadev.com
 ```
 

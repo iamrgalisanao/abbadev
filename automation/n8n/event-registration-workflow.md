@@ -1,5 +1,10 @@
 # ABBADev Seminar & Webinar Registration Workflow
 
+> **Superseded.** Use [docs/n8n-event-workflow.md](../../docs/n8n-event-workflow.md). Its
+> `Normalize Registration` code reads sessions from the events API through a
+> **Fetch Events** node. The hard-coded `SESSIONS` catalog below is out of date and
+> should not be pasted into n8n. The reminder workflow and table notes here still apply.
+
 Build this n8n workflow to receive **seminar/webinar sign-ups from the `/register`
 page** (`RegisterPage` in `src/App.jsx`). This is the automation the page itself
 showcases: a visitor registers, and n8n confirms them, stores the roster, alerts

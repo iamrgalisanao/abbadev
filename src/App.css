@@ -7603,3 +7603,12 @@ main {
   font-size: var(--text-sm);
   line-height: 1.5;
 }
+
+.register-events-status {
+  margin: 0;
+  padding: 18px 20px;
+  border: 1px dashed color-mix(in oklch, var(--color-accent-pale) 28%, transparent);
+  border-radius: var(--radius-md);
+  color: rgba(236, 244, 255, 0.74);
+  font-size: var(--text-sm);
+}

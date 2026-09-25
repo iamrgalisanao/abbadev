@@ -89,8 +89,10 @@ The one-page summary PDFs are in `public/downloads/case-studies/` and exist for 
 
 ## Events and training
 
-These are listed on `/register` and sold through `/seminar`. The data comes from the events API when `VITE_EVENTS_API` is set, and
-otherwise from the static fallback `eventOfferings` (`src/App.jsx:1876`).
+These are listed on `/register` and `/community` and sold through `/seminar?event=<slug>`. **The events API
+(`https://api.abbadev.com/api/events`) is the only source** for session data: the website (`useEvents` in `src/App.jsx`)
+and the n8n registration workflow both read it. To add or change a session, edit it in the events API admin.
+The table below is a snapshot from 2026-09-25.
 
 | Event id | Title | Format | Date (PHT) | Price |
 |---|---|---|---|---|

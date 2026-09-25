@@ -20,11 +20,11 @@ Grouped by impact. Each item names the file to change. Items marked **Fixed** we
 | 7 | **Fixed 2026-09-25.** Assistant says "three representative case studies"; the site has six | `src/Assistant.jsx` ("proof" intent), n8n assistant node 3 |
 | 8 | **Fixed 2026-09-25.** OG image and `profile.webp` said "ABBADev Tech Solutions"; replaced by `og-abbadev.png` and `profile-fb.png` | `public/og-abbadev.png`, `public/images/profile-fb.png` |
 | 9 | **Fixed 2026-09-25** (About page now reads `founderProfile.title`). Founder title differs: "Principal Systems Architect" on the homepage vs "Technology Solutions Architect" on About | `App.jsx:2358` vs `founderProfile` |
-| 10 | Event data is duplicated in several places that must be kept in sync by hand | `eventOfferings` / `flagshipSeminar` (App.jsx), n8n `EVENTS`, events API |
+| 10 | **Fixed 2026-09-25.** Event data was copied into `App.jsx`, two n8n guides and the events API; the site and the n8n workflow now read the events API only (the n8n change must be pasted into n8n) | `useEvents` (App.jsx), `docs/n8n-event-workflow.md` |
 | 11 | GCash details are duplicated | `paymentMethods` (App.jsx) and n8n `PAYMENT` |
 | 12 | The privacy policy mentions advertising pixels, but no pixel or analytics is installed | `privacyDoc` vs `index.html` |
 | 13 | The Stockora demo password is in a public disclaimer string (intentional for a public demo, but worth knowing) | `caseStudies` → stockora |
-| 14 | The flagship seminar (Sep 5, 2026) is past, but it is still the default `/seminar` offer and is still in `eventOfferings` | `App.jsx:1876`, `2727` |
+| 14 | The flagship seminar (Sep 5, 2026) is past, but it is still the default `/seminar` offer | `flagshipSeminar` in `App.jsx` |
 | 15 | **Fixed 2026-09-25.** The footer still links "Classic site" (`/v1`) after the header link was removed | `src/v2/content.js` (footer) |
 
 ## Documentation drift

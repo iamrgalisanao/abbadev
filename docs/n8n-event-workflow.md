@@ -22,6 +22,8 @@ server/consultation-proxy.mjs
         ▼
 n8n webhook  (path: abbadev-event-registration, Header Auth)
         ▼
+Fetch Events (HTTP Request: GET https://api.abbadev.com/api/events)
+        ▼
 Normalize Registration (Code node)  →  Insert rows (Postgres)
         →  Send an Email  →  Send a text message (Telegram)
 ```
@@ -50,7 +52,7 @@ Every registration posts JSON to `/api/event-registration`. The proxy merges in
 |---|---|---|---|
 | `name`, `email`, `phone`, `organization`, `message` | ✓ | ✓ | `email` validated by the proxy |
 | `audience` | `Student` / `SME owner` | `Student` / `Developer` / `Professional & owner` | |
-| `eventId` | selected event, or `notify-next` | `idea-to-intelligent-system` | **must exist in the `EVENTS` catalog** |
+| `eventId` | selected event, or `notify-next` | the flagship slug (only when `VITE_EVENTS_API` is unset) | **must be a slug the events API lists** (or `notify-next`) |
 | `eventTitle`, `eventDate`, `price` | ✓ | ✓ | informational — Normalize resolves the real details from `EVENTS` by `eventId` |
 | `flow` | — | `reserve-then-pay` | triggers the payment email path |
 | `leadSource` | — | `fb-ad-landing` | survives the proxy (unlike `channel`) |
@@ -59,10 +61,11 @@ Every registration posts JSON to `/api/event-registration`. The proxy merges in
 | `pageUrl`, `submittedAt` | ✓ | ✓ | |
 | `channel` | `event` (proxy) | `event` (proxy) | server-stamped |
 
-> The event catalog inside `Normalize Registration` is the source of truth for
-> title, schedule, price, and location. When you add or change an event on the
-> site, add/update the matching `eventId` entry in the catalog below, or
-> registrations for it throw `Unknown or unavailable event`.
+> Event details (title, schedule, price, location) come from the events API via
+> the **Fetch Events** node. To add or change a session, edit it in the events
+> API admin only - the website and this workflow both pick it up. An `eventId`
+> that the API doesn't list (ended, unpublished, or made up) throws
+> `Unknown or unavailable event`.
 
 ## n8n webhook node
 
@@ -71,6 +74,22 @@ Every registration posts JSON to `/api/event-registration`. The proxy merges in
 - **Authentication:** Header Auth (`Authorization: Bearer <token>`) — the token
   must equal `N8N_EVENT_JWT`.
 - **Respond:** Immediately.
+
+## Fetch Events node
+
+Add an **HTTP Request** node named **Fetch Events** between the Webhook and
+`Normalize Registration`:
+
+- **Method:** GET
+- **URL:** `https://api.abbadev.com/api/events`
+- **Options → Timeout:** 5000 ms
+- **Settings → On Error:** Continue (regular output)
+
+The events API is the single source for session titles, dates, and prices (the
+website reads the same endpoint). If it can't be reached, `Normalize
+Registration` stops with "Events API unavailable" instead of guessing, so set up
+an n8n Error Workflow to alert you when that happens. `notify-next` (the
+waitlist) never needs the catalog.
 
 ## Downstream node wiring
 
@@ -100,10 +119,13 @@ needs, so those nodes stay simple:
 
 ## `Normalize Registration` code
 
-Paste this as the full body of the Code node.
+Paste this as the full body of the Code node (mode: **Run Once for Each Item**).
+It reads the form data from the **Webhook** node and the event catalog from the
+**Fetch Events** node, so keep those node names.
 
 ```js
-const body = $json.body ?? $json
+const webhook = $('Webhook').item.json
+const body = webhook.body ?? webhook
 
 const clean = (value) => String(value ?? '').trim()
 
@@ -121,97 +143,47 @@ const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 // ABBADev event catalog
 // ---------------------------------------------------------
 
-const EVENTS = {
-  'idea-to-intelligent-system': {
-    id: 'idea-to-intelligent-system',
-    title: 'From Idea to Intelligent System',
-    type: 'Seminar',
-    mode: 'In-person',
-    audience: ['Students', 'SME owners'],
-    start: '2026-09-05T14:00:00+08:00',
-    end: '2026-09-05T17:00:00+08:00',
-    when: 'Sep 5, 2026 · 2:00 PM PHT',
-    duration: '3 hours',
-    level: 'Beginner',
-    price: '₱399',
-    location: 'Twinniz Cafe, Olongapo',
-  },
+// Built from the events API (fetched by the "Fetch Events" node), the same
+// source the website uses - so there is no second copy of titles, dates, or
+// prices to keep in sync here.
+const apiEvents = $('Fetch Events').item.json.events
 
-  'first-chatbot': {
-    id: 'first-chatbot',
-    title: 'Build Your First AI Chatbot',
-    type: 'Workshop',
-    mode: 'Online',
-    audience: ['Students', 'SME owners'],
-    start: '2026-10-08T10:00:00+08:00',
-    end: '2026-10-08T13:00:00+08:00',
-    when: 'Oct 8, 2026 · 10:00 AM PHT',
-    duration: '3 hours',
-    level: 'Hands-on',
-    price: '₱750',
-    location: '',
-  },
-
-  'intro-software-dev': {
-    id: 'intro-software-dev',
-    title: 'Intro to Software Development',
-    type: 'Seminar',
-    mode: 'In-person',
-    audience: ['Students'],
-    start: '2026-10-18T09:00:00+08:00',
-    end: '2026-10-18T13:00:00+08:00',
-    when: 'Oct 18, 2026 · 9:00 AM PHT',
-    duration: 'Half day',
-    level: 'Beginner',
-    price: 'Free',
-    location: 'Metro Manila',
-  },
-
-  'digital-transformation-smes': {
-    id: 'digital-transformation-smes',
-    title: 'Digital Transformation for SMEs',
-    type: 'Seminar',
-    mode: 'In-person',
-    audience: ['SME owners'],
-    start: '2026-11-05T13:00:00+08:00',
-    end: '2026-11-05T17:00:00+08:00',
-    when: 'Nov 5, 2026 · 1:00 PM PHT',
-    duration: 'Half day',
-    level: 'Intermediate',
-    price: '₱1,200',
-    location: 'Metro Manila',
-  },
-
-  'no-code-automation': {
-    id: 'no-code-automation',
-    title: 'No-Code Automation with n8n',
-    type: 'Workshop',
-    mode: 'Online',
-    audience: ['Students', 'SME owners'],
-    start: '2026-11-19T14:00:00+08:00',
-    end: '2026-11-19T17:00:00+08:00',
-    when: 'Nov 19, 2026 · 2:00 PM PHT',
-    duration: '3 hours',
-    level: 'Hands-on',
-    price: '₱750',
-    location: '',
-  },
-
-  'project-management': {
-    id: 'project-management',
-    title: 'Project Management Fundamentals',
-    type: 'Webinar',
-    mode: 'Online',
-    audience: ['Students', 'SME owners'],
-    start: '2026-12-03T15:00:00+08:00',
-    end: '2026-12-03T17:00:00+08:00',
-    when: 'Dec 3, 2026 · 3:00 PM PHT',
-    duration: '2 hours',
-    level: 'Beginner',
-    price: 'Free',
-    location: '',
-  },
+// The API gives a start time and a duration label; derive the end time for the
+// calendar link. "N hours" -> N, "Half day" -> 4, "Full day" -> 8, else 2.
+const durationHours = (label) => {
+  const hours = /(\d+(?:\.\d+)?)\s*hour/i.exec(label || '')
+  if (hours) return Number(hours[1])
+  if (/half\s*day/i.test(label || '')) return 4
+  if (/full\s*day/i.test(label || '')) return 8
+  return 2
 }
+
+// null when the API couldn't be reached; only a specific session needs it.
+const EVENTS = !Array.isArray(apiEvents) ? null : Object.fromEntries(
+  apiEvents.map((event) => {
+    const start = event.starts_at || null
+    const end = start
+      ? new Date(Date.parse(start) + durationHours(event.duration) * 3600 * 1000).toISOString()
+      : null
+    return [
+      event.slug,
+      {
+        id: event.slug,
+        title: event.title,
+        type: event.type,
+        mode: event.mode,
+        audience: event.audience || [],
+        start,
+        end,
+        when: `${event.date} · ${event.time}`,
+        duration: event.duration,
+        level: event.level,
+        price: event.is_free ? 'Free' : event.price_label,
+        location: event.location || event.mode,
+      },
+    ]
+  }),
+)
 
 const WAITLIST_EVENT_ID = 'notify-next'
 
@@ -301,6 +273,10 @@ if (isWaitlist) {
   eventLocation = ''
   status = 'waitlist'
 } else {
+  if (!EVENTS) {
+    throw new Error('Events API unavailable - could not verify the event')
+  }
+
   const event = EVENTS[eventId]
 
   if (!event) {

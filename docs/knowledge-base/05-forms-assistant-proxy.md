@@ -144,7 +144,7 @@ Names only. Never commit the values. The templates are `.env.example` and `deplo
 | `VITE_CHAT_LEAD_ENDPOINT` | `/api/chat-lead` |
 | `VITE_EVENT_ENDPOINT` | `/api/event-registration` |
 | `VITE_ASSISTANT_ENDPOINT` | Assistant stays deterministic |
-| `VITE_EVENTS_API` | `/register` uses the static list; `/seminar` uses reserve-then-pay; FeaturedSessions is hidden |
+| `VITE_EVENTS_API` | No sessions listed anywhere; `/seminar` uses reserve-then-pay. Locally, use `/events-api` in `.env.local` (read-only pass-through in `vite.config.js`) |
 
 ## Local development
 
