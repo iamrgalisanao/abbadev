@@ -17,6 +17,7 @@ The authoritative guide is `DEPLOYMENT.md`. This page summarises it and adds the
 | `deploy/abbadev-consultation.service` | systemd unit that runs `/usr/bin/node server/consultation-proxy.mjs` as `www-data` from `/var/www/abbadev`, with `EnvironmentFile=/etc/abbadev/abbadev.env` and `Restart=always` (5 s delay) |
 | `deploy/abbadev.nginx.conf` | Port 80, root `dist`, SPA fallback `try_files $uri $uri/ /index.html`, `/api/` proxied to `127.0.0.1:8787`, static assets cached for 30 days as immutable |
 | `deploy/abbadev.apache.conf` | `*:80` vhost, DocumentRoot `dist`, SPA fallback via mod_rewrite, `ProxyPass /api/` to `:8787`. Needs the `rewrite`, `proxy`, `proxy_http`, `headers` and `ssl` modules |
+| `public/.htaccess` | Copied into `dist/` by the build. Apache SPA fallback plus 301 redirects for retired pages (mirrors `routeRedirects`). Needs `AllowOverride All` on both the port 80 vhost and certbot's `abbadev-le-ssl.conf` |
 | `deploy/abbadev.env.example` | Minimal server env template. It's older and shorter than `.env.example` |
 
 HTTPS is set up with `certbot --nginx` or `certbot --apache`.
@@ -45,6 +46,12 @@ sudo systemctl reload nginx   # or apache2
 ```
 
 ## Notes
+
+- **Production runs Apache 2.4.58 on Ubuntu** (from the `Server` header, 2026-09-25).
+- **`http://abbadev.com` does not redirect to HTTPS**: it returns 200 on port 80. Running `sudo certbot --apache -d abbadev.com -d www.abbadev.com`
+  again and choosing the redirect option (or adding a `RewriteRule` to the port 80 vhost) fixes it.
+- Retired-page redirects live in three places that must stay in sync: `routeRedirects` in `src/App.jsx` (browser),
+  `public/.htaccess` (Apache) and `deploy/abbadev.nginx.conf` (Nginx).
 
 - `DEPLOYMENT.md` and `deploy/abbadev.env.example` were updated on 2026-09-25 to cover the assistant variables and the build-time `VITE_*` variables.
 - The proxy doesn't specify a host, so it listens on every network interface. Make sure the firewall blocks public access to port 8787.

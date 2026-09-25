@@ -147,6 +147,17 @@ sudo systemctl reload apache2
 
 If another Apache site already uses `abbadev.com`, disable or update that conflicting site first.
 
+The build ships a `dist/.htaccess` (from `public/.htaccess`) with the SPA fallback and 301 redirects for
+retired pages. It only takes effect when the vhost allows it (`AllowOverride All`, as in
+`deploy/abbadev.apache.conf`). Certbot copies the vhost into `abbadev-le-ssl.conf`; check that copy has
+`AllowOverride All` as well. Confirm after a deploy:
+
+```bash
+curl -sI https://abbadev.com/insights | grep -iE "^(HTTP|location)"
+# HTTP/1.1 301 Moved Permanently
+# Location: https://abbadev.com/cases
+```
+
 ## 6B. Configure Nginx
 
 Use this option only if Nginx is the front web server for this domain. Do not run Apache and Nginx on the same `80` and `443` listeners unless one is intentionally proxying to the other.

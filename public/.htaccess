@@ -1,0 +1,22 @@
+# Apache rules for the built site (Vite copies this file into dist/).
+# Rewrite rules in .htaccess replace the vhost's <Directory> rules for this
+# folder, so the SPA fallback below must stay in this file too.
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Retired pages: permanent redirects. Keep in sync with routeRedirects in src/App.jsx.
+  RewriteRule ^(contact|consulting-intake)/?$ /#contact [R=301,NE,L]
+  RewriteRule ^(insights|workflow-demos|implementation-notes)/?$ /cases [R=301,L]
+  RewriteRule ^insights/system-design/?$ /services/software-architecture [R=301,L]
+  RewriteRule ^insights/ai-operations/?$ /services/ai-automation [R=301,L]
+  RewriteRule ^insights/digital-transformation/?$ /services/technical-advisory [R=301,L]
+  RewriteRule ^work/?$ /cases [R=301,L]
+
+  # SPA fallback: serve index.html for every route that isn't a real file.
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>

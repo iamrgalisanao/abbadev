@@ -90,6 +90,10 @@ The live `contentPages` routes are `/community`, `/business-solutions` and the f
 | `/insights/ai-operations` | `/services/ai-automation` |
 | `/insights/digital-transformation` | `/services/technical-advisory` |
 
+On the server these paths also return a real 301: Apache reads `public/.htaccess` (copied into `dist/`), and
+`deploy/abbadev.nginx.conf` has the same rules. The browser-side redirect is the fallback if the server rules
+aren't active.
+
 The Insights, Workflow demos and Implementation notes pages are hidden until real articles exist. Their content is still in
 `contentPages`; delete a path from `routeRedirects` to publish it again.
 
