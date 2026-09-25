@@ -3806,10 +3806,11 @@ function SeminarLandingPage({ theme, setTheme }) {
 // LEGAL_CONTACT and the effective date if the operating details change.
 const LEGAL_CONTACT = 'info@abbadev.com'
 const LEGAL_UPDATED = 'August 31, 2026'
+const PRIVACY_UPDATED = 'September 25, 2026'
 
 const privacyDoc = {
   title: 'Privacy Policy',
-  updated: LEGAL_UPDATED,
+  updated: PRIVACY_UPDATED,
   intro:
     'ABBADev IT Solutions ("ABBADev", "we", "us") respects your privacy. This policy explains what personal information we collect when you reserve a seat at our seminars or use this website, how we use it, and the rights you have under the Philippine Data Privacy Act of 2012 (Republic Act No. 10173).',
   sections: [
@@ -3821,6 +3822,7 @@ const privacyDoc = {
         'Your school or company, and whether you are joining as a student, developer, or professional',
         'Any goals, questions, or notes you choose to share in the form',
         'Attribution data from the link you arrived through (for example, Facebook and UTM campaign parameters)',
+        'Messages you type into the website’s chat assistant, which our own automation tools process to reply',
       ],
       after: [
         'Seminar fees are paid directly through GCash. We do not collect or store your card, wallet PIN, or banking credentials — those are handled by the payment app you use.',
@@ -3837,10 +3839,11 @@ const privacyDoc = {
       ],
     },
     {
-      h: '3. Cookies and advertising pixels',
+      h: '3. Cookies, browser storage, and tracking',
       p: [
-        'This website uses first-party cookies to keep the site working. If we run ads, we may use the Meta (Facebook) Pixel and Conversion API to measure the performance of our campaigns; these may set cookies such as _fbp and _fbc and share hashed contact details with Meta.',
-        'You can control or opt out of ad tracking through your Facebook ad preferences and your browser settings without affecting your ability to register.',
+        'This website does not use cookies, advertising pixels, or analytics tools, and it does not track you across other sites.',
+        'It saves a few settings in your own browser so the site works the way you left it: your light or dark theme, the chat assistant’s recent messages and whether it is open, and - only while you move from the sessions list to a session’s registration page - the details you typed, so you don’t have to enter them twice. These stay on your device, and you can clear them at any time in your browser settings.',
+        'Pages load fonts from Google Fonts, which receives your IP address in order to deliver them. If we start using advertising or measurement tools, we will update this section before they go live.',
       ],
     },
     {

@@ -20,8 +20,9 @@
   | Agentic | Summaries, document intake, triage, drafts with human checks | AI workflow with prompts, evals and escalation rules |
 
 - **Audience:** SMEs, growing companies, entrepreneurs and startups, digital-transformation teams, students and professionals.
-- **Legal:** the privacy policy follows the Philippine Data Privacy Act of 2012 (RA 10173). The terms have 11 sections and cover
-  seminar registration, payment and refunds. Both were last updated on August 31, 2026.
+- **Legal:** the privacy policy follows the Philippine Data Privacy Act of 2012 (RA 10173) and states that the site uses no cookies,
+  pixels or analytics (effective September 25, 2026). The terms have 11 sections and cover seminar registration, payment and refunds
+  (August 31, 2026). **If you add a Meta Pixel or analytics, update section 3 of the privacy policy first.**
 - **Contact:** `info@abbadev.com` (`LEGAL_CONTACT`, `src/App.jsx`).
 - **JSON-LD** (`index.html`): type `ProfessionalService`, areaServed "Global". Service types: software architecture, AI automation,
   digital transformation, workflow automation, enterprise solution design.
