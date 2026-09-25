@@ -7612,3 +7612,11 @@ main {
   color: rgba(236, 244, 255, 0.74);
   font-size: var(--text-sm);
 }
+
+.register-hint {
+  display: block;
+  margin-top: 6px;
+  color: rgba(236, 244, 255, 0.62);
+  font-size: var(--text-xs);
+  line-height: 1.45;
+}

@@ -9,7 +9,8 @@
 | ProjectScoper quiz | `/services` | same as above, `formType: 'project-scoper'` | same |
 | Assistant "Book a consult" | assistant widget | `VITE_CHAT_LEAD_ENDPOINT` or `/api/chat-lead` | `N8N_CHAT_WEBHOOK_URL` (channel `chat`) |
 | Assistant free-text question | assistant widget | `VITE_ASSISTANT_ENDPOINT` (only if set) | `N8N_ASSISTANT_WEBHOOK_URL` |
-| Register form | `/register` | `VITE_EVENT_ENDPOINT` or `/api/event-registration` | `N8N_EVENT_WEBHOOK_URL` (channel `event`) |
+| Register form, "Notify me" only | `/register` | `VITE_EVENT_ENDPOINT` or `/api/event-registration` | `N8N_EVENT_WEBHOOK_URL` (channel `event`) |
+| Register form, a specific session | `/register` | hands off to `/seminar?event=<slug>` (prefilled) | — |
 | Seminar (fallback) | `/seminar` | `/api/event-registration`, `flow: 'reserve-then-pay'` | same |
 | Seminar (API mode) | `/seminar` | `{VITE_EVENTS_API}/api/registrations` (+ `/payment`) | direct to the Laravel events API; the proxy isn't involved |
 

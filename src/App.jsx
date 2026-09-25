@@ -1926,6 +1926,22 @@ function RegisterPage({ theme, setTheme }) {
       setMessage('Enter a valid email address, such as name@example.com.')
       return
     }
+
+    // Booking a specific session happens on its registration page, backed by the
+    // events API (capacity, GCash payment, receipt upload), so every booking and
+    // payment lives in one system. This form only handles "Notify me" itself.
+    if (selectedEventId && EVENTS_API) {
+      savePrefill({
+        name: String(payload.name || '').trim(),
+        email,
+        organization: String(payload.organization || '').trim(),
+        phone: String(payload.phone || '').trim(),
+        audience,
+      })
+      window.location.assign(`/seminar?event=${encodeURIComponent(selectedEventId)}`)
+      return
+    }
+
     if (!audience) {
       setStatus('error')
       setMessage('Let us know whether you are registering as a student or an SME owner.')
@@ -2159,6 +2175,11 @@ function RegisterPage({ theme, setTheme }) {
                     </option>
                   ))}
                 </select>
+                {selectedEventId ? (
+                  <small className="register-hint">
+                    Next you&apos;ll confirm your seat on the session page, where paid sessions are paid by GCash.
+                  </small>
+                ) : null}
               </div>
 
               <div className="register-field">
@@ -2176,7 +2197,7 @@ function RegisterPage({ theme, setTheme }) {
               )}
 
               <button type="submit" className="primary-button register-submit" disabled={status === 'submitting'}>
-                {status === 'submitting' ? 'Sending…' : 'Reserve my seat'}
+                {status === 'submitting' ? 'Sending…' : selectedEventId ? 'Continue to registration' : 'Keep me posted'}
                 {status !== 'submitting' && <ArrowRight size={18} aria-hidden="true" />}
               </button>
             </form>
@@ -2795,8 +2816,7 @@ function ProductShot({ webp, src, alt, width, height }) {
 // A single-offer conversion page for cold traffic coming from a paid FB post.
 // Deliberately distraction-free: no main nav, no chat widget, one call to
 // action (reserve a seat), and a reserve-then-pay flow. Edit `seminar` to
-// change the offer, and update `paymentMethods` with your real GCash
-// details before running ads against this page.
+// change the offer. GCash details live only in the events API admin.
 const flagshipSeminar = {
   eyebrow: 'ABBADev Live Seminar',
   title: 'From Idea to Intelligent System',
@@ -2896,9 +2916,6 @@ const seminarFaq = [
 ]
 
 // Replace these placeholders with your real payment details before advertising.
-const paymentMethods = [
-  { label: 'GCash', value: '0928 320 7029', name: 'ROM***L G.' },
-]
 
 // Live countdown to the seminar start. Ticks once a second and reports the
 // remaining days/hours/minutes/seconds, plus whether the target has passed.
@@ -2969,6 +2986,26 @@ function loadEvents() {
   return eventsRequest
 }
 
+// Details typed into the /register form, carried to the session's registration
+// page (TwoStepRegister) so the visitor doesn't retype them.
+const PREFILL_KEY = 'abba-register-prefill'
+
+function savePrefill(details) {
+  try {
+    window.sessionStorage.setItem(PREFILL_KEY, JSON.stringify(details))
+  } catch {
+    // Storage unavailable (private mode) - the visitor just retypes their details.
+  }
+}
+
+function readPrefill() {
+  try {
+    return JSON.parse(window.sessionStorage.getItem(PREFILL_KEY) || '{}') || {}
+  } catch {
+    return {}
+  }
+}
+
 // status: loading | ready | error | disabled (no VITE_EVENTS_API in this build)
 function useEvents() {
   const [state, setState] = useState(() => ({ status: EVENTS_API ? 'loading' : 'disabled', events: [] }))
@@ -3011,7 +3048,11 @@ function TwoStepRegister({ seminar, eventSlug }) {
   const [step, setStep] = useState('details') // details | payment | done
   const [registration, setRegistration] = useState(null)
   const [result, setResult] = useState(null)
-  const [audience, setAudience] = useState('')
+  // Details carried over from the /register form, if the visitor came from there.
+  const [prefill] = useState(readPrefill)
+  const [audience, setAudience] = useState(
+    prefill.audience === 'student' ? 'student' : prefill.audience === 'sme' ? 'professional' : '',
+  )
   const [status, setStatus] = useState('idle') // idle | submitting | error
   const [message, setMessage] = useState('')
 
@@ -3027,6 +3068,14 @@ function TwoStepRegister({ seminar, eventSlug }) {
     }
     return data.message || fallback
   }
+
+  useEffect(() => {
+    try {
+      window.sessionStorage.removeItem(PREFILL_KEY)
+    } catch {
+      // nothing to clear
+    }
+  }, [])
 
   const collectUtm = () => {
     if (typeof window === 'undefined') return {}
@@ -3200,11 +3249,11 @@ function TwoStepRegister({ seminar, eventSlug }) {
       <div className="lp-step-indicator" aria-hidden="true">Step 1 of 2 · Your details</div>
       <div className="register-field">
         <label htmlFor="lp-name">Full name</label>
-        <input id="lp-name" name="name" type="text" autoComplete="name" required placeholder="Juan Dela Cruz" />
+        <input id="lp-name" name="name" type="text" autoComplete="name" required placeholder="Juan Dela Cruz" defaultValue={prefill.name} />
       </div>
       <div className="register-field">
         <label htmlFor="lp-email">Email address</label>
-        <input id="lp-email" name="email" type="email" autoComplete="email" required placeholder="name@example.com" />
+        <input id="lp-email" name="email" type="email" autoComplete="email" required placeholder="name@example.com" defaultValue={prefill.email} />
       </div>
       <fieldset className="register-field register-audience">
         <legend>I&apos;m joining as a</legend>
@@ -3230,12 +3279,13 @@ function TwoStepRegister({ seminar, eventSlug }) {
           autoComplete="tel"
           required
           placeholder="0917 123 4567"
+          defaultValue={prefill.phone ? formatPhMobile(prefill.phone) : undefined}
           onInput={(inputEvent) => { inputEvent.currentTarget.value = formatPhMobile(inputEvent.currentTarget.value) }}
         />
       </div>
       <div className="register-field register-field-full">
         <label htmlFor="lp-org">School / company <span className="register-optional">(optional)</span></label>
-        <input id="lp-org" name="organization" type="text" autoComplete="organization" placeholder="Where you study or work" />
+        <input id="lp-org" name="organization" type="text" autoComplete="organization" placeholder="Where you study or work" defaultValue={prefill.organization} />
       </div>
 
       {status === 'error' && (
@@ -3654,18 +3704,9 @@ function SeminarLandingPage({ theme, setTheme }) {
               <h3>Seat reserved — one step left</h3>
               <p>
                 Thanks! We&apos;ve noted your reservation{reservedEmail ? ` for ${reservedEmail}` : ''}.
-                Complete your <strong>{seminar.price}</strong> payment to confirm your seat. A
+                We&apos;ll email you how to pay <strong>{seminar.price}</strong> to confirm your seat, and a
                 confirmation with the venue details follows once we receive it.
               </p>
-              <div className="lp-pay-methods">
-                {paymentMethods.map((method) => (
-                  <div className="lp-pay-method" key={method.label}>
-                    <span className="lp-pay-label">{method.label}</span>
-                    <strong>{method.value}</strong>
-                    <small>{method.name}</small>
-                  </div>
-                ))}
-              </div>
               <p className="lp-pay-note">
                 <ShieldCheck size={15} aria-hidden="true" />
                 Use your full name as the payment reference, then reply to our email with a screenshot of your receipt.

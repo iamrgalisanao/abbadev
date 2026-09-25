@@ -114,8 +114,10 @@ needs, so those nodes stay simple:
 - This means all paid events (the ₱750 / ₱1,200 workshops too), not only the
   ad-funnel seminar, get the payment email. To limit it to the ad funnel,
   change the catalog `isPaid` line to `isPaid = flow === 'reserve-then-pay'`.
-- Keep the `PAYMENT` GCash details in sync with `paymentMethods` in
-  `src/App.jsx` (the `/seminar` payment panel).
+- GCash details live only in the events API admin. The website sends every
+  specific-session booking to `/seminar?event=<slug>` (the events API flow), so
+  this workflow normally sees only `notify-next`. A paid booking that still
+  arrives here gets an email linking to that page to finish booking and pay.
 
 ## `Normalize Registration` code
 
@@ -187,11 +189,11 @@ const EVENTS = !Array.isArray(apiEvents) ? null : Object.fromEntries(
 
 const WAITLIST_EVENT_ID = 'notify-next'
 
-// GCash details for paid (reserve-then-pay) events.
-const PAYMENT = {
-  gcash: '0928 320 7029',
-  accountName: 'ROM***L G.',
-}
+// Paid sessions are booked and paid on the session's registration page, backed
+// by the events API (which holds the GCash details). A paid booking only reaches
+// this workflow from an old cached page or a build without the events API, so
+// the email points the visitor there instead of repeating payment details.
+const bookingUrl = (id) => `https://abbadev.com/seminar?event=${encodeURIComponent(id)}`
 
 // ---------------------------------------------------------
 // Normalize incoming fields
@@ -545,10 +547,10 @@ if (isWaitlist) {
     locationLine,
     `Amount: ${eventPrice}`,
     '',
-    `To confirm, please pay ${eventPrice} via GCash:`,
-    `  • GCash — ${PAYMENT.gcash} (${PAYMENT.accountName})`,
+    `To confirm, finish your booking and pay ${eventPrice} by GCash on the session page:`,
+    `  ${bookingUrl(eventId)}`,
     '',
-    `Use your full name (${name}) as the payment reference, then reply to this email with a screenshot of your receipt. We’ll confirm your seat and send the venue details.`,
+    'Upload your receipt there and we’ll confirm your seat and send the venue details.',
     '',
     'Seats are limited — first paid, first confirmed.',
     '',
@@ -606,14 +608,13 @@ if (isWaitlist) {
           <strong>Pay ${escapeHtml(eventPrice)} to confirm your seat</strong>
         </p>
         <p style="margin:0;">
-          GCash — ${escapeHtml(PAYMENT.gcash)} (${escapeHtml(PAYMENT.accountName)})
+          <a href="${escapeHtml(bookingUrl(eventId))}">Finish your booking and pay by GCash</a>
         </p>
       </div>
 
       <p>
-        Use your full name (<strong>${escapeHtml(name)}</strong>) as the payment
-        reference, then reply to this email with a screenshot of your receipt.
-        We’ll confirm your seat and send the venue details.
+        Upload your receipt on that page and we’ll confirm your seat and send
+        the venue details.
       </p>
 
       <p style="font-size:14px;color:#6b7280;">

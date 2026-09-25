@@ -81,7 +81,10 @@ The default disclaimer reads "Details anonymized to protect the client operating
   the API fails, a status line says so and the form still offers "Notify me of the next session".
 - An inline form at the bottom:
   - Fields: name, email, Student/SME, organization, session (default "Notify me of the next session" = `notify-next`), phone and message.
-  - It POSTs to `/api/event-registration`.
+  - **"Notify me"** (button "Keep me posted") POSTs to `/api/event-registration` (n8n waitlist).
+  - **A specific session** (button "Continue to registration") saves the typed details to `sessionStorage` and sends the visitor
+    to `/seminar?event=<slug>`, where `TwoStepRegister` prefills them. Every session booking and GCash payment therefore goes
+    through the events API.
 
 ## `/seminar`
 

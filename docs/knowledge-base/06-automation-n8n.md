@@ -61,7 +61,8 @@ gets a confirmation email and a Telegram message; a duplicate goes to a no-op.
 **What "Normalize Registration" does:**
 - It builds its `EVENTS` catalog from the events API, fetched by a **Fetch Events** HTTP node just before it, so session details
   are never copied into n8n. An `eventId` the API doesn't list makes it throw; so does an unreachable API, except for `notify-next`.
-- Paid events get status `reserved`, and the confirmation email includes GCash pay-to-confirm instructions (from `PAYMENT`).
+- Paid events get status `reserved`, and the email links to `/seminar?event=<slug>` to finish booking and pay. The site now sends
+  every specific-session booking there directly, so this path only catches old cached pages or builds without the events API.
 - Free events get status `registered`.
 - `notify-next` is the waitlist.
 
@@ -78,8 +79,7 @@ hasn't had a reminder yet (`reminded_at IS NULL`), then sets `reminded_at`.
 - **Duplicate protection:** a partial unique index on `(email, event_id) WHERE event_id <> 'notify-next'`, so each email can register once per event.
 - The docs also mention optional `lead_source`, `flow` and `utm_campaign` columns, but they aren't in the SQL.
 
-**Keep in sync by hand:**
-- the n8n `PAYMENT` details and `paymentMethods` in `App.jsx`
+GCash details live only in the events API admin; neither the site nor n8n keeps a copy.
 
 ## AI assistant workflow (`docs/n8n-assistant-workflow.md`)
 
