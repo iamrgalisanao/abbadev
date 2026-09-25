@@ -572,21 +572,21 @@ const resources = [
     icon: BookOpen,
     title: 'Architecture notes',
     copy: 'Readable explanations of system design, AI workflow choices, and integration tradeoffs.',
-    href: '/implementation-notes',
-    status: 'live',
+    href: '/cases',
+    status: 'soon',
   },
   {
     icon: GraduationCap,
     title: 'Training library',
     copy: 'Future lessons, templates, and walkthroughs for teams learning to design better systems.',
-    href: '/insights',
+    href: '/cases',
     status: 'soon',
   },
   {
     icon: Blocks,
     title: 'Automation examples',
     copy: 'See the live workflow demo running in the hero, then apply the same automation pattern to your own process.',
-    href: '/workflow-demos',
+    href: '/cases/guardrailed-site-assistant',
     status: 'live',
   },
 ]
@@ -608,6 +608,20 @@ const founderProfile = {
   ],
 }
 
+// Pages that should not render on their own. The contact pages collapse into the
+// homepage consultation form; the content-hub pages stay hidden until real
+// articles exist (their data remains below - delete the redirect to publish one).
+const routeRedirects = {
+  '/contact': '/#contact',
+  '/consulting-intake': '/#contact',
+  '/insights': '/cases',
+  '/insights/system-design': '/services/software-architecture',
+  '/insights/ai-operations': '/services/ai-automation',
+  '/insights/digital-transformation': '/services/technical-advisory',
+  '/workflow-demos': '/cases',
+  '/implementation-notes': '/cases',
+}
+
 const contentPages = {
   '/community': {
     icon: GraduationCap,
@@ -623,6 +637,17 @@ const contentPages = {
     examples: ['Webinars', 'Workshops', 'Tutorials', 'Tech demonstrations', 'AI education', 'Community discussions'],
     cta: 'Reserve a seat',
     ctaHref: '/register',
+    fitKicker: 'Who it is for',
+    fitTitle: 'Built for people applying technology at work',
+    fit: [
+      'Students exploring a career in software, AI, or project delivery',
+      'Developers who want practical AI and automation skills they can ship',
+      'SME owners moving from spreadsheets and manual steps to connected systems',
+      'Professionals who want to understand where AI fits - and where it should not',
+    ],
+    sessions: true,
+    ctaHeading: 'Pick a session and reserve your seat.',
+    ctaCopy: 'Hands-on sessions for students, developers, and SME owners - practical content you can apply the next day.',
   },
   '/services/ai-automation': {
     icon: BrainCircuit,
@@ -638,6 +663,13 @@ const contentPages = {
     examples: ['Lead intake qualification', 'Document review triage', 'Status update routing', 'Executive summary generation'],
     cta: 'Map an automation opportunity',
     ctaHref: '/#contact',
+    fit: [
+      'People copy, check, or route the same information by hand every day',
+      'Documents, messages, or forms need reading before anyone can act on them',
+      'You want AI to draft or triage, but a person must still approve the outcome',
+      'Requests or leads wait because nobody owns the first response',
+    ],
+    proof: ['document-intake-assistant', 'guardrailed-site-assistant'],
   },
   '/services/software-architecture': {
     icon: Network,
@@ -653,6 +685,13 @@ const contentPages = {
     examples: ['API foundation', 'Multi-tenant workflow platform', 'Reporting data layer', 'Legacy tool modernization'],
     cta: 'Review a system architecture',
     ctaHref: '/#contact',
+    fit: [
+      'Several tools hold overlapping data and nobody agrees which one is right',
+      'The system is about to grow - more users, tenants, or integrations - and the current design strains',
+      'Automations keep breaking because integrations have no contracts, retries, or monitoring',
+      'You want an independent review before committing build budget',
+    ],
+    proof: ['integration-foundation', 'operations-command-center', 'stockora'],
   },
   '/services/custom-systems': {
     icon: Code2,
@@ -668,6 +707,13 @@ const contentPages = {
     examples: ['Client portals', 'Operations dashboards', 'Workflow applications', 'Reporting systems'],
     cta: 'Scope a custom system',
     ctaHref: '/#contact',
+    fit: [
+      'Spreadsheets or shared inboxes have quietly become the system of record',
+      'Off-the-shelf tools force the team to work around them',
+      'The workflow needs role-based access, approvals, and an audit trail built in',
+      'You need a portal, dashboard, or internal tool shaped around how the business runs',
+    ],
+    proof: ['abbadev-crm', 'stockora', 'operations-command-center'],
   },
   '/services/technical-advisory': {
     icon: ShieldCheck,
@@ -683,6 +729,13 @@ const contentPages = {
     examples: ['Architecture second opinion', 'AI adoption review', 'Build versus buy decision', 'Integration planning'],
     cta: 'Request technical advisory',
     ctaHref: '/#contact',
+    fit: [
+      'You are deciding whether to build, buy, or extend a platform',
+      'An AI or automation vendor pitch needs an independent technical read',
+      'A technology project is drifting and leadership needs a clear delivery plan',
+      'Your team needs system design choices explained in plain language',
+    ],
+    proof: ['integration-foundation', 'document-intake-assistant'],
   },
   '/workflow-demos': {
     icon: Blocks,
@@ -774,36 +827,6 @@ const contentPages = {
     cta: 'Plan a transformation roadmap',
     ctaHref: '/#contact',
   },
-  '/contact': {
-    icon: MessageSquareText,
-    label: 'ABBADev',
-    title: 'Contact',
-    intro: 'Reach out with a workflow, system, or automation problem that needs a practical path forward.',
-    blocks: [
-      ['Best first step', 'Use the consulting intake so the first conversation starts with useful context.'],
-      ['What to include', 'Describe the workflow, tools, people, approvals, urgency, and business impact.'],
-      ['Response expectation', 'ABBADev reviews the brief and replies with the best next step.'],
-      ['Project fit', 'Best fit includes AI automation, architecture, custom systems, and digital transformation work.'],
-    ],
-    examples: ['Consultation and roadmap', 'Architecture review', 'Prototype', 'Full software build'],
-    cta: 'Open consulting intake',
-    ctaHref: '/#contact',
-  },
-  '/consulting-intake': {
-    icon: CircleDot,
-    label: 'ABBADev',
-    title: 'Consulting intake',
-    intro: 'Prepare a useful first conversation by describing the workflow, tools, urgency, and desired business outcome.',
-    blocks: [
-      ['Workflow challenge', 'Name the process, bottleneck, decision point, or system that should improve.'],
-      ['Operating context', 'Share the current tools, people involved, approval points, and company stage.'],
-      ['Engagement fit', 'Choose whether the next step is advisory, architecture review, prototype, or full build.'],
-      ['Automated routing', 'The website sends the brief into n8n, email, and Notion for follow-up.'],
-    ],
-    examples: ['AI automation', 'Custom software', 'Architecture review', 'Digital transformation'],
-    cta: 'Go to the intake form',
-    ctaHref: '/#contact',
-  },
   '/business-solutions': {
     icon: Blocks,
     label: 'ABBADev',
@@ -818,6 +841,13 @@ const contentPages = {
     examples: ['Reduce duplicate entry', 'Improve transaction traceability', 'Automate document review', 'Connect disconnected tools'],
     cta: 'Find the right solution path',
     ctaHref: '/#contact',
+    fit: [
+      'Leaders cannot see what is moving, blocked, or overdue without asking around',
+      'The same data is typed into more than one system',
+      'Approvals, reminders, and handoffs depend on someone remembering',
+      'Review work is manual even though most items are routine',
+    ],
+    proof: ['operations-command-center', 'integration-foundation', 'document-intake-assistant', 'abbadev-crm'],
   },
 }
 
@@ -839,16 +869,6 @@ const primaryNav = [
     ],
   },
   { label: 'Work', href: '/cases' },
-  {
-    label: 'Insights',
-    href: '/insights',
-    children: [
-      ['All insights', '/insights'],
-      ['System design', '/insights/system-design'],
-      ['AI operations', '/insights/ai-operations'],
-      ['Digital transformation', '/insights/digital-transformation'],
-    ],
-  },
   { label: 'Sessions', href: '/register' },
   { label: 'About', href: '/about' },
 ]
@@ -1160,6 +1180,61 @@ function CaseStudyPage({ study, theme, setTheme }) {
   )
 }
 
+// One case-study card, shared by the /cases directory and the service pages.
+function CaseCard({ study }) {
+  const Icon = study.icon
+  return (
+    <article className="cx-card">
+      <a className="cx-card-link" href={`/cases/${study.slug}`} aria-label={`Read case study: ${study.title}`}>
+        <div className="cx-media">
+          <div className="cx-chrome" aria-hidden="true">
+            <span className="cx-dot" />
+            <span className="cx-dot" />
+            <span className="cx-dot" />
+            <em>{study.code}</em>
+          </div>
+          <div className={study.mockup ? 'cx-shot cx-shot--mock' : 'cx-shot'}>
+            {study.mockup ? (
+              <div className="cx-mock-frame">
+                {study.imageWebp ? (
+                  <picture>
+                    <source srcSet={study.imageWebp} type="image/webp" />
+                    <img src={study.image} alt={study.imageAlt || ''} width="1672" height="941" loading="lazy" decoding="async" />
+                  </picture>
+                ) : (
+                  <img src={study.image} alt={study.imageAlt || ''} width="1600" height="1000" loading="lazy" decoding="async" />
+                )}
+              </div>
+            ) : (
+              <img src={study.image} alt={study.imageAlt || ''} decoding="async" width="640" height="360" />
+            )}
+          </div>
+        </div>
+        <div className="cx-body">
+          <span className="cx-cat">
+            <Icon size={14} aria-hidden="true" />
+            {study.type}
+          </span>
+          <h3>{study.title}</h3>
+          <p>{study.result}</p>
+          <div className="cx-metric" aria-label={`${study.metric.label}: before ${study.metric.before}, after ${study.metric.after}`}>
+            <span className="cx-metric-label">{study.metric.label}</span>
+            <span className="cx-metric-values">
+              <del>{study.metric.before}</del>
+              <ArrowRight size={12} aria-hidden="true" />
+              <strong>{study.metric.after}</strong>
+            </span>
+          </div>
+          <span className="cx-readmore">
+            Read case study
+            <ArrowRight size={15} aria-hidden="true" />
+          </span>
+        </div>
+      </a>
+    </article>
+  )
+}
+
 function CasesIndexPage({ theme, setTheme }) {
   const [filter, setFilter] = useState('All')
   const filters = ['All', ...Array.from(new Set(caseStudies.map((study) => study.type)))]
@@ -1201,59 +1276,9 @@ function CasesIndexPage({ theme, setTheme }) {
         </div>
 
         <div className="cx-grid">
-          {visible.map((study) => {
-            const Icon = study.icon
-            return (
-              <article className="cx-card" key={study.slug}>
-                <a className="cx-card-link" href={`/cases/${study.slug}`} aria-label={`Read case study: ${study.title}`}>
-                  <div className="cx-media">
-                    <div className="cx-chrome" aria-hidden="true">
-                      <span className="cx-dot" />
-                      <span className="cx-dot" />
-                      <span className="cx-dot" />
-                      <em>{study.code}</em>
-                    </div>
-                    <div className={study.mockup ? 'cx-shot cx-shot--mock' : 'cx-shot'}>
-                      {study.mockup ? (
-                        <div className="cx-mock-frame">
-                          {study.imageWebp ? (
-                            <picture>
-                              <source srcSet={study.imageWebp} type="image/webp" />
-                              <img src={study.image} alt={study.imageAlt || ''} width="1672" height="941" loading="lazy" decoding="async" />
-                            </picture>
-                          ) : (
-                            <img src={study.image} alt={study.imageAlt || ''} width="1600" height="1000" loading="lazy" decoding="async" />
-                          )}
-                        </div>
-                      ) : (
-                        <img src={study.image} alt={study.imageAlt || ''} decoding="async" width="640" height="360" />
-                      )}
-                    </div>
-                  </div>
-                  <div className="cx-body">
-                    <span className="cx-cat">
-                      <Icon size={14} aria-hidden="true" />
-                      {study.type}
-                    </span>
-                    <h3>{study.title}</h3>
-                    <p>{study.result}</p>
-                    <div className="cx-metric" aria-label={`${study.metric.label}: before ${study.metric.before}, after ${study.metric.after}`}>
-                      <span className="cx-metric-label">{study.metric.label}</span>
-                      <span className="cx-metric-values">
-                        <del>{study.metric.before}</del>
-                        <ArrowRight size={12} aria-hidden="true" />
-                        <strong>{study.metric.after}</strong>
-                      </span>
-                    </div>
-                    <span className="cx-readmore">
-                      Read case study
-                      <ArrowRight size={15} aria-hidden="true" />
-                    </span>
-                  </div>
-                </a>
-              </article>
-            )
-          })}
+          {visible.map((study) => (
+            <CaseCard study={study} key={study.slug} />
+          ))}
         </div>
 
         <section className="cx-cta">
@@ -1262,7 +1287,7 @@ function CasesIndexPage({ theme, setTheme }) {
             <h2>Recognize one of these patterns in your own operations?</h2>
             <p>Bring the workflow that costs you the most time. We will map the system around it.</p>
           </div>
-          <a className="primary-button" href="/consulting-intake">
+          <a className="primary-button" href="/#contact">
             Book a systems consult <ArrowRight size={18} aria-hidden="true" />
           </a>
         </section>
@@ -1367,7 +1392,7 @@ const serviceCategories = [
     alt: 'Server racks connected by colorful network cabling',
     copy: 'Connect the systems you already use so data flows automatically between websites, CRMs, accounting, HR, messaging platforms, databases, forms, and third-party applications.',
     points: ['API integrations', 'Automated data sync', 'Third-party connectors', 'Single source of truth'],
-    href: '/consulting-intake',
+    href: '/services/software-architecture',
   },
   {
     num: '05',
@@ -2298,7 +2323,7 @@ function AboutPage({ theme, setTheme }) {
             and project delivery so technology fits how you actually operate.
           </p>
           <div className="content-page-actions">
-            <a className="primary-button" href="/consulting-intake">
+            <a className="primary-button" href="/#contact">
               Start a conversation <ArrowRight size={18} aria-hidden="true" />
             </a>
             <a className="secondary-button" href="/cases">
@@ -2463,7 +2488,7 @@ function AboutPage({ theme, setTheme }) {
               automation, or AI can make it possible.
             </p>
           </div>
-          <a className="primary-button" href="/consulting-intake">
+          <a className="primary-button" href="/#contact">
             Start a conversation <ArrowRight size={18} aria-hidden="true" />
           </a>
         </section>
@@ -2510,6 +2535,10 @@ function Breadcrumbs({ crumbs }) {
 
 function ContentPage({ page, theme, setTheme }) {
   const PageIcon = page.icon
+  const proof = (page.proof || []).map((slug) => caseStudies.find((study) => study.slug === slug)).filter(Boolean)
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const upcoming = page.sessions ? eventOfferings.filter((event) => new Date(event.date) >= today) : []
 
   return (
     <div className="site-shell case-page-shell content-page-shell">
@@ -2543,21 +2572,87 @@ function ContentPage({ page, theme, setTheme }) {
           ))}
         </section>
 
-        <section className="content-examples-panel">
-          <span className="kicker">Where this applies</span>
-          <h2>Representative use cases</h2>
-          <div className="content-example-list">
-            {page.examples.map((item) => (
-              <span key={item}>{item}</span>
-            ))}
+        {page.fit ? (
+          <div className="case-page-split">
+            <section className="case-page-section case-page-list-section">
+              <span className="kicker">{page.fitKicker || 'Good fit when'}</span>
+              <h2>{page.fitTitle || 'Signs this is the right service'}</h2>
+              <ul>
+                {page.fit.map((item) => <li key={item}>{item}</li>)}
+              </ul>
+            </section>
+            <section className="case-page-section case-page-list-section">
+              <span className="kicker">Typical requests</span>
+              <h2>What people bring to us</h2>
+              <ul>
+                {page.examples.map((item) => <li key={item}>{item}</li>)}
+              </ul>
+            </section>
           </div>
-        </section>
+        ) : (
+          <section className="content-examples-panel">
+            <span className="kicker">Where this applies</span>
+            <h2>Representative use cases</h2>
+            <div className="content-example-list">
+              {page.examples.map((item) => (
+                <span key={item}>{item}</span>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {proof.length > 0 && (
+          <section className="case-page-section content-proof-section">
+            <span className="kicker">Proof</span>
+            <h2>Where we have done this</h2>
+            <div className="cx-grid">
+              {proof.map((study) => <CaseCard study={study} key={study.slug} />)}
+            </div>
+          </section>
+        )}
+
+        {page.sessions && upcoming.length > 0 && (
+          <section className="case-page-section case-page-list-section">
+            <span className="kicker">Upcoming sessions</span>
+            <h2>Learn with us</h2>
+            <div className="case-phase-list case-page-phases">
+              {upcoming.map((event, index) => (
+                <div className="case-phase-item" key={event.id}>
+                  <small>{String(index + 1).padStart(2, '0')}</small>
+                  <div>
+                    <strong>
+                      <a href={`/seminar?event=${event.id}`}>{event.title}</a>
+                    </strong>
+                    <p>{`${event.type} · ${event.date} · ${event.mode === 'Online' ? 'Online' : event.location} · ${event.price}`}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {page.proof && (
+          <section className="case-page-section case-page-list-section">
+            <span className="kicker">How it starts</span>
+            <h2>The first conversation</h2>
+            <div className="case-phase-list case-page-phases">
+              {consultationSteps.map((step, index) => (
+                <div className="case-phase-item" key={step}>
+                  <small>{String(index + 1).padStart(2, '0')}</small>
+                  <div>
+                    <strong>{step}</strong>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         <section className="case-page-cta">
           <div>
             <span className="kicker">Next step</span>
-            <h2>Bring one real workflow into the conversation.</h2>
-            <p>Share the process, tools, people, and business outcome. ABBADev will map the practical software or automation path around it.</p>
+            <h2>{page.ctaHeading || 'Bring one real workflow into the conversation.'}</h2>
+            <p>{page.ctaCopy || 'Share the process, tools, people, and business outcome. ABBADev will map the practical software or automation path around it.'}</p>
           </div>
           <a className="primary-button" href={page.ctaHref}>
             {page.cta} <ArrowRight size={18} aria-hidden="true" />
@@ -2681,17 +2776,13 @@ const footerGroups = [
     title: 'Work',
     links: [
       ['Case studies', '/cases'],
-      ['Workflow demos', '/workflow-demos'],
-      ['Implementation notes', '/implementation-notes'],
+      ['ABBADev CRM', '/cases/abbadev-crm'],
+      ['Stockora', '/cases/stockora'],
     ],
   },
   {
     title: 'Learn',
     links: [
-      ['Insights', '/insights'],
-      ['System design', '/insights/system-design'],
-      ['AI operations', '/insights/ai-operations'],
-      ['Digital transformation', '/insights/digital-transformation'],
       ['Community & learning', '/community'],
       ['Seminars & webinars', '/register'],
     ],
@@ -2700,9 +2791,8 @@ const footerGroups = [
     title: 'ABBADev',
     links: [
       ['About', '/about'],
-      ['Contact', '/contact'],
-      ['Consulting intake', '/consulting-intake'],
       ['Business solutions', '/business-solutions'],
+      ['Book a consultation', '/#contact'],
     ],
   },
 ]
@@ -4131,9 +4221,14 @@ function App() {
   const routeCase = path.startsWith('/cases/')
     ? caseStudies.find((study) => study.slug === path.replace('/cases/', '').replace(/\/$/, ''))
     : null
+  const redirectTarget = routeRedirects[normalizedPath] || null
   const routeHome = normalizedPath === '/'
   const routeNotFound = !(routeHome || routeV1 || routeV2 || routeCasesIndex || routeCase || routeAbout
     || routeServices || routeRegister || routeSeminar || routePrivacy || routeTerms || routeContent)
+
+  useEffect(() => {
+    if (redirectTarget) window.location.replace(redirectTarget)
+  }, [redirectTarget])
 
   useEffect(() => {
     // Canonicalize the legacy /work URL to /cases without a full navigation;
@@ -4260,6 +4355,10 @@ function App() {
 
   // v2 preview — self-contained dark, scroll-driven homepage. Renders its own
   // chrome (nav, assistant) and takes over the shell; v1 is otherwise untouched.
+  if (redirectTarget) {
+    return null
+  }
+
   if (routeV2) {
     return <V2Home />
   }
@@ -4859,8 +4958,8 @@ function App() {
               )
             })}
           </div>
-          <a className="all-cases-link" href="/insights">
-            Read all insights <ArrowRight size={16} aria-hidden="true" />
+          <a className="all-cases-link" href="/cases">
+            See all case studies <ArrowRight size={16} aria-hidden="true" />
           </a>
         </section>
 

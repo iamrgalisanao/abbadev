@@ -78,9 +78,9 @@ const INTENTS = [
     id: 'demo',
     keywords: ['demo', 'show me', 'workflow demo', 'live'],
     reply:
-      'The homepage hero runs a live workflow blueprint - intake to rules to AI drafting to data sync to a human approval. The workflow-demos page walks through more of these.',
+      'The case studies show these workflows running - the guardrailed site assistant case even replays this chat pipeline live, from intake to validation to a human handoff.',
     chips: [
-      { label: 'Open workflow demos', href: '/workflow-demos' },
+      { label: 'See the live pipeline', href: '/cases/guardrailed-site-assistant' },
       CONSULT_CHIP,
     ],
   },

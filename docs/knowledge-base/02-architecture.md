@@ -74,16 +74,24 @@ Trailing slashes are removed before matching.
 | `/register` | `RegisterPage` | yes |
 | `/seminar?event=<slug>` | `SeminarLandingPage` (ad landing page) | **no** |
 | `/privacy`, `/terms` | `LegalPage` | no |
-| 14 `contentPages` keys | `ContentPage` (generic template) | yes |
+| 6 `contentPages` keys | `ContentPage` (service/community template) | yes |
+| 8 `routeRedirects` keys | Redirect with `location.replace` | — |
 | anything else | `NotFoundPage` (404, `noindex`) | no |
 
-The `contentPages` keys are:
+The live `contentPages` routes are `/community`, `/business-solutions` and the four `/services/*` pages.
 
-- `/community`
-- `/services/ai-automation`, `/services/software-architecture`, `/services/custom-systems`, `/services/technical-advisory`
-- `/workflow-demos`, `/implementation-notes`
-- `/insights`, `/insights/system-design`, `/insights/ai-operations`, `/insights/digital-transformation`
-- `/contact`, `/consulting-intake`, `/business-solutions`
+`routeRedirects` (`src/App.jsx`) sends these paths elsewhere before anything renders:
+
+| From | To |
+|---|---|
+| `/contact`, `/consulting-intake` | `/#contact` (homepage form) |
+| `/insights`, `/workflow-demos`, `/implementation-notes` | `/cases` |
+| `/insights/system-design` | `/services/software-architecture` |
+| `/insights/ai-operations` | `/services/ai-automation` |
+| `/insights/digital-transformation` | `/services/technical-advisory` |
+
+The Insights, Workflow demos and Implementation notes pages are hidden until real articles exist. Their content is still in
+`contentPages`; delete a path from `routeRedirects` to publish it again.
 
 Each route sets its own `<title>`, meta description, Open Graph/Twitter title and description, canonical URL and robots tag
 through `applyPageMeta` (`routeMeta` in `src/App.jsx`). Case studies and content pages take theirs from their own data. `/v1` and `/v2`
@@ -95,7 +103,6 @@ LinkedIn still show the `index.html` defaults.
 - **Interior pages** use `CasePageHeader` and `SiteNav` with `primaryNav` (`App.jsx:829`). The top-level items are:
   - Services ▾ (all services plus the four `/services/*` pages)
   - Work
-  - Insights ▾ (all insights plus the three `/insights/*` pages)
   - Sessions
   - About
   - "Book a consult" → `/#contact`

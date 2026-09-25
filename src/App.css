@@ -7580,3 +7580,26 @@ main {
   margin: 0;
   color: var(--color-body);
 }
+
+/* Service and community pages: proof grid and session links */
+.content-proof-section .cx-grid {
+  margin-top: 8px;
+}
+
+.content-page-shell .case-phase-item strong a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklch, var(--color-accent-pale) 45%, transparent);
+  text-underline-offset: 3px;
+}
+
+.content-page-shell .case-phase-item strong a:hover {
+  color: var(--color-accent-text);
+}
+
+.content-page-shell .case-phase-item p {
+  margin: 0;
+  color: rgba(236, 244, 255, 0.68);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+}

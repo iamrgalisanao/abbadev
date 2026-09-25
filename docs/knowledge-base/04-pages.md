@@ -106,21 +106,33 @@ A conversion page for Facebook ads, with no site nav and no chat widget. It has 
 2. **Otherwise, it uses reserve-then-pay:** the form POSTs `flow: 'reserve-then-pay'` to `/api/event-registration`, then shows the hard-coded
    GCash details (`paymentMethods`).
 
-## Content pages
+## Service and community pages
 
-`ContentPage` is a generic template. Each page has an icon, a title, an intro, four blocks, a list of "Representative use cases",
-and the CTA "Bring one real workflow into the conversation."
+`ContentPage` renders six routes from `contentPages` in `src/App.jsx`:
 
-The 14 routes that use it:
-
-| Group | Routes |
+| Route | "Proof" case studies |
 |---|---|
-| Services | `/services/ai-automation`, `/services/software-architecture`, `/services/custom-systems`, `/services/technical-advisory` |
-| Insights | `/insights`, `/insights/system-design`, `/insights/ai-operations`, `/insights/digital-transformation` |
-| Other | `/workflow-demos`, `/implementation-notes`, `/community`, `/contact`, `/consulting-intake`, `/business-solutions` |
+| `/services/ai-automation` | Document intake assistant, Guardrailed site assistant |
+| `/services/software-architecture` | Integration foundation, Transaction intake command center, Stockora |
+| `/services/custom-systems` | ABBADev CRM, Stockora, Transaction intake command center |
+| `/services/technical-advisory` | Integration foundation, Document intake assistant |
+| `/business-solutions` | Transaction intake command center, Integration foundation, Document intake assistant, ABBADev CRM |
+| `/community` | — (shows upcoming sessions instead) |
 
-- `/consulting-intake` is where the v2 final CTA lands. It describes how a brief is routed to n8n, email and Notion. **It has no form of its own.**
-- The Insights pages are placeholders. There are no articles yet.
+**Sections, in order:**
+1. Breadcrumbs and hero: icon, title, intro, CTA and "Review proof".
+2. Four "what's included" blocks (`blocks`).
+3. Two lists side by side: "Good fit when" (`fit`) and "Typical requests" (`examples`).
+4. **Proof:** the listed case studies as cards (`proof`, rendered with the shared `CaseCard`, which the `/cases` directory also uses).
+5. **Upcoming sessions** (`sessions: true`, community only): future events from `eventOfferings`, each linking to `/seminar?event=<id>`.
+   Past events drop off automatically.
+6. **How it starts:** the three `consultationSteps` (service pages only).
+7. CTA. `ctaHeading` and `ctaCopy` override the default "Bring one real workflow into the conversation."
+
+The `/services` page's "Systems Integration" card links to `/services/software-architecture`.
+
+The content-hub pages (`/insights` and its sub-pages, `/workflow-demos`, `/implementation-notes`) and the contact pages redirect.
+See [02-architecture.md](02-architecture.md#routing).
 
 ## `/privacy`, `/terms`
 
