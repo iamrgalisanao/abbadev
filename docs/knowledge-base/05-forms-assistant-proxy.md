@@ -4,6 +4,7 @@
 
 | Form | Page | Browser POSTs to | Proxy forwards to |
 |---|---|---|---|
+| Consultation brief (`ConsultForm`) | `/#contact` (homepage) | `VITE_CONSULTATION_ENDPOINT` or `/api/consultation`, `formType: 'v2-consultation'` | `N8N_WEBHOOK_URL` (channel `form`) |
 | Consultation form | `/v1#contact` | `VITE_CONSULTATION_ENDPOINT` or `/api/consultation` | `N8N_WEBHOOK_URL` (channel `form`) |
 | ProjectScoper quiz | `/services` | same as above, `formType: 'project-scoper'` | same |
 | Assistant "Book a consult" | assistant widget | `VITE_CHAT_LEAD_ENDPOINT` or `/api/chat-lead` | `N8N_CHAT_WEBHOOK_URL` (channel `chat`) |

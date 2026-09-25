@@ -229,6 +229,27 @@ export const finalCta = {
   ],
 }
 
+// Consultation brief form. Option labels must match the n8n lead-scoring rules in
+// automation/n8n/consultation-lead-workflow.md (workFocus, urgency, budget, stage).
+export const consult = {
+  eyebrow: 'Consultation brief',
+  heading: 'Tell us about the workflow.',
+  body: 'A useful first conversation starts with the process, the people involved, the tools in play, and what better operations would make possible.',
+  next: [
+    'A systems architect reads your brief — not a bot',
+    'You get a reply within one business day',
+    'No commitment, and your details are never published',
+  ],
+  email: 'info@abbadev.com',
+  fields: {
+    workFocus: ['AI automation', 'Custom software', 'Architecture review', 'Digital transformation'],
+    companyStage: ['Growing business', 'Startup', 'Enterprise team', 'Public sector or nonprofit'],
+    urgency: ['This month', 'This quarter', 'Planning phase', 'Exploring options'],
+    engagement: ['Consultation and roadmap', 'Architecture review', 'Prototype or proof of concept', 'Full software build'],
+    budget: ['To be scoped', 'Under $5k', '$5k to $15k', '$15k to $50k', '$50k+'],
+  },
+}
+
 export const footer = {
   statement: 'People + software + automation + AI. ABBADev builds the systems where they work together.',
   groups: [

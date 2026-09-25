@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 import { ArrowUpRight, ArrowRight } from 'lucide-react'
 import Assistant from '../Assistant'
+import ConsultForm from './ConsultForm.jsx'
 import CtaGradient from './CtaGradient.jsx'
 import { Reveal, ScrollProgress, TextReveal, Parallax, TiltCard } from './motion.jsx'
 import { useLenis, prefersReduced } from './motion-utils.js'
-import { nav, hero, position, pillars, services, work, products, founder, plate, finalCta, footer } from './content.js'
+import { nav, hero, position, pillars, services, work, products, founder, plate, finalCta, consult, footer } from './content.js'
 import './v2.css'
 
 function ProductShot({ shot, shotWebp, alt }) {
@@ -342,7 +343,7 @@ export default function V2Home() {
         </section>
 
         {/* Final CTA */}
-        <section className="v2-section v2-cta" id="contact">
+        <section className="v2-section v2-cta" id="start">
           <div className="v2-cta-scene" aria-hidden="true">
             <Parallax rate={0.13} className="v2-cta-layer v2-cta-far">
               <img src="/images/layer03.png" alt="" />
@@ -361,8 +362,8 @@ export default function V2Home() {
               ))}
             </ol>
             <Reveal className="v2-cta-book" delay={120}>
-              <a className="v2-pill v2-pill--solid v2-pill--lg" href="/consulting-intake">
-                {finalCta.button.label} <ArrowUpRight size={18} />
+              <a className="v2-pill v2-pill--solid v2-pill--lg" href={finalCta.button.href}>
+                {finalCta.button.label} <ArrowRight size={18} />
               </a>
             </Reveal>
           </div>
@@ -373,6 +374,28 @@ export default function V2Home() {
           {/* Front layer (layer01) frontmost, rising in front of everything. */}
           <div className="v2-cta-foreground" aria-hidden="true">
             <img src="/images/layer01.png" alt="" />
+          </div>
+        </section>
+
+        {/* Consultation brief — the target of every "Book a consultation" link. */}
+        <section className="v2-section v2-consult" id="contact">
+          <div className="v2-container v2-consult-grid">
+            <div className="v2-consult-intro">
+              <Reveal className="v2-eyebrow" as="span">{consult.eyebrow}</Reveal>
+              <TextReveal lines={[consult.heading]} as="h2" className="v2-h2" step={22} />
+              <Reveal className="v2-body" as="p" delay={120}>{consult.body}</Reveal>
+              <ul className="v2-consult-next">
+                {consult.next.map((item, i) => (
+                  <Reveal as="li" key={item} delay={160 + i * 80}>{item}</Reveal>
+                ))}
+              </ul>
+              <p className="v2-consult-email">
+                Prefer email? <a href={`mailto:${consult.email}`}>{consult.email}</a>
+              </p>
+            </div>
+            <Reveal delay={120}>
+              <ConsultForm />
+            </Reveal>
           </div>
         </section>
       </main>

@@ -9,6 +9,7 @@ The v2 page is self-contained: it never imports from `App.jsx`, so there's no ci
 | `src/v2/content.js` | All copy, as plain exported objects: `nav, hero, position, pillars, services, work, products, founder, plate, finalCta, footer` |
 | `src/v2/motion.jsx` | `Reveal`, `TextReveal`, `TypewriterHeading` (unused), `ScrollProgress`, `TiltCard`, `Parallax` |
 | `src/v2/motion-utils.js` | `prefersReduced()`, `useLenis()` (kept out of motion.jsx to satisfy react-refresh) |
+| `src/v2/ConsultForm.jsx` | Consultation brief form; posts to `/api/consultation` |
 | `src/v2/CtaGradient.jsx` | WebGL simplex-noise gradient behind the final CTA card |
 | `src/v2/v2.css` | All styles, scoped under `.v2-shell` |
 
@@ -49,15 +50,22 @@ href, which are hard-coded in `V2Home.jsx`.
    - A tilt-on-hover "credential plate" card showing: Principal Architect · Focus / Approach / Accountability.
    - The bio, three points, and "More about ABBADev →" linking to `/about`.
    - No photo.
-10. **Final CTA (`#contact`):** "Recognize this pattern in your operations?"
-    - Three steps, then a "Book a consultation" button that links to **`/consulting-intake`**.
+10. **Final CTA (`#start`):** "Recognize this pattern in your operations?"
+    - Three steps, then a "Book a consultation" button that scrolls down to the form (`#contact`).
     - The skyline layers sit in front of and behind the card, with the WebGL gradient inside it.
-11. **Footer:**
+11. **Consultation brief (`#contact`):** "Tell us about the workflow."
+    - Every "Book a consultation" link on the homepage, and `/#contact` links from other pages, land here.
+    - Left: intro, what happens next, and `info@abbadev.com`. Right: `ConsultForm`.
+    - Fields: name*, work email*, company, work focus, company stage, timeline (defaults to "This quarter"), engagement, budget, and the workflow* (at least 10 characters, which the n8n workflow requires).
+      Option labels are in `consult.fields` in `content.js` and must match the n8n lead-scoring rules.
+    - Posts `formType: 'v2-consultation'` to `VITE_CONSULTATION_ENDPOINT` or `/api/consultation`. A hidden honeypot field (`website`) silently drops bot submissions.
+    - Success replaces the form with "Brief received."; failure shows an alert and keeps what was typed.
+12. **Footer:**
     - Company: About, Services, Case studies.
     - Products: CRM, Stockora.
     - Connect: Book a consultation.
     - "© 2026 ABBADev IT Solutions. Founded by Rommel Galisanao."
-12. **`<Assistant/>`:** the floating chat widget. See [05](05-forms-assistant-proxy.md).
+13. **`<Assistant/>`:** the floating chat widget. See [05](05-forms-assistant-proxy.md).
 
 On mount, V2Home adds the `v2-active` class to `<html>` and removes it on unmount. It turns on Lenis smooth scrolling (`lerp 0.1`).
 
@@ -105,5 +113,4 @@ These fields exist in `content.js` or `motion.jsx` but nothing on the page uses 
 - `nav.brand`
 - `work.cases[].metric.label`
 - `work.cases[].screenshot`
-- `finalCta.button.href` (ignored; the href is hard-coded)
 - `TypewriterHeading`
