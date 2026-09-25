@@ -42,7 +42,7 @@ The Sep 5 flagship seminar is no longer listed.
 
 ## Findings
 
-Findings 1, 2, 3, 4, 5 and 7 were fixed in the code on 2026-09-25. They stay live on abbadev.com until the next deploy.
+Findings 1, 2, 3, 4, 5, 6 and 7 were fixed in the code on 2026-09-25. They stay live on abbadev.com until the next deploy.
 
 1. **`sitemap.xml` is stale.** It lists `/` plus hash anchors such as `/#platform` and `/#resources`, which search engines ignore. It doesn't list
    `/services`, `/cases`, the six case pages, `/about` or `/register`.

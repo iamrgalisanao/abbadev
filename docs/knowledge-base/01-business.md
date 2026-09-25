@@ -2,8 +2,7 @@
 
 ## Company
 
-- **Name:** ABBADev IT Solutions. It was renamed from "ABBADev Tech Solutions" in commit `62a6c56`. The old name still
-  appears in `public/og-image.png` and `public/images/profile.webp`.
+- **Name:** ABBADev IT Solutions. It was renamed from "ABBADev Tech Solutions" in commit `62a6c56`.
 - **Wordmark:** "ABBADEV" with an "IT Solutions" line underneath.
 - **Logo:** a glossy blue/cyan triangle "A" built from network nodes, with a tree growing inside it (`/images/abbadev-logo.png`).
 - **Positioning (v2 hero):** "Systems for work that outgrew manual effort."

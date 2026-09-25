@@ -18,7 +18,7 @@ Grouped by impact. Each item names the file to change. Items marked **Fixed** we
 | # | Issue | Where |
 |---|---|---|
 | 7 | **Fixed 2026-09-25.** Assistant says "three representative case studies"; the site has six | `src/Assistant.jsx` ("proof" intent), n8n assistant node 3 |
-| 8 | OG image and `profile.webp` still say "ABBADev Tech Solutions" | `public/og-image.png`, `public/images/profile.webp` |
+| 8 | **Fixed 2026-09-25.** OG image and `profile.webp` said "ABBADev Tech Solutions"; replaced by `og-abbadev.png` and `profile-fb.png` | `public/og-abbadev.png`, `public/images/profile-fb.png` |
 | 9 | Founder title differs: "Principal Systems Architect" on the homepage vs "Technology Solutions Architect" on About | `App.jsx:2358` vs `founderProfile` |
 | 10 | Event data is duplicated in several places that must be kept in sync by hand | `eventOfferings` / `flagshipSeminar` (App.jsx), n8n `EVENTS`, events API |
 | 11 | GCash details are duplicated | `paymentMethods` (App.jsx) and n8n `PAYMENT` |
@@ -50,7 +50,6 @@ Grouped by impact. Each item names the file to change. Items marked **Fixed** we
   - the `.v2-hero-sub` and `.v2-type*` CSS
 - **Unused dependency:** `framer-motion`. Tailwind is only wired into Vite.
 - **Unused assets:**
-  - `profile.webp`
   - the WebP versions of `hero`, `project-delivery`, `software-architecture` and `training`
   - `favicon.svg`, `icons.svg`
   - `src/assets/react.svg`, `src/assets/vite.svg`

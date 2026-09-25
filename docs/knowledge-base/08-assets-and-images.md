@@ -12,8 +12,8 @@ Sizes are shown in KB (1 KB = 1,000 bytes).
 | Path | Size | Dimensions | Used by | What it shows |
 |---|---|---|---|---|
 | `/images/abbadev-logo.png` | 148 KB | 555×449, transparent | Favicon and apple-touch-icon (`index.html`), v2 header and footer, v1 headers | Glossy blue/cyan triangle "A" made of network nodes, with a tree growing inside |
-| `/og-image.png` | 414 KB | 1200×630 | `og:image`, `twitter:image` | Dark navy social card: "ABBADev **Tech** Solutions" (old name), tagline, pills (Architecture / AI Automation / Digital Transformation), isometric AI-network art |
-| `/images/profile.webp` | 16 KB | 360×360 | **unused** | Square brand tile: glowing logo, "ABBADev Tech Solutions" |
+| `/og-abbadev.png` | 460 KB | 1200×630 | `og:image`, `twitter:image` | Share card generated from `profile-fb.png`: the logo tile centred on a blurred, darkened copy of itself. Replaced the old `og-image.png` ("Tech Solutions") on 2026-09-25; the new filename makes Facebook and LinkedIn fetch it fresh |
+| `/images/profile-fb.png` | 1.49 MB | 1254×1254 | JSON-LD `logo` and `image` (`index.html`) | Square brand tile: glowing network-tree "A" logo over "ABBADEV / IT SOLUTIONS" on dark navy. Replaced the old `profile.webp` ("Tech Solutions") |
 | `/favicon.svg` | 10 KB | 48×46 | **unused** (Vite default) | Purple lightning-bolt mark |
 | `/icons.svg` | 5 KB | sprite | **unused** (Vite default) | Social icon sprite (bluesky, discord, github, x…) |
 
@@ -73,8 +73,7 @@ Each is about 4.6 KB. The CRM and Stockora case studies don't have one.
 
 - `founder.png` (1.97 MB), `case-studies/ai-connection.png` (2.35 MB), `mockup_crm.png` (1.49 MB) and `cloud.png` (1.08 MB) are large PNGs.
   Serve WebP or AVIF where a PNG is still loaded.
-- Remove the unused assets: `profile.webp`, the four unused service WebPs, `favicon.svg` and `icons.svg`.
-- Regenerate `og-image.png` with the current name, "IT Solutions".
+- Remove the unused assets: the four unused service WebPs, `favicon.svg` and `icons.svg`.
 
 ## Untracked local media (not in git)
 
