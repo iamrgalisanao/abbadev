@@ -31,8 +31,16 @@ More detail: /services. The services page also covers business systems, systems 
 Cases 1 to 3 are anonymized client work; 4 to 6 are ABBADev's own systems.
 
 ## Products ABBADev builds and runs
-- ABBADev CRM: contacts, deal pipeline, tasks and a live dashboard. https://crm.abbadev.com
-- Stockora: warehouse intelligence with multi-warehouse stock, FIFO costing, role-based approvals and an offline scanner app. Public demo at https://stockora.abbadev.com (the login page lists the demo accounts).
+ABBADev CRM (live at https://crm.abbadev.com, case study /cases/abbadev-crm):
+- ABBADev's own sales CRM for SME owners, sales and operations teams, running in production.
+- One pipeline for contacts, deals and follow-ups, where every record has an owner and a status.
+- Features: a lead-to-deal pipeline with stages, tasks and reminders, role-based access, an audit trail, automations through n8n, and a live dashboard of pipeline value, win rate and stage movement.
+- Result: leads that sat in spreadsheets, chat threads and inboxes now live in one shared pipeline, and follow-ups no longer depend on memory.
+
+Stockora (public demo at https://stockora.abbadev.com, case study /cases/stockora):
+- Warehouse intelligence: multi-warehouse stock, FIFO costing, role-based approvals and an offline scanner app for the warehouse floor.
+- Every stock movement is recorded, so inventory is 100% traceable instead of overwritten.
+- The demo login page lists the demo accounts.
 
 ## Pricing
 - Every engagement is scoped per workflow. There are no fixed packages.

@@ -108,7 +108,8 @@ with a safe "I don't have that detail here" reply; trims a reply that hit the to
 case studies, denied Stockora, returned "[Name]" for the founder and said there was no email). The new prompt answered all 10 core
 questions correctly and gave the safe reply to five questions the facts don't cover. **Live on abbadev.com the same day, after
 publishing the new workflow: 10 of 10 core questions correct, quote requests answered with the pricing range, and "I don't have that
-detail here" for mobile apps and hiring.** Remaining quirk: it pads the CRM description with generic wording. Replies take 1.5–26 s
+detail here" for mobile apps and hiring.** The CRM padding (generic "built with scalability in mind" filler) was fixed by giving the facts file a fuller, concrete CRM and
+Stockora description: with enough real detail, the model stops inventing its own. Replies take 1.5–26 s
 on the server's CPU; the full session list is the slowest.
 
 **Live node names:** Webhook → Fetch Live Sessions → Fetch Facts → Build AI Prompt → Call Ollama → Clean AI Reply → Respond to Webhook.
