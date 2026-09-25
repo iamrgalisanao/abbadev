@@ -34,7 +34,7 @@
   project leadership and business process analysis, and bridges executive clarity with developer-ready implementation. Accountability stays human at every step.
 - **Three focus points:** software architecture and enterprise systems; AI automation with governance and guardrails;
   business-to-technical translation for leaders and teams.
-- **About page title:** "Founder & Technology Solutions Architect". This differs from the homepage title; see [known issues](10-known-issues.md).
+- **Title everywhere:** "Founder & Principal Systems Architect" (`FOUNDER_TITLE` in `src/App.jsx`, also in `src/v2/content.js` and the seminar deck).
 - **About page:** approach Understand → Simplify → Automate → Build for growth → Measure. Values: Purpose, Excellence,
   Integrity, Continuous learning, Service, Innovation.
 - **Headshot:** `/images/founder.png`, used on v1 and `/about` only. The v2 homepage shows a "credential plate" card instead.

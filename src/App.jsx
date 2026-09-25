@@ -597,9 +597,13 @@ const consultationSteps = [
   'Return a practical path for automation, architecture, or software delivery',
 ]
 
+// Single source for the founder's title (also used in src/v2/content.js).
+const FOUNDER_TITLE = 'Founder & Principal Systems Architect'
+
 const founderProfile = {
   name: 'Rommel Galisanao',
-  role: 'Founder & Principal Systems Architect — ABBADev IT Solutions',
+  title: FOUNDER_TITLE,
+  role: `${FOUNDER_TITLE} — ABBADev IT Solutions`,
   bio: 'I help organizations turn business complexity into practical software systems, bringing together software architecture, AI automation, project leadership, and business process analysis. The work bridges executive clarity and developer-ready implementation, with accountability kept human at every step.',
   points: [
     'Software architecture and enterprise systems',
@@ -2380,7 +2384,7 @@ function AboutPage({ theme, setTheme }) {
           <div className="about-founder-copy">
             <span className="kicker">Meet the founder</span>
             <h2>Rommel Galisanao</h2>
-            <p className="about-founder-role">Founder &amp; Technology Solutions Architect</p>
+            <p className="about-founder-role">{founderProfile.title}</p>
             <p>
               ABBADev was founded by Rommel Galisanao, whose work spans software engineering,
               project management, team leadership, systems implementation, and business process
