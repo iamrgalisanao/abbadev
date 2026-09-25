@@ -91,12 +91,14 @@ The default disclaimer reads "Details anonymized to protect the client operating
 A conversion page for Facebook ads, with no site nav and no chat widget. It has its own header, footer and legal links.
 
 **What it shows**
-- **Without `?event`:** the flagship offer, "From Idea to Intelligent System". The details are in `flagshipSeminar` (`App.jsx:2727`):
-  - Sep 5, 2026, 2 PM PHT, Twinniz Cafe, Olongapo.
-  - Price ₱399, down from ₱500. Capacity 40.
-  - A countdown timer.
-  - Sections: what you'll learn, who it's for, outcomes, and a six-question FAQ.
-- **With `?event=<slug>`:** a leaner page built from the API event. An unknown slug shows "We couldn't find that session."
+- **The flagship page** (`flagshipSeminar`, `App.jsx`) is a rich ad-landing template: what you'll learn, who it's for, outcomes,
+  a six-question FAQ and a countdown. It shows for `/seminar` or `?event=idea-to-intelligent-system` **only until its start time**
+  (`startsAtIso`). The current flagship, "From Idea to Intelligent System" (Sep 5, 2026, Twinniz Cafe, ₱399), has ended.
+  To run a new ad campaign with this template, update `flagshipSeminar` and `SEMINAR_EVENT_SLUG` (the slug must exist in the events API).
+- **Otherwise** a leaner page is built from the events API: the session named in `?event=<slug>`, or with no parameter the **next
+  upcoming session**, so old ad links land on something bookable.
+- A slug the API doesn't list (ended, unpublished, or the ended flagship) shows "That session has ended or isn't available"
+  with a link to `/register`. With no parameter and no sessions scheduled, it says no sessions are open.
 
 **How registration works**
 

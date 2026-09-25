@@ -3305,15 +3305,20 @@ function TwoStepRegister({ seminar, eventSlug }) {
 }
 
 function SeminarLandingPage({ theme, setTheme }) {
-  // Which event this page is for. No param (or the flagship slug) = the rich
-  // flagship page; any other slug = a lean page driven by the events API.
+  // Which event this page is for:
+  // - the rich flagship page (flagshipSeminar), but only until it starts, for no
+  //   param or the flagship slug - so old ad links never sell an ended seminar;
+  // - otherwise a lean page driven by the events API: the requested slug, or with
+  //   no param the next upcoming session.
   const eventSlug = useMemo(
     () => (typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('event')),
     [],
   )
-  const isFlagship = !eventSlug || eventSlug === SEMINAR_EVENT_SLUG
+  const [flagshipOpen] = useState(() => Date.parse(flagshipSeminar.startsAtIso) > Date.now())
+  const isFlagship = flagshipOpen && (!eventSlug || eventSlug === SEMINAR_EVENT_SLUG)
   const { status: eventsStatus, events } = useEvents()
-  const apiEvent = isFlagship ? null : events.find((event) => event.slug === eventSlug) || null
+  const targetSlug = isFlagship ? SEMINAR_EVENT_SLUG : eventSlug || events[0]?.slug || null
+  const apiEvent = isFlagship ? null : events.find((event) => event.slug === targetSlug) || null
   // loading | ready | error
   const eventState = isFlagship
     ? 'ready'
@@ -3432,8 +3437,17 @@ function SeminarLandingPage({ theme, setTheme }) {
             <p className="lp-state-loading">Loading session…</p>
           ) : (
             <div className="lp-state-error">
-              <h1>We couldn&apos;t find that session.</h1>
-              <p>It may have ended or been unpublished.</p>
+              {eventSlug ? (
+                <>
+                  <h1>That session has ended or isn&apos;t available.</h1>
+                  <p>It may have already taken place or been unpublished. See what&apos;s coming up next.</p>
+                </>
+              ) : (
+                <>
+                  <h1>No sessions are open for registration right now.</h1>
+                  <p>New seminars and workshops are added regularly. Leave your email to hear about the next one.</p>
+                </>
+              )}
               <a className="primary-button" href="/register">
                 Browse all sessions <ArrowRight size={17} aria-hidden="true" />
               </a>
@@ -3697,7 +3711,7 @@ function SeminarLandingPage({ theme, setTheme }) {
           </div>
 
           {EVENTS_API ? (
-            <TwoStepRegister seminar={seminar} eventSlug={isFlagship ? SEMINAR_EVENT_SLUG : eventSlug} />
+            <TwoStepRegister seminar={seminar} eventSlug={targetSlug} />
           ) : status === 'reserved' ? (
             <div className="lp-pay" role="status">
               <span className="register-success-icon" aria-hidden="true"><CheckCircle2 size={26} /></span>

@@ -97,7 +97,7 @@ The table below is a snapshot from 2026-09-25.
 
 | Event id | Title | Format | Date (PHT) | Price |
 |---|---|---|---|---|
-| `idea-to-intelligent-system` | From Idea to Intelligent System | In-person seminar, Twinniz Cafe, Olongapo | Sat Sep 5, 2026, 2:00 PM, 3 h | ₱399 (down from ₱500), 40 seats, snack included. **Already held** |
+| `idea-to-intelligent-system` | From Idea to Intelligent System | In-person seminar, Twinniz Cafe, Olongapo | Sat Sep 5, 2026, 2:00 PM, 3 h | ₱399 (down from ₱500), 40 seats, snack included. **Already held**; `/seminar` now features the next upcoming session instead |
 | `first-chatbot` | Build Your First AI Chatbot | Online workshop | Oct 8, 2026, 10:00 AM, 3 h | ₱750 |
 | `intro-software-dev` | Intro to Software Development | Seminar, Metro Manila | Oct 18, 2026, 9:00 AM, half day | Free |
 | `digital-transformation-smes` | Digital Transformation for SMEs | Seminar, Metro Manila | Nov 5, 2026, 1:00 PM, half day | ₱1,200 |
