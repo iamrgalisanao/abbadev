@@ -115,7 +115,7 @@ Keep Ollama bound to localhost / the private Docker network. Do **not** publish
 Seven nodes, in this order:
 
 ```
-Webhook → Fetch Sessions → Fetch Facts → Build request (Code) → Ollama (HTTP) → Clean reply (Code) → Respond
+Webhook → Fetch Live Sessions → Fetch Facts → Build AI Prompt → Call Ollama → Clean AI Reply → Respond to Webhook
 ```
 
 Build them by hand as below.
@@ -128,8 +128,8 @@ Build them by hand as below.
   `N8N_ASSISTANT_JWT` (see [.env.example](../.env.example)).
 - **Respond:** "Using 'Respond to Webhook' node".
 
-### Node 2 — HTTP Request: **Fetch Sessions**
-Name the node exactly **Fetch Sessions** (Node 3 reads it by name).
+### Node 2 — HTTP Request: **Fetch Live Sessions**
+Name the node exactly **Fetch Live Sessions** (Node 3 reads it by name).
 - **Method:** GET
 - **URL:** `https://api.abbadev.com/api/events`
 - **Options → Timeout:** 5000 ms
@@ -140,7 +140,7 @@ The API returns `{ "events": [ ... ] }`. It is the same source the website uses,
 the assistant always quotes the live sessions.
 
 ### Node 2b — HTTP Request: **Fetch Facts**
-Name the node exactly **Fetch Facts**. Place it after Fetch Sessions.
+Name the node exactly **Fetch Facts**. Place it after Fetch Live Sessions.
 - **Method:** GET
 - **URL:** `https://abbadev.com/assistant-facts.md`
 - **Options → Response → Response Format:** Text (the text lands in the `data` field)
@@ -153,7 +153,7 @@ pricing, how to start, contact and privacy. It ships with every site deploy, so 
 assistant picks up changes without touching n8n. It is condensed from
 `docs/knowledge-base/`; keep it short, because on CPU every prompt word adds latency.
 
-### Node 3 — Code: build the Ollama request
+### Node 3 — Code: **Build AI Prompt**
 Language: JavaScript, mode **Run Once for All Items**. It assembles the grounded
 system prompt (facts file + live sessions) and sanitises the incoming turns.
 
@@ -165,10 +165,19 @@ Founder: Rommel Galisanao, Founder & Principal Systems Architect.
 Book a consultation at /#contact (reply within one business day) or email info@abbadev.com.
 Case studies: /cases. Services: /services. Sessions: /register.`
 
+// Accept the file however the HTTP node hands it over: as text in `data`
+// (Response Format: Text), in `body`, or as binary (Autodetect / File).
 let facts = ''
 try {
-  const fetched = $('Fetch Facts').first().json
-  facts = typeof fetched.data === 'string' ? fetched.data : ''
+  const item = $('Fetch Facts').first()
+  const json = item.json || {}
+  if (typeof json.data === 'string') facts = json.data
+  else if (typeof json.body === 'string') facts = json.body
+  const file = item.binary && Object.values(item.binary)[0]
+  if (!facts && file && typeof file.data === 'string' && typeof Buffer !== 'undefined') {
+    const text = Buffer.from(file.data, 'base64').toString('utf8')
+    if (text.includes('## ')) facts = text
+  }
 } catch { facts = '' }
 // Drop the file's own header note (everything before the first "## " section).
 const firstSection = facts.indexOf('\n## ')
@@ -178,7 +187,7 @@ if (facts.trim().length < 200) facts = FALLBACK_FACTS
 // --- Live sessions from Node 2, soonest first ------------------------------
 let sessions = []
 try {
-  const body = $('Fetch Sessions').first().json
+  const body = $('Fetch Live Sessions').first().json
   sessions = Array.isArray(body.events) ? body.events : Array.isArray(body) ? body : []
 } catch { sessions = [] }
 sessions = sessions
@@ -245,13 +254,13 @@ return [{
 }]
 ```
 
-> Node 3 reads its inputs by node name: **Webhook**, **Fetch Sessions** and **Fetch Facts**.
+> Build AI Prompt reads its inputs by node name: **Webhook**, **Fetch Live Sessions** and **Fetch Facts**.
 > If you rename any of those nodes, update the names in the code.
 >
 > If you switch to a non-thinking model (e.g. `llama3.2:3b`), `think: false` is
 > ignored, so it's safe to leave in.
 
-### Node 4 — HTTP Request: call Ollama
+### Node 4 — HTTP Request: **Call Ollama**
 - **Method:** POST
 - **URL:** `http://ollama:11434/api/chat` (shared Docker network) or
   `http://localhost:11434/api/chat` (n8n on the host). See section 2.
@@ -259,7 +268,8 @@ return [{
 - **Body:** "Using JSON" →  `={{ $json }}`  (sends the object built in Node 3)
 - **Options → Timeout:** 28000 ms (see the timeout ladder in section 5)
 
-### Node 5 — Code: extract + clean the reply
+### Node 5 — Code: **Clean AI Reply**
+Mode **Run Once for All Items**, language JavaScript. Replace the whole code with:
 ```js
 const SAFE_REPLY = "I don't have that detail here. You can ask ABBADev IT Solutions directly through the consultation form at /#contact or email info@abbadev.com."
 
@@ -293,7 +303,7 @@ if (!reply) reply = SAFE_REPLY
 return [{ json: { reply: reply.slice(0, 1500) } }]
 ```
 
-### Node 6 — Respond to Webhook
+### Node 6 — **Respond to Webhook**
 - **Respond With:** JSON
 - **Response Body:** `={{ { "reply": $json.reply } }}`
 - **Response Code:** 200

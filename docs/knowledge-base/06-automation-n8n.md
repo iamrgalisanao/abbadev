@@ -106,8 +106,13 @@ with a safe "I don't have that detail here" reply; trims a reply that hit the to
 
 **Accuracy.** Tested 2026-09-25 on `qwen3:1.7b` with the section 6 question set: the old live prompt got 4 of 10 right (it invented
 case studies, denied Stockora, returned "[Name]" for the founder and said there was no email). The new prompt answered all 10 core
-questions correctly and gave the safe reply to five questions the facts don't cover. Remaining quirk: it pads the CRM description
-with generic wording.
+questions correctly and gave the safe reply to five questions the facts don't cover. **Live on abbadev.com the same day, after
+publishing the new workflow: 10 of 10 core questions correct, quote requests answered with the pricing range, and "I don't have that
+detail here" for mobile apps and hiring.** Remaining quirk: it pads the CRM description with generic wording. Replies take 1.5–26 s
+on the server's CPU; the full session list is the slowest.
+
+**Live node names:** Webhook → Fetch Live Sessions → Fetch Facts → Build AI Prompt → Call Ollama → Clean AI Reply → Respond to Webhook.
+Edits in n8n only take effect after **Publish** (the button shows a yellow dot while changes are unpublished).
 
 **Timeouts.** Nested so each outer layer outlasts the inner one: Ollama 28 s < proxy 30 s < browser 32 s.
 
