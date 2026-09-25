@@ -502,7 +502,7 @@ const caseStudies = [
     stack: 'NestJS - Prisma - PostgreSQL - Next.js 14 - Turborepo - Docker - PWA',
     liveUrl: 'https://stockora.abbadev.com/',
     summaryPdf: false,
-    disclaimer: 'Live product - public demo at stockora.abbadev.com (nine role logins, password123, resets nightly).',
+    disclaimer: 'Live product - public demo at stockora.abbadev.com. The login page lists the nine demo role accounts, and demo data resets nightly.',
     liveCtaHeading: 'Walk the whole system in the public demo',
     liveCtaText: 'Open Stockora running in production - nine role logins, resetting nightly - and see how an append-only ledger holds it all together.',
     liveCtaButton: 'Explore the live demo',

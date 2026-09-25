@@ -23,7 +23,7 @@ Grouped by impact. Each item names the file to change. Items marked **Fixed** we
 | 10 | **Fixed 2026-09-25.** Event data was copied into `App.jsx`, two n8n guides and the events API; the site and the n8n workflow now read the events API only (the n8n change must be pasted into n8n) | `useEvents` (App.jsx), `docs/n8n-event-workflow.md` |
 | 11 | **Fixed 2026-09-25.** GCash details were copied in `App.jsx`, n8n and the events API. Session bookings from `/register` now go through the events API flow, and the site and n8n copies are gone | `RegisterPage`, `docs/n8n-event-workflow.md` |
 | 12 | **Fixed 2026-09-25** (section 3 now describes browser storage and Google Fonts, no pixels; chat messages added to section 1; effective date Sep 25, 2026). The privacy policy mentions advertising pixels, but no pixel or analytics is installed | `privacyDoc` vs `index.html` |
-| 13 | The Stockora demo password is in a public disclaimer string (intentional for a public demo, but worth knowing) | `caseStudies` → stockora |
+| 13 | **Fixed 2026-09-25** (the disclaimer now points to the demo accounts on the Stockora login page). The Stockora demo password is in a public disclaimer string (intentional for a public demo, but worth knowing) | `caseStudies` → stockora |
 | 14 | The flagship seminar (Sep 5, 2026) is past, but it is still the default `/seminar` offer | `flagshipSeminar` in `App.jsx` |
 | 15 | **Fixed 2026-09-25.** The footer still links "Classic site" (`/v1`) after the header link was removed | `src/v2/content.js` (footer) |
 
